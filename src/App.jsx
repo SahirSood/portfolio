@@ -190,7 +190,7 @@ function Home() {
             {/* Left: intro */}
             <div>
               <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl dark:text-white">
-                Hi! I'm <span className="text-emerald-600 dark:text-emerald-400">Sahir Sood</span>
+                Hi! I'm <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent font-bold">Sahir Sood</span>
               </h1>
               <p className="mt-2 text-lg text-slate-600 dark:text-slate-300">
                 4th Year Computer Science Student @ SFU
@@ -201,7 +201,7 @@ function Home() {
                 {HOT_LINKS.map(({ label, href, icon: Icon }) => {
                   let buttonClass = "group inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium shadow-sm transition hover:-translate-y-0.5 hover:shadow-md";
                   
-                  if (label === "Email") {
+                  if (label === "ssa434@sfu.ca") {
                     buttonClass += " bg-red-500 text-white hover:bg-red-600";
                   } else if (label === "GitHub") {
                     buttonClass += " bg-gray-900 text-white hover:bg-gray-800";
@@ -230,37 +230,21 @@ function Home() {
               <div className="mt-8">
                 <p className="max-w-3xl text-slate-700 dark:text-slate-300">
                   An Intro to CS elective completely shifted my path. What started as curiosity quickly turned into a real passion for 
-                  <span className="font-medium bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> solving problems</span>, 
+                  <span className="font-bold"> solving problems</span>, 
                   which led me to transfer into the joint CS and Business program at SFU.
                 </p>
                 <p className="mt-4 max-w-3xl text-slate-700 dark:text-slate-300">
                   Since then I've built projects that tested both my technical skills and my ability to collaborate. I enjoy 
-                  <span className="font-medium bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent"> backend systems and data-driven development</span>, 
+                  <span className="font-bold"> backend systems and data-driven development</span>, 
                   but what stands out most to me is how much 
-                  <span className="font-medium bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent"> teamwork and adaptability</span> 
+                  <span className="font-bold"> teamwork and adaptability</span> 
                   shape the success of a project.
                 </p>
                 <p className="mt-4 max-w-3xl text-slate-700 dark:text-slate-300">
                   Outside of coding I keep balance through 
-                  <span className="font-medium bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent"> basketball, travel, and exploring the outdoors</span>. 
+                  <span className="font-bold"> basketball, travel, and exploring the outdoors</span>. 
                   These experiences keep me grounded and help me bring a genuine perspective into the work I do.
                 </p>
-                
-                {/* Navigation buttons */}
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <button
-                    onClick={() => document.getElementById('projects').scrollIntoView({ behavior: 'smooth' })}
-                    className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                  >
-                    View Projects ↓
-                  </button>
-                  <button
-                    onClick={() => document.getElementById('experience').scrollIntoView({ behavior: 'smooth' })}
-                    className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                  >
-                    View Experience ↓
-                  </button>
-                </div>
               </div>
             </div>
 
@@ -272,6 +256,51 @@ function Home() {
                 className="mx-auto aspect-square max-w-sm rounded-2xl object-cover shadow-xl ring-1 ring-slate-200 dark:ring-slate-800"
               />
             </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* Navigation Cards */}
+      <Section id="navigation" className="pt-0">
+        <div className="flex justify-center">
+          <div className="grid gap-8 sm:grid-cols-2 max-w-2xl">
+            <button
+              onClick={() => document.getElementById('experience').scrollIntoView({ behavior: 'smooth' })}
+              className="group flex flex-col items-center text-center transition hover:-translate-y-1"
+            >
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 shadow-sm transition hover:shadow-lg dark:border-slate-700 dark:bg-slate-800">
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/5/59/SAP_2011_logo.svg" 
+                  alt="mothertongue_logo" 
+                  className="h-16 w-auto mx-auto object-contain"
+                />
+              </div>
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Work Experience</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                  Learn more about my work experience.
+                </p>
+              </div>
+            </button>
+            
+            <button
+              onClick={() => document.getElementById('experience').scrollIntoView({ behavior: 'smooth' })}
+              className="group flex flex-col items-center text-center transition hover:-translate-y-1"
+            >
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 shadow-sm transition hover:shadow-lg dark:border-slate-700 dark:bg-slate-800">
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/5/59/SAP_2011_logo.svg" 
+                  alt="SAP Logo" 
+                  className="h-16 w-auto mx-auto object-contain"
+                />
+              </div>
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Work Experience</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                  Learn more about the projects I have been apart of.
+                </p>
+              </div>
+            </button>
           </div>
         </div>
       </Section>

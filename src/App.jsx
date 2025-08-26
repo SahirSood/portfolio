@@ -33,7 +33,7 @@ function useTheme() {
 // -----------------------------
 // DATA — edit these to your real info
 // -----------------------------
-const PROFILE_IMG = "../1_Sahir Sood_Spring 2024_Boating in Demark  Canals.JPEG"; 
+const PROFILE_IMG = "/img/sahir-headshot.JPEG"; 
 const HOT_LINKS = [
   { label: "sahirsood@gmail.com", href: "mailto:sahirsood@gmail.com", icon: Mail },
   { label: "GitHub", href: "https://github.com/SahirSood", icon: Github },
@@ -43,7 +43,7 @@ const HOT_LINKS = [
 const PROJECTS = [
   {
     title: "Spotify Playlist Generator",
-    img: "../spotifyProjectImage.png",
+    img: "/img/spotify-project.png",
     description: "A Real Time Playlist Generator that creates personalized Spotify playlists based on user mood and preferences.",
     date: "Mar 2025 - Present",
     stack: ["Python", "React", "Node.JS", "AWS", "OpenAI API", "GitHub Actions"],
@@ -59,7 +59,7 @@ const PROJECTS = [
   },
   {
     title: "TripMate",
-    img: "../tripmate-logo.png",
+    img: "/img/tripmate-logo.png",
     description: "A travel planning app that helps users organize trips, share itineraries, and discover new destinations.",
     date: "Oct – Dec 2023",
     stack: ["Ruby", "Rails", "PostgreSQL", "WebSocets"],
@@ -67,7 +67,7 @@ const PROJECTS = [
   },
   {
     title: "Financial Fast Feed",
-    img: "../fff.jpg",
+    img: "/img/fff.jpg",
     description: "Built login and bookmark system enabling users to save and revisit articles from the personalized news feed.",
     date: "Jan-Apr 2025",
     stack: ["React", "Postman", "Node.JS", "Flask", "RESTful APIs"],
@@ -75,7 +75,7 @@ const PROJECTS = [
   },
     {
     title: "Sensor Movement Data Analysis",
-    img: "../km,eans.png",
+    img: "/img/kmeans.png",
     description: "Developed ML models using smartphone sensor data to detect human activities.",
     date: "Feb-Mar 2025",
     stack: ["Python", "Pandas", "Matplotlib", "Scokit-learn"],
@@ -83,7 +83,7 @@ const PROJECTS = [
   },
   {
     title: "Apocolypse Rerising",
-    img: "../img-zmb.jpg",
+    img: "/img/img-zmb.jpg",
     description: "A 2D zombie survival game with wave-based enemies and power-ups.",
     date: "Dec 2022",
     stack: ["Python", "Pygame"],
@@ -91,7 +91,7 @@ const PROJECTS = [
   },
   {
     title: "Fall Hackathon Project - Endless Scroller",
-    img: "../No_Image_Available.jpg",
+    img: "/img/no-img.jpg",
     description: "An endless 2D scroller with score based obstacles and power-ups.",
     date: "Fall 2022",
     stack: ["Java", "Spring Boot", "Angular", "Docker", "Kubernetes", "PostgreSQL"],
@@ -107,7 +107,7 @@ const EXPERIENCE = [
     summary:
       "Developed a comprehensive Chrome extension for writing feedback that provides sentence-level analysis and adaptive learning capabilities. Built a responsive React UI and integrated Chrome Extension APIs to enable real-time writing analysis directly in users' browsers. Connected OpenAI API through a custom Node.js backend using specialized prompts and rule layers to deliver targeted writing suggestions. Implemented a sophisticated scoring system powered by Firestore that maps user writing patterns to adaptive course modules, creating a personalized learning experience.",
     tags: ["React", "JavaScript", "ChatGPT API", "JMeter", "Selenium", "GitHub Actions", "Chrome API", "Node.js", "Firestore"],
-    logo: "../mothertongue_logo.jpg",
+    logo: "/img/mothertongue-logo.jpg",
   },
   {
     company: "Kapali Developments",
@@ -116,7 +116,7 @@ const EXPERIENCE = [
     summary:
       "Developed a comprehensive React dashboard connected to Firestore for real-time financial tracking and transparency across multiple properties and investment projects. Designed robust SQL schemas to effectively model complex financial relationships including rental income, mortgage payments, and partner equity contributions. Built a scalable backend using Node.js and Firebase Functions that automates monthly reporting processes and calculates equity splits between partners. Created a user-friendly interface that allows stakeholders to track investments, expenses, and determine who owes what across various projects and partnerships.",
     tags: ["Firestore", "React", "JavaScript", "Node.js", "Firebase Functions", "SQL"],
-    logo: "../KApa.png",
+    logo: "/img/kapali.png",
   },
 
   {
@@ -126,7 +126,7 @@ const EXPERIENCE = [
     summary:
       "Increased client engagement by 20% through social media optimization, driving new leads for the business. Streamlined financial reporting using Excel, improving accounting accuracy and reducing reporting time by 30%. Redesigned the company website and business cards, elevating branding and enhancing client engagement. Managed on-site operations and coordinated with contractors, ensuring projects met deadlines while strengthening communication and problem-solving skills.",
     tags: ["Excel", "Social Media", "Web Design", "Project Management", "Client Relations"],
-    logo: "../KApa.png",
+    logo: "/img/kapali.png",
   },
   {
     company: "PedalHeads",
@@ -135,7 +135,7 @@ const EXPERIENCE = [
     summary:
       "Taught bike riding skills to young children while enforcing safety protocols to build confidence. Administered first aid and independently managed injuries, ensuring camper safety and well-being. Resolved camper behavioral challenges through creative problem-solving, maintaining a positive environment for 25+ children and earning parent praise. Engaged proactively with parents to address concerns and maintain clear communication, fostering trust and positive feedback from families and management.",
     tags: ["Leadership", "First Aid", "Communication", "Problem Solving", "Child Safety"],
-    logo: "../images.jpg",
+    logo: "/img/pedalheads.jpg",
   },
 ];
 
@@ -319,7 +319,7 @@ function Home({ onNavigate }) {
                 <div className="relative">
                   <div className="absolute -inset-3 rounded-2xl bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-30"></div>
                   <img 
-                    src="../mothertongue_logo.jpg" 
+                    src="/img/mothertongue-logo.jpg" 
                     alt="Work Experience" 
                     className="relative h-16 w-16 rounded-xl bg-white object-contain p-2 ring-2 ring-slate-200 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:ring-purple-300 dark:ring-slate-700 dark:group-hover:ring-purple-600"
                   />
@@ -346,7 +346,7 @@ function Home({ onNavigate }) {
                 <div className="relative">
                   <div className="absolute -inset-3 rounded-2xl bg-gradient-to-r from-blue-400 to-cyan-400 opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-30"></div>
                   <img 
-                    src="../km,eans.png" 
+                    src="/img/kmeans.png" 
                     alt="Projects" 
                     className="relative h-16 w-16 rounded-xl bg-white object-contain p-2 ring-2 ring-slate-200 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:ring-blue-300 dark:ring-slate-700 dark:group-hover:ring-blue-600"
                   />

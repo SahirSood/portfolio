@@ -185,57 +185,64 @@ function Home() {
   return (
     <>
       <Section id="hero" className="pt-10 sm:pt-16">
-        <div className="grid items-center gap-10 md:grid-cols-2">
-          {/* Left: intro */}
-          <div>
-            <Pill>hi, I am Sahir</Pill>
-            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl dark:text-white">
-              Building useful software with a product mindset.
-            </h1>
-            <p className="mt-4 max-w-prose text-slate-600 dark:text-slate-300">
-              Joint Computer Science & Business student at Simon Fraser University (AI & Finance).
-              I love backend systems, data pipelines, and shipping polished user experiences.
-            </p>
+        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="grid items-center gap-10 md:grid-cols-2">
+            {/* Left: intro */}
+            <div>
+              <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl dark:text-white">
+                Hi! I'm <span className="text-emerald-600 dark:text-emerald-400">Sahir Sood</span>
+              </h1>
+              <p className="mt-2 text-lg text-slate-600 dark:text-slate-300">
+                4th Year Computer Science Student @ SFU
+              </p>
 
-            {/* Hot links */}
-            <div className="mt-6 flex flex-wrap gap-3">
-              {HOT_LINKS.map(({ label, href, icon: Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
-                >
-                  <Icon size={16} className="opacity-80" />
-                  {label}
-                  <ExternalLink size={14} className="opacity-50 transition group-hover:translate-x-0.5" />
-                </a>
-              ))}
+              {/* Hot links */}
+              <div className="mt-6 flex flex-wrap gap-3">
+                {HOT_LINKS.map(({ label, href, icon: Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                  >
+                    <Icon size={16} className="opacity-80" />
+                    {label}
+                  </a>
+                ))}
+              </div>
+
+              {/* About me content moved here */}
+              <div className="mt-8">
+                <p className="max-w-3xl text-slate-700 dark:text-slate-300">
+                  As a fourth year Computer Science student with experience at companies 
+                  <span className="font-medium text-emerald-700 dark:text-emerald-300"> large and small</span>, I always
+                  strive to better myself as both a software engineer and student.
+                </p>
+                <p className="mt-4 max-w-3xl text-slate-700 dark:text-slate-300">
+                  I am always ready to learn and venture out of my comfort zone, whether that's 
+                  <span className="font-medium text-emerald-700 dark:text-emerald-300"> winning a hackathon</span> or
+                  <span className="font-medium text-emerald-700 dark:text-emerald-300"> becoming the software team lead on a drone engineering design team</span>.
+                </p>
+                <p className="mt-4 max-w-3xl text-slate-700 dark:text-slate-300">
+                  I have experience with web development, data science, and devops, but am currently focused on
+                  developing <span className="font-medium text-emerald-700 dark:text-emerald-300">my skills in embedded development</span>.
+                </p>
+                <p className="mt-4 max-w-3xl text-slate-700 dark:text-slate-300">
+                  Scroll down to see my experience and projects. ↓
+                </p>
+              </div>
+            </div>
+
+            {/* Right: photo */}
+            <div className="order-first md:order-none">
+              <img
+                src={PROFILE_IMG}
+                alt="Sahir portrait"
+                className="mx-auto aspect-square max-w-sm rounded-2xl object-cover shadow-xl ring-1 ring-slate-200 dark:ring-slate-800"
+              />
             </div>
           </div>
-
-          {/* Right: photo */}
-          <div className="order-first md:order-none">
-            <img
-              src={PROFILE_IMG}
-              alt="Sahir portrait"
-              className="mx-auto aspect-square max-w-md rounded-3xl object-cover shadow-xl ring-1 ring-slate-200 dark:ring-slate-800"
-            />
-          </div>
-        </div>
-      </Section>
-
-      {/* About me */}
-      <Section id="about">
-        <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-emerald-50 to-cyan-50 p-8 shadow-sm dark:border-slate-800 dark:from-slate-900 dark:to-slate-950">
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-white">About me</h2>
-          <p className="mt-3 max-w-3xl text-slate-700 dark:text-slate-300">
-            I’m passionate about backend development and practical ML. Recently, I’ve been building
-            <span className="font-medium text-emerald-700 dark:text-emerald-300"> MotherTongue</span>, a writing assistant with adaptive quizzes, and a
-            <span className="font-medium text-emerald-700 dark:text-emerald-300"> Spotify Playlist Generator</span> that blends audio features with context like time and weather.
-            I care about clean APIs, thoughtful UX, and systems that scale.
-          </p>
         </div>
       </Section>
     </>

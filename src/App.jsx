@@ -187,7 +187,12 @@ function Header({ active, onNavigate }) {
     <header className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/90 backdrop-blur-md shadow-sm dark:border-slate-800 dark:bg-slate-950/90">
       <Container>
         <div className="flex items-center justify-between py-5">
-          <div className="text-xl font-bold tracking-tight text-slate-900 transition-colors hover:text-purple-600 dark:text-white dark:hover:text-purple-400">Sahir Sood</div>
+          <button 
+            onClick={() => onNavigate('home')}
+            className="text-xl font-bold tracking-tight text-slate-900 transition-colors hover:text-purple-600 dark:text-white dark:hover:text-purple-400 cursor-pointer"
+          >
+            Sahir Sood
+          </button>
           <div className="flex items-center gap-2 sm:gap-3">
             {links.map(l => (
               <button
@@ -215,11 +220,15 @@ function Header({ active, onNavigate }) {
 // -----------------------------
 // HOME
 // -----------------------------
-function Home() {
+function Home({ onNavigate }) {
   return (
     <>
-      <Section id="hero" className="pt-12 sm:pt-20">
-        <div className="rounded-3xl border border-slate-200/80 bg-gradient-to-br from-white via-slate-50/50 to-white p-10 shadow-xl shadow-slate-200/50 backdrop-blur-sm dark:border-slate-800/80 dark:from-slate-900 dark:via-slate-900/80 dark:to-slate-900 dark:shadow-slate-900/50">
+      <Section id="hero" className="pt-12 sm:pt-20 relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-50/30 via-transparent to-blue-50/30 dark:from-purple-900/10 dark:via-transparent dark:to-blue-900/10"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(120,119,198,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(120,119,198,0.1),transparent_50%)]"></div>
+        
+        <div className="relative rounded-3xl border border-slate-200/80 bg-gradient-to-br from-white via-slate-50/50 to-white p-10 shadow-xl shadow-slate-200/50 backdrop-blur-sm dark:border-slate-800/80 dark:from-slate-900 dark:via-slate-900/80 dark:to-slate-900 dark:shadow-slate-900/50">
           <div className="grid items-center gap-12 md:grid-cols-2">
             {/* Left: intro */}
             <div>
@@ -271,7 +280,7 @@ function Home() {
                   Since then I've built projects that tested both my technical skills and my ability to collaborate. I enjoy 
                   <span className="font-bold text-slate-900 dark:text-white"> backend systems and data-driven development</span>, 
                   but what stands out most to me is how much 
-                  <span className="font-bold text-slate-900 dark:text-white"> teamwork and adaptability</span> 
+                  <span className="font-bold text-slate-900 dark:text-white"> teamwork and adaptability </span> 
                   shape the success of a project.
                 </p>
                 <p className="mt-5 max-w-3xl text-slate-700 leading-relaxed dark:text-slate-300">
@@ -298,50 +307,60 @@ function Home() {
       </Section>
 
       {/* Navigation Cards */}
-      <Section id="navigation" className="pt-0">
+      <Section id="navigation" className="pt-4 pb-8">
         <div className="flex justify-center">
-          <div className="grid gap-10 sm:grid-cols-2 max-w-2xl">
+          <div className="grid gap-8 sm:grid-cols-2 max-w-4xl w-full">
             <button
-              onClick={() => document.getElementById('experience').scrollIntoView({ behavior: 'smooth' })}
-              className="group flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-2"
+              onClick={() => onNavigate('experience')}
+              className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-slate-200/80 bg-gradient-to-br from-white via-slate-50/30 to-white p-8 shadow-xl shadow-slate-200/60 transition-all duration-300 hover:-translate-y-3 hover:scale-105 hover:border-purple-300/60 hover:shadow-2xl hover:shadow-purple-200/40 dark:border-slate-700/80 dark:from-slate-900 dark:via-slate-800/30 dark:to-slate-900 dark:shadow-slate-900/60 dark:hover:border-purple-600/40 dark:hover:shadow-purple-900/30"
             >
-              <div className="rounded-3xl border border-slate-200/80 bg-gradient-to-br from-white to-slate-50 p-10 shadow-lg shadow-slate-200/50 transition-all duration-300 hover:shadow-xl hover:shadow-slate-300/50 dark:border-slate-700/80 dark:from-slate-800 dark:to-slate-900 dark:shadow-slate-900/50">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-400/5 via-transparent to-pink-400/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+              <div className="relative flex items-center gap-6 mb-4">
                 <div className="relative">
-                  <div className="absolute -inset-2 rounded-2xl bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 blur transition-opacity duration-300 group-hover:opacity-20"></div>
+                  <div className="absolute -inset-3 rounded-2xl bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-30"></div>
                   <img 
                     src="../mothertongue_logo.jpg" 
-                    alt="mothertongue_logo" 
-                    className="relative h-20 w-auto mx-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                    alt="Work Experience" 
+                    className="relative h-16 w-16 rounded-xl bg-white object-contain p-2 ring-2 ring-slate-200 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:ring-purple-300 dark:ring-slate-700 dark:group-hover:ring-purple-600"
                   />
                 </div>
+                <div className="text-left">
+                  <h3 className="text-2xl font-bold text-slate-900 transition-colors group-hover:text-purple-600 dark:text-white dark:group-hover:text-purple-400">Experience</h3>
+                  <div className="mt-1 h-1 w-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-300 group-hover:w-24"></div>
+                </div>
               </div>
-              <div className="mt-6">
-                <h3 className="text-xl font-bold text-slate-900 transition-colors group-hover:text-purple-600 dark:text-white dark:group-hover:text-purple-400">Work Experience</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-                  Learn more about my work experience.
-                </p>
+              <p className="relative text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                Explore my professional journey from startups to established companies, including development roles and leadership positions.
+              </p>
+              <div className="absolute bottom-4 right-4 opacity-30 transition-opacity duration-300 group-hover:opacity-60">
+                <ExternalLink size={20} className="text-purple-600 dark:text-purple-400" />
               </div>
             </button>
             
             <button
-              onClick={() => document.getElementById('projects').scrollIntoView({ behavior: 'smooth' })}
-              className="group flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-2"
+              onClick={() => onNavigate('projects')}
+              className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-slate-200/80 bg-gradient-to-br from-white via-slate-50/30 to-white p-8 shadow-xl shadow-slate-200/60 transition-all duration-300 hover:-translate-y-3 hover:scale-105 hover:border-blue-300/60 hover:shadow-2xl hover:shadow-blue-200/40 dark:border-slate-700/80 dark:from-slate-900 dark:via-slate-800/30 dark:to-slate-900 dark:shadow-slate-900/60 dark:hover:border-blue-600/40 dark:hover:shadow-blue-900/30"
             >
-              <div className="rounded-3xl border border-slate-200/80 bg-gradient-to-br from-white to-slate-50 p-10 shadow-lg shadow-slate-200/50 transition-all duration-300 hover:shadow-xl hover:shadow-slate-300/50 dark:border-slate-700/80 dark:from-slate-800 dark:to-slate-900 dark:shadow-slate-900/50">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400/5 via-transparent to-cyan-400/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+              <div className="relative flex items-center gap-6 mb-4">
                 <div className="relative">
-                  <div className="absolute -inset-2 rounded-2xl bg-gradient-to-r from-blue-400 to-cyan-400 opacity-0 blur transition-opacity duration-300 group-hover:opacity-20"></div>
+                  <div className="absolute -inset-3 rounded-2xl bg-gradient-to-r from-blue-400 to-cyan-400 opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-30"></div>
                   <img 
                     src="../km,eans.png" 
                     alt="Projects" 
-                    className="relative h-20 w-auto mx-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                    className="relative h-16 w-16 rounded-xl bg-white object-contain p-2 ring-2 ring-slate-200 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:ring-blue-300 dark:ring-slate-700 dark:group-hover:ring-blue-600"
                   />
                 </div>
+                <div className="text-left">
+                  <h3 className="text-2xl font-bold text-slate-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">Projects</h3>
+                  <div className="mt-1 h-1 w-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all duration-300 group-hover:w-24"></div>
+                </div>
               </div>
-              <div className="mt-6">
-                <h3 className="text-xl font-bold text-slate-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">Projects</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-                  Learn more about the projects I have been part of.
-                </p>
+              <p className="relative text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                Discover my technical projects spanning web development, mobile apps, machine learning, and game development.
+              </p>
+              <div className="absolute bottom-4 right-4 opacity-30 transition-opacity duration-300 group-hover:opacity-60">
+                <ExternalLink size={20} className="text-blue-600 dark:text-blue-400" />
               </div>
             </button>
           </div>
@@ -486,7 +505,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-white text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
       <Header active={page} onNavigate={setPage} />
-      {page === "home" && <Home />}
+      {page === "home" && <Home onNavigate={setPage} />}
       {page === "projects" && <Projects />}
       {page === "experience" && <Experience />}
       <Footer />

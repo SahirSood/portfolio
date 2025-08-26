@@ -35,7 +35,7 @@ function useTheme() {
 // -----------------------------
 const PROFILE_IMG = "../1_Sahir Sood_Spring 2024_Boating in Demark  Canals.JPEG"; 
 const HOT_LINKS = [
-  { label: "Email", href: "mailto:ssa434@sfu.ca.com", icon: Mail },
+  { label: "sahirsood@gmail.com", href: "mailto:sahirsood@gmail.com", icon: Mail },
   { label: "GitHub", href: "https://github.com/SahirSood", icon: Github },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/sahir-sood/", icon: Linkedin },
 ];
@@ -166,7 +166,7 @@ function Pill({ children }) {
 
 function Tech({ label }) {
   return (
-    <span className="rounded-md bg-slate-100 px-2 py-1 text-xs text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+    <span className="rounded-lg bg-gradient-to-r from-slate-100 to-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 transition-all duration-200 hover:scale-105 hover:shadow-sm dark:from-slate-700 dark:to-slate-800 dark:text-slate-300">
       {label}
     </span>
   );
@@ -184,23 +184,23 @@ function Header({ active, onNavigate }) {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-950/70">
+    <header className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/90 backdrop-blur-md shadow-sm dark:border-slate-800 dark:bg-slate-950/90">
       <Container>
-        <div className="flex items-center justify-between py-4">
-          <div className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">Sahir Sood</div>
+        <div className="flex items-center justify-between py-5">
+          <div className="text-xl font-bold tracking-tight text-slate-900 transition-colors hover:text-purple-600 dark:text-white dark:hover:text-purple-400">Sahir Sood</div>
           <div className="flex items-center gap-2 sm:gap-3">
             {links.map(l => (
               <button
                 key={l.key}
                 onClick={() => onNavigate(l.key)}
-                className={`rounded-lg px-3 py-2 text-sm capitalize transition hover:bg-slate-100 dark:hover:bg-slate-800 ${active === l.key ? "text-emerald-600 dark:text-emerald-400" : "text-slate-700 dark:text-slate-300"}`}
+                className={`rounded-xl px-4 py-2.5 text-sm capitalize transition-all duration-200 hover:scale-105 ${active === l.key ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md" : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"}`}
               >
                 {l.label}
               </button>
             ))}
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="ml-2 rounded-lg border border-slate-200 bg-white p-2 text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+              className="ml-2 rounded-xl border border-slate-200 bg-white p-2.5 text-slate-700 shadow-sm transition-all duration-200 hover:scale-105 hover:bg-slate-50 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
               aria-label="Toggle theme"
             >
               {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
@@ -218,31 +218,31 @@ function Header({ active, onNavigate }) {
 function Home() {
   return (
     <>
-      <Section id="hero" className="pt-10 sm:pt-16">
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <div className="grid items-center gap-10 md:grid-cols-2">
+      <Section id="hero" className="pt-12 sm:pt-20">
+        <div className="rounded-3xl border border-slate-200/80 bg-gradient-to-br from-white via-slate-50/50 to-white p-10 shadow-xl shadow-slate-200/50 backdrop-blur-sm dark:border-slate-800/80 dark:from-slate-900 dark:via-slate-900/80 dark:to-slate-900 dark:shadow-slate-900/50">
+          <div className="grid items-center gap-12 md:grid-cols-2">
             {/* Left: intro */}
             <div>
-              <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl dark:text-white">
-                Hi! I'm <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent font-bold">Sahir Sood</span>
+              <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl dark:text-white">
+                Hi! I'm <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent font-extrabold">Sahir Sood</span>
               </h1>
-              <p className="mt-2 text-lg text-slate-600 dark:text-slate-300">
+              <p className="mt-3 text-xl text-slate-600 dark:text-slate-300">
                 4th Year Computer Science Student @ SFU
               </p>
 
               {/* Hot links */}
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-8 flex flex-wrap gap-4">
                 {HOT_LINKS.map(({ label, href, icon: Icon }) => {
-                  let buttonClass = "group inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium shadow-sm transition hover:-translate-y-0.5 hover:shadow-md";
+                  let buttonClass = "group inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-medium shadow-md transition-all duration-200 hover:scale-105 hover:shadow-lg";
                   
-                  if (label === "ssa434@sfu.ca") {
-                    buttonClass += " bg-red-500 text-white hover:bg-red-600";
+                  if (label === "sahirsood@gmail.com") {
+                    buttonClass += " bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700";
                   } else if (label === "GitHub") {
-                    buttonClass += " bg-gray-900 text-white hover:bg-gray-800";
+                    buttonClass += " bg-gradient-to-r from-gray-800 to-gray-900 text-white hover:from-gray-900 hover:to-black";
                   } else if (label === "LinkedIn") {
-                    buttonClass += " bg-blue-600 text-white hover:bg-blue-700";
+                    buttonClass += " bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800";
                   } else {
-                    buttonClass += " border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200";
+                    buttonClass += " border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700";
                   }
                   
                   return (
@@ -261,22 +261,22 @@ function Home() {
               </div>
 
               {/* About me content moved here */}
-              <div className="mt-8">
-                <p className="max-w-3xl text-slate-700 dark:text-slate-300">
+              <div className="mt-10">
+                <p className="max-w-3xl text-slate-700 leading-relaxed dark:text-slate-300">
                   An Intro to CS elective completely shifted my path. What started as curiosity quickly turned into a real passion for 
-                  <span className="font-bold"> solving problems</span>, 
+                  <span className="font-bold text-slate-900 dark:text-white"> solving problems</span>, 
                   which led me to transfer into the joint CS and Business program at SFU.
                 </p>
-                <p className="mt-4 max-w-3xl text-slate-700 dark:text-slate-300">
+                <p className="mt-5 max-w-3xl text-slate-700 leading-relaxed dark:text-slate-300">
                   Since then I've built projects that tested both my technical skills and my ability to collaborate. I enjoy 
-                  <span className="font-bold"> backend systems and data-driven development</span>, 
+                  <span className="font-bold text-slate-900 dark:text-white"> backend systems and data-driven development</span>, 
                   but what stands out most to me is how much 
-                  <span className="font-bold"> teamwork and adaptability</span> 
+                  <span className="font-bold text-slate-900 dark:text-white"> teamwork and adaptability</span> 
                   shape the success of a project.
                 </p>
-                <p className="mt-4 max-w-3xl text-slate-700 dark:text-slate-300">
+                <p className="mt-5 max-w-3xl text-slate-700 leading-relaxed dark:text-slate-300">
                   Outside of coding I keep balance through 
-                  <span className="font-bold"> basketball, travel, and exploring the outdoors</span>. 
+                  <span className="font-bold text-slate-900 dark:text-white"> basketball, travel, and exploring the outdoors</span>. 
                   These experiences keep me grounded and help me bring a genuine perspective into the work I do.
                 </p>
               </div>
@@ -284,11 +284,14 @@ function Home() {
 
             {/* Right: photo */}
             <div className="order-first md:order-none">
-              <img
-                src={PROFILE_IMG}
-                alt="Sahir portrait"
-                className="mx-auto aspect-square max-w-sm rounded-2xl object-cover shadow-xl ring-1 ring-slate-200 dark:ring-slate-800"
-              />
+              <div className="relative">
+                <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 opacity-20 blur-lg"></div>
+                <img
+                  src={PROFILE_IMG}
+                  alt="Sahir portrait"
+                  className="relative mx-auto aspect-square max-w-sm rounded-2xl object-cover shadow-2xl ring-1 ring-slate-200 transition-transform duration-300 hover:scale-105 dark:ring-slate-800"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -297,41 +300,47 @@ function Home() {
       {/* Navigation Cards */}
       <Section id="navigation" className="pt-0">
         <div className="flex justify-center">
-          <div className="grid gap-8 sm:grid-cols-2 max-w-2xl">
+          <div className="grid gap-10 sm:grid-cols-2 max-w-2xl">
             <button
               onClick={() => document.getElementById('experience').scrollIntoView({ behavior: 'smooth' })}
-              className="group flex flex-col items-center text-center transition hover:-translate-y-1"
+              className="group flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-2"
             >
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 shadow-sm transition hover:shadow-lg dark:border-slate-700 dark:bg-slate-800">
-                <img 
-                  src="../mothertongue_logo.jpg" 
-                  alt="mothertongue_logo" 
-                  className="h-16 w-auto mx-auto object-contain"
-                />
+              <div className="rounded-3xl border border-slate-200/80 bg-gradient-to-br from-white to-slate-50 p-10 shadow-lg shadow-slate-200/50 transition-all duration-300 hover:shadow-xl hover:shadow-slate-300/50 dark:border-slate-700/80 dark:from-slate-800 dark:to-slate-900 dark:shadow-slate-900/50">
+                <div className="relative">
+                  <div className="absolute -inset-2 rounded-2xl bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 blur transition-opacity duration-300 group-hover:opacity-20"></div>
+                  <img 
+                    src="../mothertongue_logo.jpg" 
+                    alt="mothertongue_logo" 
+                    className="relative h-20 w-auto mx-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                  />
+                </div>
               </div>
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Work Experience</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              <div className="mt-6">
+                <h3 className="text-xl font-bold text-slate-900 transition-colors group-hover:text-purple-600 dark:text-white dark:group-hover:text-purple-400">Work Experience</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
                   Learn more about my work experience.
                 </p>
               </div>
             </button>
             
             <button
-              onClick={() => document.getElementById('experience').scrollIntoView({ behavior: 'smooth' })}
-              className="group flex flex-col items-center text-center transition hover:-translate-y-1"
+              onClick={() => document.getElementById('projects').scrollIntoView({ behavior: 'smooth' })}
+              className="group flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-2"
             >
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 shadow-sm transition hover:shadow-lg dark:border-slate-700 dark:bg-slate-800">
-                <img 
-                  src="https://upload.wikimedia.org/wikipedia/commons/5/59/SAP_2011_logo.svg" 
-                  alt="SAP Logo" 
-                  className="h-16 w-auto mx-auto object-contain"
-                />
+              <div className="rounded-3xl border border-slate-200/80 bg-gradient-to-br from-white to-slate-50 p-10 shadow-lg shadow-slate-200/50 transition-all duration-300 hover:shadow-xl hover:shadow-slate-300/50 dark:border-slate-700/80 dark:from-slate-800 dark:to-slate-900 dark:shadow-slate-900/50">
+                <div className="relative">
+                  <div className="absolute -inset-2 rounded-2xl bg-gradient-to-r from-blue-400 to-cyan-400 opacity-0 blur transition-opacity duration-300 group-hover:opacity-20"></div>
+                  <img 
+                    src="../km,eans.png" 
+                    alt="Projects" 
+                    className="relative h-20 w-auto mx-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                  />
+                </div>
               </div>
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Work Experience</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                  Learn more about the projects I have been apart of.
+              <div className="mt-6">
+                <h3 className="text-xl font-bold text-slate-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">Projects</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                  Learn more about the projects I have been part of.
                 </p>
               </div>
             </button>
@@ -351,17 +360,20 @@ function ProjectCard({ p }) {
       href={p.repo}
       target="_blank"
       rel="noreferrer"
-      className="group flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900"
+      className="group flex flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-gradient-to-br from-white to-slate-50/50 shadow-lg shadow-slate-200/50 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-slate-300/50 dark:border-slate-800/80 dark:from-slate-900 dark:to-slate-900/50 dark:shadow-slate-900/50"
     >
-      <img src={p.img} alt="" className="h-48 w-full object-cover" />
-      <div className="flex flex-1 flex-col gap-3 p-5">
+      <div className="relative overflow-hidden">
+        <img src={p.img} alt="" className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-110" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+      </div>
+      <div className="flex flex-1 flex-col gap-3 p-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-slate-900 group-hover:text-emerald-700 dark:text-white dark:group-hover:text-emerald-300">{p.title}</h3>
+          <h3 className="text-lg font-bold text-slate-900 transition-colors group-hover:text-purple-600 dark:text-white dark:group-hover:text-purple-400">{p.title}</h3>
           <span className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
             <Calendar size={14} /> {p.date}
           </span>
         </div>
-        <p className="text-sm text-slate-600 dark:text-slate-300">{p.description}</p>
+        <p className="text-sm text-slate-600 leading-relaxed dark:text-slate-300">{p.description}</p>
         <div className="mt-auto flex flex-wrap gap-2">
           {p.stack.map((t) => (
             <Tech key={t} label={t} />
@@ -375,13 +387,12 @@ function ProjectCard({ p }) {
 function Projects() {
   return (
     <Section id="projects">
-      <div className="mb-8 flex items-end justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Projects</h2>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Clickable cards — open the GitHub repo.</p>
-        </div>
+      <div className="mb-10">
+        <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Projects</h2>
+        <div className="mt-2 h-1 w-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full"></div>
+        <p className="mt-4 text-slate-600 dark:text-slate-400">Clickable cards — open the GitHub repo.</p>
       </div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {PROJECTS.map((p) => (
           <ProjectCard key={p.title} p={p} />
         ))}
@@ -395,16 +406,19 @@ function Projects() {
 // -----------------------------
 function ExperienceCard({ e }) {
   return (
-    <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-slate-50/60 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-      <div className="flex items-center gap-4">
-        <img src={e.logo} alt="logo" className="h-16 w-16 rounded-xl bg-white object-contain p-2 ring-1 ring-slate-200 dark:ring-slate-800" />
+    <div className="group flex flex-col gap-6 rounded-3xl border border-slate-200/80 bg-gradient-to-br from-slate-50/50 to-white p-8 shadow-lg shadow-slate-200/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-300/50 dark:border-slate-800/80 dark:from-slate-900/50 dark:to-slate-900 dark:shadow-slate-900/50">
+      <div className="flex items-center gap-6">
+        <div className="relative">
+          <div className="absolute -inset-2 rounded-xl bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 blur transition-opacity duration-300 group-hover:opacity-20"></div>
+          <img src={e.logo} alt="logo" className="relative h-20 w-20 rounded-xl bg-white object-contain p-2 ring-1 ring-slate-200 shadow-sm transition-transform duration-300 group-hover:scale-105 dark:ring-slate-800" />
+        </div>
         <div>
-          <h3 className="text-xl font-semibold text-slate-900 dark:text-white">{e.company}</h3>
-          <div className="text-sm text-slate-600 dark:text-slate-300">{e.role}</div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">{e.timeframe}</div>
+          <h3 className="text-2xl font-bold text-slate-900 transition-colors group-hover:text-purple-600 dark:text-white dark:group-hover:text-purple-400">{e.company}</h3>
+          <div className="text-base font-medium text-slate-600 dark:text-slate-300">{e.role}</div>
+          <div className="text-sm text-slate-500 dark:text-slate-400">{e.timeframe}</div>
         </div>
       </div>
-      <p className="text-sm text-slate-700 dark:text-slate-300">{e.summary}</p>
+      <p className="text-sm text-slate-700 leading-relaxed dark:text-slate-300">{e.summary}</p>
       <div className="flex flex-wrap gap-2">
         {e.tags.map((t) => (
           <Tech key={t} label={t} />
@@ -417,11 +431,11 @@ function ExperienceCard({ e }) {
 function Experience() {
   return (
     <Section id="experience">
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Experience</h2>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Clean cards with tech badges and summaries.</p>
+      <div className="mb-10">
+        <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Experience</h2>
+        <div className="mt-2 h-1 w-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
       </div>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-8">
         {EXPERIENCE.map((e) => (
           <ExperienceCard key={e.company} e={e} />
         ))}

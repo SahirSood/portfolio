@@ -102,30 +102,40 @@ const PROJECTS = [
 const EXPERIENCE = [
   {
     company: "MotherTongue",
-    role: "Software Developer",
-    timeframe: "May – July 2025",
+    role: "Lead Developer - Startup",
+    timeframe: "May 2025 – Present",
     summary:
-      "Streamlined compliance processes, improved frontend design, and automated license dependency management.",
-    tags: ["Angular", "Groovy", "Spring Boot", "Kubernetes", "Jenkins", "CI/CD"],
-    logo: "https://upload.wikimedia.org/wikipedia/commons/5/59/SAP_2011_logo.svg",
+      "Developed a comprehensive Chrome extension for writing feedback that provides sentence-level analysis and adaptive learning capabilities. Built a responsive React UI and integrated Chrome Extension APIs to enable real-time writing analysis directly in users' browsers. Connected OpenAI API through a custom Node.js backend using specialized prompts and rule layers to deliver targeted writing suggestions. Implemented a sophisticated scoring system powered by Firestore that maps user writing patterns to adaptive course modules, creating a personalized learning experience.",
+    tags: ["React", "JavaScript", "ChatGPT API", "JMeter", "Selenium", "GitHub Actions", "Chrome API", "Node.js", "Firestore"],
+    logo: "../mothertongue_logo.jpg",
   },
   {
-    company: "Korotu Technology",
-    role: "Software Engineer Intern",
-    timeframe: "Jan 2023 – Sep 2023",
+    company: "Kapali Developments",
+    role: "Contract Software Developer",
+    timeframe: "Jan – Apr 2025",
     summary:
-      "Built a web app for land trusts, improved biomass calculations, and reduced server load times.",
-    tags: ["React", "Django", "GeoPandas", "Microsoft Azure", "Nginx"],
-    logo: "https://images.unsplash.com/photo-1527097609759-53f6b3b6b4d6?w=256&auto=format&fit=crop&q=60",
+      "Developed a comprehensive React dashboard connected to Firestore for real-time financial tracking and transparency across multiple properties and investment projects. Designed robust SQL schemas to effectively model complex financial relationships including rental income, mortgage payments, and partner equity contributions. Built a scalable backend using Node.js and Firebase Functions that automates monthly reporting processes and calculates equity splits between partners. Created a user-friendly interface that allows stakeholders to track investments, expenses, and determine who owes what across various projects and partnerships.",
+    tags: ["Firestore", "React", "JavaScript", "Node.js", "Firebase Functions", "SQL"],
+    logo: "../KApa.png",
+  },
+
+  {
+    company: "Kapali Developments",
+    role: "Part-time Assistant",
+    timeframe: "July 2022 – September 2024",
+    summary:
+      "Increased client engagement by 20% through social media optimization, driving new leads for the business. Streamlined financial reporting using Excel, improving accounting accuracy and reducing reporting time by 30%. Redesigned the company website and business cards, elevating branding and enhancing client engagement. Managed on-site operations and coordinated with contractors, ensuring projects met deadlines while strengthening communication and problem-solving skills.",
+    tags: ["Excel", "Social Media", "Web Design", "Project Management", "Client Relations"],
+    logo: "../KApa.png",
   },
   {
-    company: "UBC Unmanned Aerial Systems",
-    role: "Software Team Lead",
-    timeframe: "Jan 2023 – Present",
+    company: "PedalHeads",
+    role: "Camp Counselor",
+    timeframe: "June – August 2021",
     summary:
-      "Led software for drone competitions and optimized server environments using Docker.",
-    tags: ["Python", "Docker", "Confluence", "Trello", "Amazon EC2"],
-    logo: "https://images.unsplash.com/photo-1524602830207-88b0f57dcb72?w=256&auto=format&fit=crop&q=60",
+      "Taught bike riding skills to young children while enforcing safety protocols to build confidence. Administered first aid and independently managed injuries, ensuring camper safety and well-being. Resolved camper behavioral challenges through creative problem-solving, maintaining a positive environment for 25+ children and earning parent praise. Engaged proactively with parents to address concerns and maintain clear communication, fostering trust and positive feedback from families and management.",
+    tags: ["Leadership", "First Aid", "Communication", "Problem Solving", "Child Safety"],
+    logo: "../images.jpg",
   },
 ];
 

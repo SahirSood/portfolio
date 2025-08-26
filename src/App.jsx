@@ -42,44 +42,68 @@ const HOT_LINKS = [
 
 const PROJECTS = [
   {
-    title: "DuoASL — 1st Place @ nwHacks 2024",
-    img: "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?w=800&auto=format&fit=crop&q=60",
-    description: "Real‑time ASL gesture learning using a computer‑vision neural network.",
-    date: "Jan 2024",
-    stack: ["Next.js", "Flask", "TensorFlow", "MediaPipe", "Auth0", "OpenCV"],
-    repo: "https://github.com/your-github/duoasl"
+    title: "Spotify Playlist Generator",
+    img: "../spotifyProjectImage.png",
+    description: "A Real Time Playlist Generator that creates personalized Spotify playlists based on user mood and preferences.",
+    date: "Mar 2025 - Present",
+    stack: ["Python", "React", "Node.JS", "AWS", "OpenAI API", "GitHub Actions"],
+    repo: "https://github.com/SahirSood/Spotify-Playlist-Generator"
   },
   {
-    title: "Ensemble",
-    img: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&auto=format&fit=crop&q=60",
-    description: "Share music reviews with friends and view listening analytics.",
-    date: "Jan 2023 – Sep 2023",
-    stack: ["React", "Express", "Node", "MongoDB", "Spotify API", "TypeScript"],
-    repo: "https://github.com/your-github/ensemble"
+    title: "BeerIQ",
+    img: "https://thumbs.dreamstime.com/b/cartoon-style-illustration-pint-glass-filled-golden-beer-topped-frothy-white-head-slightly-overflows-365646594.jpg",
+    description: "A Beer Based Social Media Platform that allows users to share reviews, rate beers, and discover new breweries",
+    date: "Oct – Dec 2024",
+    stack: ["Kotlin", "Firebase", "Android Studio", "Google Maps API", "Python"],
+    repo: "https://github.com/SahirSood/BeerIQ/tree/main"
   },
   {
-    title: "Collabr (Spring Boot chat)",
-    img: "https://images.unsplash.com/photo-1519241047957-be31d7379a5d?w=800&auto=format&fit=crop&q=60",
-    description: "Live chat & sketching app; containerized with Docker and deployed.",
-    date: "Jan 2023 – May 2023",
-    stack: ["Java", "Spring Boot", "Angular", "Docker", "Kubernetes", "PostgreSQL"],
-    repo: "https://github.com/your-github/collabr"
-  },
-  {
-    title: "Heart‑Disease Regression",
-    img: "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?w=800&auto=format&fit=crop&q=60",
-    description: "Forward selection & classification to find biggest risk factors.",
-    date: "Oct 2023 – Dec 2023",
-    stack: ["R", "Statistics", "Classification"],
+    title: "TripMate",
+    img: "../tripmate-logo.png",
+    description: "A travel planning app that helps users organize trips, share itineraries, and discover new destinations.",
+    date: "Oct – Dec 2023",
+    stack: ["Ruby", "Rails", "PostgreSQL", "WebSocets"],
     repo: "https://github.com/your-github/heart-regression"
+  },
+  {
+    title: "Financial Fast Feed",
+    img: "../fff.jpg",
+    description: "Built login and bookmark system enabling users to save and revisit articles from the personalized news feed.",
+    date: "Jan-Apr 2025",
+    stack: ["React", "Postman", "Node.JS", "Flask", "RESTful APIs"],
+    repo: "https://github.com/SahirSood/financial-fast-feed"
+  },
+    {
+    title: "Sensor Movement Data Analysis",
+    img: "../km,eans.png",
+    description: "Developed ML models using smartphone sensor data to detect human activities.",
+    date: "Feb-Mar 2025",
+    stack: ["Python", "Pandas", "Matplotlib", "Scokit-learn"],
+    repo: ""
+  },
+  {
+    title: "Apocolypse Rerising",
+    img: "../img-zmb.jpg",
+    description: "A 2D zombie survival game with wave-based enemies and power-ups.",
+    date: "Dec 2022",
+    stack: ["Python", "Pygame"],
+    repo: "https://github.com/SahirSood/Apocalypse-Rerising/commits/main/"
+  },
+  {
+    title: "Fall Hackathon Project - Endless Scroller",
+    img: "../No_Image_Available.jpg",
+    description: "An endless 2D scroller with score based obstacles and power-ups.",
+    date: "Fall 2022",
+    stack: ["Java", "Spring Boot", "Angular", "Docker", "Kubernetes", "PostgreSQL"],
+    repo: "https://github.com/SahirSood/FallHackathonProject"
   },
 ];
 
 const EXPERIENCE = [
   {
-    company: "SAP",
-    role: "Software Engineer Intern",
-    timeframe: "May 2024 – Present",
+    company: "MotherTongue",
+    role: "Software Developer",
+    timeframe: "May – July 2025",
     summary:
       "Streamlined compliance processes, improved frontend design, and automated license dependency management.",
     tags: ["Angular", "Groovy", "Spring Boot", "Kubernetes", "Jenkins", "CI/CD"],
@@ -270,7 +294,7 @@ function Home() {
             >
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 shadow-sm transition hover:shadow-lg dark:border-slate-700 dark:bg-slate-800">
                 <img 
-                  src="https://upload.wikimedia.org/wikipedia/commons/5/59/SAP_2011_logo.svg" 
+                  src="../mothertongue_logo.jpg" 
                   alt="mothertongue_logo" 
                   className="h-16 w-auto mx-auto object-contain"
                 />

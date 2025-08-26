@@ -198,39 +198,69 @@ function Home() {
 
               {/* Hot links */}
               <div className="mt-6 flex flex-wrap gap-3">
-                {HOT_LINKS.map(({ label, href, icon: Icon }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="group inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                  >
-                    <Icon size={16} className="opacity-80" />
-                    {label}
-                  </a>
-                ))}
+                {HOT_LINKS.map(({ label, href, icon: Icon }) => {
+                  let buttonClass = "group inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium shadow-sm transition hover:-translate-y-0.5 hover:shadow-md";
+                  
+                  if (label === "Email") {
+                    buttonClass += " bg-red-500 text-white hover:bg-red-600";
+                  } else if (label === "GitHub") {
+                    buttonClass += " bg-gray-900 text-white hover:bg-gray-800";
+                  } else if (label === "LinkedIn") {
+                    buttonClass += " bg-blue-600 text-white hover:bg-blue-700";
+                  } else {
+                    buttonClass += " border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200";
+                  }
+                  
+                  return (
+                    <a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={buttonClass}
+                    >
+                      <Icon size={16} className="opacity-90" />
+                      {label}
+                    </a>
+                  );
+                })}
               </div>
 
               {/* About me content moved here */}
               <div className="mt-8">
                 <p className="max-w-3xl text-slate-700 dark:text-slate-300">
-                  As a fourth year Computer Science student with experience at companies 
-                  <span className="font-medium text-emerald-700 dark:text-emerald-300"> large and small</span>, I always
-                  strive to better myself as both a software engineer and student.
+                  An Intro to CS elective completely shifted my path. What started as curiosity quickly turned into a real passion for 
+                  <span className="font-medium bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> solving problems</span>, 
+                  which led me to transfer into the joint CS and Business program at SFU.
                 </p>
                 <p className="mt-4 max-w-3xl text-slate-700 dark:text-slate-300">
-                  I am always ready to learn and venture out of my comfort zone, whether that's 
-                  <span className="font-medium text-emerald-700 dark:text-emerald-300"> winning a hackathon</span> or
-                  <span className="font-medium text-emerald-700 dark:text-emerald-300"> becoming the software team lead on a drone engineering design team</span>.
+                  Since then I've built projects that tested both my technical skills and my ability to collaborate. I enjoy 
+                  <span className="font-medium bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent"> backend systems and data-driven development</span>, 
+                  but what stands out most to me is how much 
+                  <span className="font-medium bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent"> teamwork and adaptability</span> 
+                  shape the success of a project.
                 </p>
                 <p className="mt-4 max-w-3xl text-slate-700 dark:text-slate-300">
-                  I have experience with web development, data science, and devops, but am currently focused on
-                  developing <span className="font-medium text-emerald-700 dark:text-emerald-300">my skills in embedded development</span>.
+                  Outside of coding I keep balance through 
+                  <span className="font-medium bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent"> basketball, travel, and exploring the outdoors</span>. 
+                  These experiences keep me grounded and help me bring a genuine perspective into the work I do.
                 </p>
-                <p className="mt-4 max-w-3xl text-slate-700 dark:text-slate-300">
-                  Scroll down to see my experience and projects. ↓
-                </p>
+                
+                {/* Navigation buttons */}
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <button
+                    onClick={() => document.getElementById('projects').scrollIntoView({ behavior: 'smooth' })}
+                    className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    View Projects ↓
+                  </button>
+                  <button
+                    onClick={() => document.getElementById('experience').scrollIntoView({ behavior: 'smooth' })}
+                    className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    View Experience ↓
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -345,7 +375,18 @@ function Footer() {
     <footer className="border-t border-slate-200 py-10 text-center text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
       <Container>
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-          <div>© {new Date().getFullYear()} Sahir Sood. All rights reserved.</div>
+          <div className="flex items-center gap-4">
+            <div>© {new Date().getFullYear()} Sahir Sood. All rights reserved.</div>
+            <a 
+              href="https://github.com/SahirSood/portfolio" 
+              target="_blank" 
+              rel="noreferrer"
+              className="inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-gray-700 to-gray-900 px-3 py-1 text-xs font-medium text-white transition hover:-translate-y-0.5 hover:shadow-md"
+            >
+              <Github size={14} />
+              View Source
+            </a>
+          </div>
           <div className="flex gap-3">
             {HOT_LINKS.map(({ label, href, icon: Icon }) => (
               <a key={label} href={href} target="_blank" rel="noreferrer" className="rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label={label}>

@@ -242,26 +242,26 @@ function Header() {
         : 'bg-transparent'
     }`}>
       <Container>
-        <div className="flex items-center justify-between py-6">
+        <div className="flex flex-wrap items-center justify-between py-4 md:py-6 gap-2 md:gap-0">
           <button 
             onClick={() => scrollToSection('home')}
-            className={`text-2xl font-bold tracking-tight transition-all duration-300 ${
+            className={`text-xl md:text-2xl font-bold tracking-tight transition-all duration-300 ${
               scrollY > 50 
                 ? 'text-slate-900 dark:text-white' 
                 : 'text-slate-900 dark:text-white drop-shadow-lg'
             } hover:scale-105`}
+            style={{minWidth: 0, overflowWrap: 'break-word'}}
           >
             <span className={scrollY > 50 ? 'text-slate-900 dark:text-white' : 'text-slate-900 dark:text-white drop-shadow-lg'}>
               Sahir Sood
             </span>
           </button>
-          
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1 w-full md:w-auto justify-center md:justify-end">
             {links.map(link => (
               <button
                 key={link.key}
                 onClick={() => scrollToSection(link.key)}
-                className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 ${
+                className={`px-4 md:px-6 py-2 md:py-3 rounded-full text-xs md:text-sm font-medium transition-all duration-300 hover:scale-105 ${
                   scrollY > 50
                     ? 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
                     : 'text-slate-700 hover:bg-slate-100/50 dark:text-white/90 dark:hover:bg-white/10 backdrop-blur-sm'
@@ -270,10 +270,9 @@ function Header() {
                 {link.label}
               </button>
             ))}
-            
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className={`ml-2 p-3 rounded-full transition-all duration-300 hover:scale-105 ${
+              className={`ml-2 p-2 md:p-3 rounded-full transition-all duration-300 hover:scale-105 ${
                 scrollY > 50
                   ? 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
                   : 'bg-slate-100/80 text-slate-700 dark:bg-white/10 dark:text-white backdrop-blur-sm'
@@ -312,32 +311,31 @@ function HeroSection() {
           style={{ transform: `translateY(${scrollY * 0.2}px)` }}
         />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(147,51,234,0.05),transparent_70%)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(147,51,234,0.08),transparent_70%)]" />
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 right-1/4 w-60 h-60 md:w-96 md:h-96 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 left-1/4 w-48 h-48 md:w-80 md:h-80 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl" />
       </div>
 
       <div className="relative z-10 h-full flex items-center">
-        <div className="w-full max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            
+        <div className="w-full max-w-6xl mx-auto px-2 sm:px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center">
             {/* Left: Text Content */}
-            <div className={`text-slate-900 dark:text-white space-y-8 transition-all duration-1000 delay-300 ${
+            <div className={`text-slate-900 dark:text-white space-y-6 md:space-y-8 transition-all duration-1000 delay-300 ${
               isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-20'
             }`}>
               <div>
-                <h1 className="text-5xl lg:text-7xl font-bold leading-tight tracking-tight whitespace-nowrap">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight tracking-tight whitespace-nowrap max-w-full overflow-x-auto">
                   Hi! I'm{' '}
                   <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
                     Sahir Sood
                   </span>
                 </h1>
-                <p className="text-xl lg:text-2xl mt-6 text-slate-600 dark:text-slate-200 font-light">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl mt-4 md:mt-6 text-slate-600 dark:text-slate-200 font-light">
                   4th Year Computer Science Student @ SFU
                 </p>
               </div>
 
               {/* Contact Links - Colorful & Eye-catching */}
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-3 md:gap-4">
                 {HOT_LINKS.map(({ label, href, icon: Icon }, index) => {
                   const colors = [
                     'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-lg shadow-purple-500/25',
@@ -350,10 +348,11 @@ function HeroSection() {
                       href={href}
                       target="_blank"
                       rel="noreferrer"
-                      className={`group flex items-center gap-3 px-6 py-3 rounded-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 ${colors[index]}`}
+                      className={`group flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-3 rounded-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 text-xs md:text-sm ${colors[index]}`}
                     >
-                      <Icon size={18} className="group-hover:scale-110 transition-transform" />
-                      <span className="text-sm font-medium">
+                      <Icon size={16} className="md:!hidden" />
+                      <Icon size={18} className="hidden md:inline group-hover:scale-110 transition-transform" />
+                      <span className="font-medium truncate max-w-[120px] md:max-w-none">
                         {label}
                       </span>
                     </a>
@@ -362,20 +361,20 @@ function HeroSection() {
               </div>
 
               {/* About Section - Left Aligned & Clean */}
-              <div className="space-y-6 text-slate-700 dark:text-slate-100 leading-relaxed max-w-lg">
-                <p className="text-lg">
+              <div className="space-y-4 md:space-y-6 text-slate-700 dark:text-slate-100 leading-relaxed max-w-lg text-sm sm:text-base md:text-lg">
+                <p>
                   An Intro to CS elective completely shifted my path. What started as curiosity quickly turned into a real passion for 
                   <span className="font-medium"> solving problems</span>, 
                   which led me to transfer into the joint CS and Business program at SFU.
                 </p>
-                <p className="text-lg">
+                <p>
                   Since then I've built projects that tested both my technical skills and my ability to collaborate. I enjoy 
                   <span className="font-medium"> backend systems and data-driven development</span>, 
                   but what stands out most to me is how much 
                   <span className="font-medium"> teamwork and adaptability </span> 
                   shape the success of a project.
                 </p>
-                <p className="text-lg">
+                <p>
                   Outside of coding I keep balance through 
                   <span className="font-medium"> basketball, travel, and exploring the outdoors</span>. 
                   These experiences keep me grounded and help me bring a genuine perspective into the work I do.
@@ -385,10 +384,11 @@ function HeroSection() {
               {/* Scroll Indicator */}
               <button 
                 onClick={scrollToProjects}
-                className="group flex items-center gap-3 text-slate-600 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white transition-colors mt-8"
+                className="group flex items-center gap-2 md:gap-3 text-slate-600 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white transition-colors mt-6 md:mt-8 text-xs md:text-sm"
               >
-                <span className="text-sm font-medium">Explore My Work</span>
-                <ChevronDown size={20} className="group-hover:translate-y-1 transition-transform" />
+                <span className="font-medium">Explore My Work</span>
+                <ChevronDown size={18} className="md:hidden" />
+                <ChevronDown size={20} className="hidden md:inline group-hover:translate-y-1 transition-transform" />
               </button>
             </div>
 
@@ -398,18 +398,16 @@ function HeroSection() {
             }`}>
               <div className="relative">
                 {/* Gradient Background Ring */}
-                <div className="absolute -inset-12 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse" 
+                <div className="absolute -inset-6 md:-inset-12 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 rounded-full blur-2xl md:blur-3xl animate-pulse" 
                      style={{ animationDuration: '4s' }} />
-                
                 {/* Outer Ring */}
-                <div className="absolute -inset-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 rounded-full opacity-20 blur-sm" />
-                
+                <div className="absolute -inset-3 md:-inset-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 rounded-full opacity-20 blur-sm" />
                 {/* Main Image */}
                 <div className="relative">
                   <img
                     src={PROFILE_IMG}
                     alt="Sahir Sood"
-                    className="w-80 h-80 lg:w-96 lg:h-96 object-cover rounded-full border-4 border-white/10 shadow-2xl hover:scale-105 transition-all duration-500 hover:border-white/20"
+                    className="w-40 h-40 sm:w-56 sm:h-56 md:w-80 md:h-80 lg:w-96 lg:h-96 object-cover rounded-full border-4 border-white/10 shadow-2xl hover:scale-105 transition-all duration-500 hover:border-white/20"
                     style={{ transform: `translateY(${-scrollY * 0.1}px)` }}
                   />
                 </div>

@@ -81,6 +81,14 @@ const HOT_LINKS = [
 
 const PROJECTS = [
   {
+    title: "UniVerse - StormHacks 2025",
+    img: "/img/universe.png",
+    description: "Built UniVerse, a real-time campus app for shared rides, errands, and micro-tasks (campus gig economy). Integrated phone GPS with GeoJSON mapping for auto room detection and zone-based communication. Developed a Node.js + Socket.IO backend for sub-250 ms real-time broadcast routing and user matching. Implemented Firebase Auth for anonymous login, live presence tracking, and secure multi-user sessions.",
+    date: "StormHacks 2025",
+    stack: ["React Native", "Node.js", "Firebase Auth", "Socket.IO", "TypeScript", "GeoJSON", "Real-time"],
+    repo: "https://github.com/SahirSood/UniVerse"
+  },
+  {
     title: "Spotify Playlist Generator",
     img: "/img/spotify-project.png",
     description: "A Real Time Playlist Generator that creates personalized Spotify playlists based on user mood and preferences.",
@@ -139,6 +147,15 @@ const PROJECTS = [
 ];
 
 const EXPERIENCE = [
+  {
+    company: "RedBrick (Paved)",
+    role: "Incoming Software Developer",
+    timeframe: "Jan – Apr 2026",
+    summary:
+      "Incoming Software Developer joining RedBrick (Paved) — an ad-tech platform serving 3K+ publishers and 253M+ subscribers including Uber and NYT. Contributing to a focused 4-month feature project from design to production within agile development cycles. Working across backend and CI/CD with Ruby, Python, JavaScript, TypeScript, and GitHub Actions.",
+    tags: ["Ruby", "Python", "JavaScript", "TypeScript", "GitHub Actions", "Ad-Tech", "CI/CD"],
+    logo: "/img/redbrick.png",
+  },
   {
     company: "MotherTongue",
     role: "Lead Developer - Startup",

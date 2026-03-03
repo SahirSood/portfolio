@@ -2,8 +2,10 @@
 import { useEffect, useState } from "react";
 import {
   Github, Linkedin, Mail, Moon, Sun, ExternalLink,
-  Calendar, ChevronDown, Menu, X, Send,
+  Calendar, ChevronDown, Menu, X, Send, Briefcase,
 } from "lucide-react";
+import pavedLogo from './assets/Paved.png';
+import rbcLogo from './assets/RBC.jpg';
 
 // ─────────────────────────────────────────────
 // HOOKS
@@ -217,24 +219,21 @@ const PROJECTS = [
 
 const EXPERIENCE = [
   {
+    company: "RBC",
+    role: "Software Developer",
+    timeframe: "Incoming",
+    incoming: true,
+    logo: rbcLogo,
+  },
+  {
     company: "RedBrick (Paved)",
     role: "Software Developer",
     timeframe: "Jan – Apr 2026",
     summary:
       "Software Developer at RedBrick (Paved) — an ad-tech platform serving 3K+ publishers and 253M+ subscribers including Uber and NYT. Contributing to a focused 4-month feature project from design to production within agile development cycles. Working across backend and CI/CD with Ruby, Python, JavaScript, TypeScript, and GitHub Actions.",
     tags: ["Ruby", "Python", "JavaScript", "TypeScript", "GitHub Actions", "Ad-Tech", "CI/CD"],
-    logo: "/img/redbrick.png",
+    logo: pavedLogo,
   },
-  /* RBC_ENTRY — uncomment and fill in, then add /img/rbc.png to public/img/
-  {
-    company: "RBC",
-    role: "Software Developer",
-    timeframe: "TODO: add dates",
-    summary: "TODO: add summary of your work at RBC",
-    tags: ["TODO"],
-    logo: "/img/rbc.png",
-  },
-  */
   {
     company: "MotherTongue",
     role: "Lead Developer – Startup",
@@ -310,8 +309,8 @@ function Tech({ label }) {
 const NAV_LINKS = [
   { key: "home",       label: "Home" },
   { key: "skills",     label: "Skills" },
-  { key: "projects",   label: "Projects" },
   { key: "experience", label: "Experience" },
+  { key: "projects",   label: "Projects" },
   { key: "contact",    label: "Contact" },
 ];
 
@@ -758,11 +757,13 @@ function ExperienceCard({ e, index, isLast }) {
       style={{ transitionDelay: `${index * 200}ms` }}
     >
       {!isLast && (
-        <div className="absolute left-[11px] sm:left-[15px] top-20 w-0.5 h-full bg-gradient-to-b from-purple-500 to-pink-500 opacity-30" />
+        <div className="absolute left-[13px] top-14 w-0.5 h-full bg-gradient-to-b from-purple-500 to-pink-500 opacity-50" />
       )}
-      <div className="absolute left-[6px] sm:left-[10px] top-7 sm:top-8 w-4 h-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-lg" />
+      <div className="absolute left-0 top-5 w-7 h-7 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-lg ring-4 ring-white dark:ring-slate-950 flex items-center justify-center z-10">
+        <Briefcase size={12} className="text-white" />
+      </div>
 
-      <div className="ml-9 sm:ml-14 group">
+      <div className="ml-12 sm:ml-16 group">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-purple-50/30 to-white dark:from-slate-900 dark:via-purple-950/30 dark:to-slate-900 border border-slate-200/80 dark:border-slate-700/80 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:scale-[1.01]">
           <div className="p-5 sm:p-8">
             <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-5">
@@ -781,17 +782,26 @@ function ExperienceCard({ e, index, isLast }) {
                 <p className="text-base sm:text-lg font-medium text-slate-600 dark:text-slate-300 mb-1">
                   {e.role}
                 </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2 flex-wrap">
                   <Calendar size={13} /> {e.timeframe}
+                  {e.incoming && (
+                    <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400">
+                      Upcoming
+                    </span>
+                  )}
                 </p>
               </div>
             </div>
-            <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed mb-5">
-              {e.summary}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {e.tags.map(tag => <Tech key={tag} label={tag} />)}
-            </div>
+            {e.summary && (
+              <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed mb-5">
+                {e.summary}
+              </p>
+            )}
+            {e.tags?.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {e.tags.map(tag => <Tech key={tag} label={tag} />)}
+              </div>
+            )}
           </div>
           <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-transparent to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
         </div>
@@ -995,8 +1005,8 @@ export default function App() {
       <main>
         <HeroSection />
         <SkillsSection />
-        <ProjectsSection />
         <ExperienceSection />
+        <ProjectsSection />
         <ContactSection />
       </main>
       <Footer />

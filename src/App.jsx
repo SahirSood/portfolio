@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import {
   Github, Linkedin, Mail, Moon, Sun, ExternalLink,
-  Calendar, ChevronDown, Menu, X, Send, Briefcase,
+  Calendar, ChevronDown, Menu, X, Send,
 } from "lucide-react";
 import pavedLogo from './assets/Paved.png';
 import rbcLogo from './assets/RBC.jpg';
@@ -295,9 +295,18 @@ function Section({ id, children, className = "", animate = true }) {
   );
 }
 
+/* v1 Tech
 function Tech({ label }) {
   return (
     <span className="rounded-lg bg-gradient-to-r from-slate-100 to-slate-200 px-2.5 py-1 text-xs font-medium text-slate-700 transition-all duration-200 hover:scale-105 hover:shadow-sm dark:from-slate-700 dark:to-slate-800 dark:text-slate-300">
+      {label}
+    </span>
+  );
+}
+*/
+function Tech({ label }) {
+  return (
+    <span className="px-2.5 py-0.5 text-xs font-medium rounded-md bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-400 border border-teal-200/70 dark:border-teal-800/60">
       {label}
     </span>
   );
@@ -314,6 +323,7 @@ const NAV_LINKS = [
   { key: "contact",    label: "Contact" },
 ];
 
+/* v1 Header
 function Header() {
   const { theme, setTheme } = useTheme();
   const scrollY = useScrollAnimation();
@@ -337,15 +347,12 @@ function Header() {
     >
       <Container>
         <div className="flex items-center justify-between py-4 sm:py-5">
-          {/* Logo */}
           <button
             onClick={() => scrollTo("home")}
             className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white hover:scale-105 transition-transform"
           >
             Sahir Sood
           </button>
-
-          {/* Desktop nav */}
           <div className="hidden lg:flex items-center gap-1">
             {NAV_LINKS.map(link => (
               <button
@@ -373,8 +380,6 @@ function Header() {
               {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
             </button>
           </div>
-
-          {/* Mobile: theme + hamburger */}
           <div className="flex lg:hidden items-center gap-2">
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -392,8 +397,6 @@ function Header() {
           </div>
         </div>
       </Container>
-
-      {/* Mobile dropdown */}
       <div
         className={`lg:hidden overflow-hidden transition-all duration-300 ${
           menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
@@ -420,6 +423,106 @@ function Header() {
     </header>
   );
 }
+*/
+function Header() {
+  const { theme, setTheme } = useTheme();
+  const scrollY = useScrollAnimation();
+  const activeSection = useActiveSection();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setMenuOpen(false);
+  };
+
+  const scrolled = scrollY > 50;
+
+  return (
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-white/90 backdrop-blur-xl border-b border-slate-200 dark:bg-slate-950/90 dark:border-slate-800"
+          : "bg-transparent"
+      }`}
+    >
+      <Container>
+        <div className="flex items-center justify-between py-4 sm:py-5">
+          <button
+            onClick={() => scrollTo("home")}
+            className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white"
+          >
+            Sahir<span className="text-teal-600"> Sood</span>
+          </button>
+
+          {/* Desktop nav */}
+          <div className="hidden lg:flex items-center gap-0.5">
+            {NAV_LINKS.map(link => (
+              <button
+                key={link.key}
+                onClick={() => scrollTo(link.key)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                  activeSection === link.key
+                    ? "bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800"
+                }`}
+              >
+                {link.label}
+              </button>
+            ))}
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="ml-3 p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
+            >
+              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+          </div>
+
+          {/* Mobile */}
+          <div className="flex lg:hidden items-center gap-2">
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
+            >
+              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+            <button
+              onClick={() => setMenuOpen(o => !o)}
+              className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+        </div>
+      </Container>
+
+      {/* Mobile dropdown */}
+      <div
+        className={`lg:hidden overflow-hidden transition-all duration-300 ${
+          menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        } bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800`}
+      >
+        <Container>
+          <div className="py-3 flex flex-col gap-0.5">
+            {NAV_LINKS.map(link => (
+              <button
+                key={link.key}
+                onClick={() => scrollTo(link.key)}
+                className={`text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                  activeSection === link.key
+                    ? "bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800"
+                }`}
+              >
+                {link.label}
+              </button>
+            ))}
+          </div>
+        </Container>
+      </div>
+    </header>
+  );
+}
 
 // ─────────────────────────────────────────────
 // HERO SECTION
@@ -431,6 +534,7 @@ const TYPEWRITER_WORDS = [
   "Problem Solver",
 ];
 
+/* v1 HeroSection
 function HeroSection() {
   const scrollY = useScrollAnimation();
   const visibleElements = useIntersectionObserver();
@@ -443,112 +547,161 @@ function HeroSection() {
       data-animate="true"
       className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-purple-50/30 to-slate-50 dark:from-slate-950 dark:via-purple-950/50 dark:to-slate-950 min-h-screen flex items-center pt-20"
     >
-      {/* Animated background blobs */}
       <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute inset-0 bg-gradient-to-r from-purple-600/5 via-pink-600/5 to-blue-600/5 dark:from-purple-600/10 dark:via-pink-600/10 dark:to-blue-600/10"
-          style={{ transform: `translateY(${scrollY * 0.2}px)` }}
-        />
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/5 via-pink-600/5 to-blue-600/5 dark:from-purple-600/10 dark:via-pink-600/10 dark:to-blue-600/10" style={{ transform: `translateY(${scrollY * 0.2}px)` }} />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(147,51,234,0.05),transparent_70%)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(147,51,234,0.08),transparent_70%)]" />
         <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl" />
       </div>
-
       <Container className="relative z-10 py-12 sm:py-16">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-
-          {/* Profile image — shows first on mobile */}
-          <div
-            className={`flex justify-center lg:order-2 transition-all duration-1000 delay-500 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-            }`}
-          >
+          <div className={`flex justify-center lg:order-2 transition-all duration-1000 delay-500 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
             <div className="relative">
-              <div
-                className="absolute -inset-10 sm:-inset-12 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse"
-                style={{ animationDuration: "4s" }}
-              />
+              <div className="absolute -inset-10 sm:-inset-12 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: "4s" }} />
               <div className="absolute -inset-4 sm:-inset-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 rounded-full opacity-20 blur-sm" />
-              <img
-                src={PROFILE_IMG}
-                alt="Sahir Sood"
-                className="relative w-48 h-48 sm:w-64 sm:h-64 lg:w-96 lg:h-96 object-cover rounded-full border-4 border-white/10 shadow-2xl hover:scale-105 transition-all duration-500"
-                style={{ transform: `translateY(${-scrollY * 0.08}px)` }}
-              />
+              <img src={PROFILE_IMG} alt="Sahir Sood" className="relative w-48 h-48 sm:w-64 sm:h-64 lg:w-96 lg:h-96 object-cover rounded-full border-4 border-white/10 shadow-2xl hover:scale-105 transition-all duration-500" style={{ transform: `translateY(${-scrollY * 0.08}px)` }} />
             </div>
           </div>
-
-          {/* Text content */}
-          <div
-            className={`lg:order-1 text-slate-900 dark:text-white space-y-6 sm:space-y-8 transition-all duration-1000 delay-300 ${
-              isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
-            }`}
-          >
+          <div className={`lg:order-1 text-slate-900 dark:text-white space-y-6 sm:space-y-8 transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"}`}>
             <div>
               <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight tracking-tight">
                 Hi! I&apos;m{" "}
-                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-                  Sahir Sood
-                </span>
+                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">Sahir Sood</span>
               </h1>
-              {/* Typewriter subtitle */}
               <p className="text-lg sm:text-xl lg:text-2xl mt-4 text-slate-600 dark:text-slate-200 font-light min-h-[2rem] sm:min-h-[2.5rem]">
-                {typedText}
-                <span className="animate-pulse text-purple-500 font-thin ml-0.5">|</span>
+                {typedText}<span className="animate-pulse text-purple-500 font-thin ml-0.5">|</span>
               </p>
             </div>
-
-            {/* Contact links */}
             <div className="flex flex-wrap gap-2 sm:gap-3">
               {HOT_LINKS.map(({ label, href, icon: Icon }, index) => {
-                const colors = [
-                  "from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-purple-500/25",
-                  "from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-blue-500/25",
-                  "from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 shadow-pink-500/25",
-                ];
+                const colors = ["from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-purple-500/25","from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-blue-500/25","from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 shadow-pink-500/25"];
                 return (
-                  <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={`group flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl text-white shadow-lg bg-gradient-to-r transition-all duration-300 hover:scale-105 hover:-translate-y-1 ${colors[index]}`}
-                  >
+                  <a key={label} href={href} target="_blank" rel="noreferrer" className={`group flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl text-white shadow-lg bg-gradient-to-r transition-all duration-300 hover:scale-105 hover:-translate-y-1 ${colors[index]}`}>
                     <Icon size={15} className="group-hover:scale-110 transition-transform shrink-0" />
                     <span className="text-xs sm:text-sm font-medium">{label}</span>
                   </a>
                 );
               })}
             </div>
-
-            {/* About bio */}
             <div className="space-y-4 text-slate-700 dark:text-slate-100 leading-relaxed">
-              <p className="text-base sm:text-lg">
+              <p className="text-base sm:text-lg">An Intro to CS elective completely shifted my path. What started as curiosity quickly turned into a real passion for <span className="font-medium">solving problems</span>, which led me to transfer into the joint CS and Business program at SFU.</p>
+              <p className="text-base sm:text-lg">Since then I&apos;ve built projects that tested both my technical skills and my ability to collaborate. I enjoy <span className="font-medium">backend systems and data-driven development</span>, but what stands out most is how much <span className="font-medium">teamwork and adaptability</span> shape the success of a project.</p>
+              <p className="text-base sm:text-lg">Outside of coding I keep balance through <span className="font-medium">basketball, travel, and exploring the outdoors</span>.</p>
+            </div>
+            <button onClick={() => document.getElementById("skills")?.scrollIntoView({ behavior: "smooth" })} className="group flex items-center gap-2 text-slate-600 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white transition-colors">
+              <span className="text-sm font-medium">Explore My Work</span>
+              <ChevronDown size={18} className="group-hover:translate-y-1 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
+*/
+function HeroSection() {
+  const scrollY = useScrollAnimation();
+  const visibleElements = useIntersectionObserver();
+  const isVisible = visibleElements.has("home");
+  const typedText = useTypewriter(TYPEWRITER_WORDS);
+
+  return (
+    <section
+      id="home"
+      data-animate="true"
+      className="relative min-h-screen flex items-center pt-20 bg-white dark:bg-slate-950 overflow-hidden"
+    >
+      {/* Subtle teal glow top-right */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-teal-500/5 dark:bg-teal-500/8 rounded-full blur-3xl pointer-events-none" />
+
+      <Container className="relative z-10 py-12 sm:py-16">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
+
+          {/* Profile image */}
+          <div
+            className={`flex justify-center lg:order-2 transition-all duration-1000 delay-300 ${
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
+          >
+            <div className="relative">
+              <div className="absolute -inset-3 rounded-full bg-teal-500/15 dark:bg-teal-500/20 blur-xl" />
+              <div className="absolute -inset-1 rounded-full ring-2 ring-teal-500/30" />
+              <img
+                src={PROFILE_IMG}
+                alt="Sahir Sood"
+                className="relative w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 object-cover rounded-full shadow-xl"
+                style={{ transform: `translateY(${-scrollY * 0.05}px)` }}
+              />
+            </div>
+          </div>
+
+          {/* Text content */}
+          <div
+            className={`lg:order-1 space-y-7 transition-all duration-1000 ${
+              isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"
+            }`}
+          >
+            <div>
+              <p className="text-xs font-semibold tracking-widest text-teal-600 uppercase mb-4">
+                Portfolio
+              </p>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white">
+                Hi, I&apos;m{" "}
+                <span className="text-teal-600">Sahir Sood</span>
+              </h1>
+              <p className="text-lg sm:text-xl mt-4 text-slate-500 dark:text-slate-400 min-h-[2rem] sm:min-h-[2.5rem]">
+                {typedText}
+                <span className="animate-pulse text-teal-500 ml-0.5">|</span>
+              </p>
+            </div>
+
+            {/* Links */}
+            <div className="flex flex-wrap gap-2 sm:gap-3">
+              {HOT_LINKS.map(({ label, href, icon: Icon }, index) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 ${
+                    index === 0
+                      ? "bg-teal-600 hover:bg-teal-700 text-white shadow-sm shadow-teal-600/20"
+                      : "border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-400 dark:hover:border-teal-600 hover:text-teal-700 dark:hover:text-teal-400"
+                  }`}
+                >
+                  <Icon size={15} className="shrink-0" />
+                  {label}
+                </a>
+              ))}
+            </div>
+
+            {/* Bio */}
+            <div className="space-y-3 text-slate-600 dark:text-slate-400 leading-relaxed text-sm sm:text-base border-l-2 border-teal-500/30 pl-4">
+              <p>
                 An Intro to CS elective completely shifted my path. What started as curiosity
                 quickly turned into a real passion for{" "}
-                <span className="font-medium">solving problems</span>, which led me to transfer
-                into the joint CS and Business program at SFU.
+                <span className="text-slate-800 dark:text-slate-200 font-medium">solving problems</span>,
+                which led me to transfer into the joint CS and Business program at SFU.
               </p>
-              <p className="text-base sm:text-lg">
-                Since then I&apos;ve built projects that tested both my technical skills and my
-                ability to collaborate. I enjoy{" "}
-                <span className="font-medium">backend systems and data-driven development</span>,
-                but what stands out most is how much{" "}
-                <span className="font-medium">teamwork and adaptability</span> shape the success
-                of a project.
+              <p>
+                I enjoy{" "}
+                <span className="text-slate-800 dark:text-slate-200 font-medium">backend systems and data-driven development</span>,
+                and I thrive when{" "}
+                <span className="text-slate-800 dark:text-slate-200 font-medium">teamwork and adaptability</span>{" "}
+                are at the core of a project.
               </p>
-              <p className="text-base sm:text-lg">
-                Outside of coding I keep balance through{" "}
-                <span className="font-medium">basketball, travel, and exploring the outdoors</span>.
+              <p>
+                Outside of code —{" "}
+                <span className="text-slate-800 dark:text-slate-200 font-medium">basketball, travel, and the outdoors</span>.
               </p>
             </div>
 
             <button
-              onClick={() => document.getElementById("skills")?.scrollIntoView({ behavior: "smooth" })}
-              className="group flex items-center gap-2 text-slate-600 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white transition-colors"
+              onClick={() => document.getElementById("experience")?.scrollIntoView({ behavior: "smooth" })}
+              className="group flex items-center gap-2 text-sm text-slate-500 hover:text-teal-600 dark:text-slate-400 dark:hover:text-teal-400 transition-colors"
             >
-              <span className="text-sm font-medium">Explore My Work</span>
-              <ChevronDown size={18} className="group-hover:translate-y-1 transition-transform" />
+              Explore My Work
+              <ChevronDown size={16} className="group-hover:translate-y-0.5 transition-transform" />
             </button>
           </div>
         </div>
@@ -560,10 +713,53 @@ function HeroSection() {
 // ─────────────────────────────────────────────
 // SKILLS SECTION
 // ─────────────────────────────────────────────
+/* v1 SkillIcon + SkillsSection
 function SkillIcon({ skill }) {
   const [errored, setErrored] = useState(false);
   return (
     <div className="flex flex-col items-center gap-2 p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 hover:scale-110 hover:shadow-md hover:border-purple-200 dark:hover:border-purple-700 transition-all duration-200 cursor-default group">
+      {!errored ? (
+        <img src={`${DEVICON}/${skill.icon}.svg`} alt={skill.label} className="w-8 h-8 sm:w-10 sm:h-10 object-contain" onError={() => setErrored(true)} />
+      ) : (
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white text-xs font-bold">{skill.label.slice(0, 2).toUpperCase()}</div>
+      )}
+      <span className="text-xs font-medium text-slate-600 dark:text-slate-400 text-center leading-tight group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">{skill.label}</span>
+    </div>
+  );
+}
+function SkillsSection() {
+  const visibleElements = useIntersectionObserver();
+  const isVisible = visibleElements.has("skills");
+  const [activeTab, setActiveTab] = useState("Languages");
+  const tabs = Object.keys(SKILLS);
+  return (
+    <Section id="skills" className="bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 dark:from-slate-900 dark:via-purple-950/20 dark:to-slate-900">
+      <div className="w-full max-w-4xl mx-auto">
+        <div className={`text-center mb-10 sm:mb-12 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-3">Technical <span className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">Skills</span></h2>
+          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400">Technologies I work with</p>
+        </div>
+        <div className={`flex justify-center gap-2 sm:gap-3 mb-8 transition-all duration-1000 delay-200 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+          {tabs.map(tab => (
+            <button key={tab} onClick={() => setActiveTab(tab)} className={`px-5 sm:px-7 py-2 sm:py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === tab ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-lg scale-105" : "border-2 border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-500 hover:scale-105"}`}>{tab}</button>
+          ))}
+        </div>
+        <div className={`transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+          <div className="rounded-3xl bg-slate-100/60 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 p-5 sm:p-8 shadow-xl">
+            <div className="grid grid-cols-4 md:grid-cols-8 gap-3 sm:gap-4">
+              {SKILLS[activeTab].map(skill => (<SkillIcon key={skill.label} skill={skill} />))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Section>
+  );
+}
+*/
+function SkillIcon({ skill }) {
+  const [errored, setErrored] = useState(false);
+  return (
+    <div className="flex flex-col items-center gap-2 p-3 sm:p-4 rounded-xl bg-white dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 hover:border-teal-300 dark:hover:border-teal-600 hover:shadow-sm transition-all duration-200 cursor-default group">
       {!errored ? (
         <img
           src={`${DEVICON}/${skill.icon}.svg`}
@@ -572,11 +768,11 @@ function SkillIcon({ skill }) {
           onError={() => setErrored(true)}
         />
       ) : (
-        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white text-xs font-bold">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-teal-600 flex items-center justify-center text-white text-xs font-bold">
           {skill.label.slice(0, 2).toUpperCase()}
         </div>
       )}
-      <span className="text-xs font-medium text-slate-600 dark:text-slate-400 text-center leading-tight group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+      <span className="text-xs font-medium text-slate-500 dark:text-slate-400 text-center leading-tight group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
         {skill.label}
       </span>
     </div>
@@ -592,29 +788,27 @@ function SkillsSection() {
   return (
     <Section
       id="skills"
-      className="bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 dark:from-slate-900 dark:via-purple-950/20 dark:to-slate-900"
+      className="bg-slate-50 dark:bg-slate-900"
     >
       <div className="w-full max-w-4xl mx-auto">
-        {/* Heading */}
         <div
           className={`text-center mb-10 sm:mb-12 transition-all duration-1000 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
           }`}
         >
+          <p className="text-xs font-semibold tracking-widest text-teal-600 uppercase mb-3">Stack</p>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-3">
             Technical{" "}
-            <span className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
-              Skills
-            </span>
+            <span className="text-teal-600">Skills</span>
           </h2>
-          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400">
+          <p className="text-lg sm:text-xl text-slate-500 dark:text-slate-400">
             Technologies I work with
           </p>
         </div>
 
-        {/* Tab buttons */}
+        {/* Tabs */}
         <div
-          className={`flex justify-center gap-2 sm:gap-3 mb-8 transition-all duration-1000 delay-200 ${
+          className={`flex justify-center gap-2 mb-8 transition-all duration-1000 delay-200 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
           }`}
         >
@@ -622,10 +816,10 @@ function SkillsSection() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-5 sm:px-7 py-2 sm:py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
+              className={`px-5 sm:px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                 activeTab === tab
-                  ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-lg scale-105"
-                  : "border-2 border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-500 hover:scale-105"
+                  ? "bg-teal-600 text-white shadow-sm"
+                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
               {tab}
@@ -633,13 +827,13 @@ function SkillsSection() {
           ))}
         </div>
 
-        {/* Skills grid */}
+        {/* Grid */}
         <div
           className={`transition-all duration-1000 delay-300 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
           }`}
         >
-          <div className="rounded-3xl bg-slate-100/60 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 p-5 sm:p-8 shadow-xl">
+          <div className="rounded-2xl bg-white dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700 p-5 sm:p-8 shadow-sm">
             <div className="grid grid-cols-4 md:grid-cols-8 gap-3 sm:gap-4">
               {SKILLS[activeTab].map(skill => (
                 <SkillIcon key={skill.label} skill={skill} />
@@ -655,38 +849,80 @@ function SkillsSection() {
 // ─────────────────────────────────────────────
 // PROJECTS SECTION
 // ─────────────────────────────────────────────
+/* v1 ProjectCard + ProjectsSection
+function ProjectCard({ p, index }) {
+  const visibleElements = useIntersectionObserver();
+  const isVisible = visibleElements.has("projects");
+  const inner = (
+    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50/50 to-white dark:from-slate-900 dark:via-slate-800/50 dark:to-slate-900 border border-slate-200/80 dark:border-slate-700/80 shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 hover:-translate-y-2 h-full flex flex-col">
+      <div className="relative h-44 sm:h-48 overflow-hidden shrink-0">
+        <img src={p.img} alt={p.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {p.repo && (<div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"><ExternalLink size={20} className="text-white" /></div>)}
+      </div>
+      <div className="p-5 sm:p-6 space-y-3 flex-1 flex flex-col">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors leading-tight">{p.title}</h3>
+          <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 shrink-0 mt-0.5"><Calendar size={11} /> {p.date}</span>
+        </div>
+        <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed flex-1">{p.description}</p>
+        <div className="flex flex-wrap gap-1.5 pt-1">{p.stack.map(tech => <Tech key={tech} label={tech} />)}</div>
+      </div>
+    </div>
+  );
+  const classes = `group block transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`;
+  const delay = { transitionDelay: `${index * 100}ms` };
+  return p.repo ? (<a href={p.repo} target="_blank" rel="noreferrer" className={classes} style={delay}>{inner}</a>) : (<div className={classes} style={delay}>{inner}</div>);
+}
+function ProjectsSection() {
+  const visibleElements = useIntersectionObserver();
+  const isVisible = visibleElements.has("projects");
+  return (
+    <Section id="projects" className="bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-blue-950/30 dark:to-slate-900">
+      <div className="w-full">
+        <div className={`text-center mb-12 sm:mb-16 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-4">Featured <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Projects</span></h2>
+          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">A showcase of my technical work spanning various domains and technologies</p>
+        </div>
+        <div className="grid gap-5 sm:gap-7 sm:grid-cols-2 lg:grid-cols-3">
+          {PROJECTS.map((project, index) => (<ProjectCard key={project.title} p={project} index={index} />))}
+        </div>
+      </div>
+    </Section>
+  );
+}
+*/
 function ProjectCard({ p, index }) {
   const visibleElements = useIntersectionObserver();
   const isVisible = visibleElements.has("projects");
 
   const inner = (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50/50 to-white dark:from-slate-900 dark:via-slate-800/50 dark:to-slate-900 border border-slate-200/80 dark:border-slate-700/80 shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 hover:-translate-y-2 h-full flex flex-col">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 h-full flex flex-col overflow-hidden">
       <div className="relative h-44 sm:h-48 overflow-hidden shrink-0">
         <img
           src={p.img}
           alt={p.title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         {p.repo && (
-          <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <ExternalLink size={20} className="text-white" />
+          <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            <ExternalLink size={22} className="text-white" />
           </div>
         )}
       </div>
-      <div className="p-5 sm:p-6 space-y-3 flex-1 flex flex-col">
+      <div className="p-5 sm:p-6 flex-1 flex flex-col gap-3">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors leading-tight">
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors leading-tight">
             {p.title}
           </h3>
-          <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 shrink-0 mt-0.5">
+          <span className="text-xs text-slate-400 flex items-center gap-1 shrink-0 mt-0.5">
             <Calendar size={11} /> {p.date}
           </span>
         </div>
-        <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed flex-1">
+        <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed flex-1">
           {p.description}
         </p>
-        <div className="flex flex-wrap gap-1.5 pt-1">
+        <div className="flex flex-wrap gap-1.5">
           {p.stack.map(tech => <Tech key={tech} label={tech} />)}
         </div>
       </div>
@@ -694,9 +930,9 @@ function ProjectCard({ p, index }) {
   );
 
   const classes = `group block transition-all duration-700 ${
-    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
   }`;
-  const delay = { transitionDelay: `${index * 100}ms` };
+  const delay = { transitionDelay: `${index * 80}ms` };
 
   return p.repo ? (
     <a href={p.repo} target="_blank" rel="noreferrer" className={classes} style={delay}>
@@ -714,7 +950,7 @@ function ProjectsSection() {
   return (
     <Section
       id="projects"
-      className="bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-blue-950/30 dark:to-slate-900"
+      className="bg-white dark:bg-slate-950"
     >
       <div className="w-full">
         <div
@@ -722,17 +958,16 @@ function ProjectsSection() {
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
           }`}
         >
+          <p className="text-xs font-semibold tracking-widest text-teal-600 uppercase mb-3">Work</p>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-4">
             Featured{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-              Projects
-            </span>
+            <span className="text-teal-600">Projects</span>
           </h2>
-          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
             A showcase of my technical work spanning various domains and technologies
           </p>
         </div>
-        <div className="grid gap-5 sm:gap-7 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {PROJECTS.map((project, index) => (
             <ProjectCard key={project.title} p={project} index={index} />
           ))}
@@ -743,8 +978,9 @@ function ProjectsSection() {
 }
 
 // ─────────────────────────────────────────────
-// EXPERIENCE SECTION
+// EXPERIENCE SECTION (v1 — bold purple/pink, commented out)
 // ─────────────────────────────────────────────
+/* v1 ExperienceCard
 function ExperienceCard({ e, index, isLast }) {
   const visibleElements = useIntersectionObserver();
   const isVisible = visibleElements.has("experience");
@@ -849,10 +1085,154 @@ function ExperienceSection() {
     </Section>
   );
 }
+*/
+
+// ─────────────────────────────────────────────
+// EXPERIENCE SECTION (v2 — professional / clean)
+// ─────────────────────────────────────────────
+function ExperienceCard({ e, index, isLast }) {
+  const visibleElements = useIntersectionObserver();
+  const isVisible = visibleElements.has("experience");
+
+  return (
+    <div
+      className={`relative transition-all duration-700 ${
+        isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"
+      }`}
+      style={{ transitionDelay: `${index * 150}ms` }}
+    >
+      {!isLast && (
+        <div className="absolute left-[13px] top-14 w-px h-full bg-slate-200 dark:bg-slate-700" />
+      )}
+      <div className="absolute left-0 top-5 w-7 h-7 bg-white dark:bg-slate-900 rounded-full border-2 border-teal-500 shadow-sm flex items-center justify-center z-10">
+        <div className="w-2.5 h-2.5 bg-teal-500 rounded-full" />
+      </div>
+
+      <div className="ml-12 sm:ml-16">
+        <div className="relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-teal-500 rounded-l-2xl" />
+          <div className="pl-6 pr-5 sm:pr-8 py-5 sm:py-6">
+            <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5 mb-4">
+              <img
+                src={e.logo}
+                alt={`${e.company} logo`}
+                className="w-11 h-11 sm:w-14 sm:h-14 object-contain rounded-xl bg-slate-50 dark:bg-slate-800 p-2 border border-slate-100 dark:border-slate-700 shrink-0"
+              />
+              <div className="flex-1 min-w-0">
+                <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">
+                  {e.company}
+                </h3>
+                <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mb-1.5">
+                  {e.role}
+                </p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1.5 flex-wrap">
+                  <Calendar size={11} /> {e.timeframe}
+                  {e.incoming && (
+                    <span className="px-2 py-0.5 text-xs font-medium rounded-md bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800">
+                      Upcoming
+                    </span>
+                  )}
+                </p>
+              </div>
+            </div>
+            {e.summary && (
+              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+                {e.summary}
+              </p>
+            )}
+            {e.tags?.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {e.tags.map(tag => (
+                  <span key={tag} className="px-2.5 py-0.5 text-xs font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ExperienceSection() {
+  const visibleElements = useIntersectionObserver();
+  const isVisible = visibleElements.has("experience");
+
+  return (
+    <Section
+      id="experience"
+      className="bg-slate-50 dark:bg-slate-950"
+    >
+      <div className="w-full">
+        <div
+          className={`text-center mb-12 sm:mb-16 transition-all duration-1000 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          }`}
+        >
+          <p className="text-xs font-semibold tracking-widest text-teal-600 uppercase mb-3">Career</p>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-4">
+            Professional{" "}
+            <span className="text-teal-600">
+              Experience
+            </span>
+          </h2>
+          <p className="text-lg sm:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
+            My journey through various roles in technology and development
+          </p>
+        </div>
+        <div className="relative max-w-4xl mx-auto space-y-8 sm:space-y-10">
+          {EXPERIENCE.map((exp, index) => (
+            <ExperienceCard
+              key={`${exp.company}-${exp.role}`}
+              e={exp}
+              index={index}
+              isLast={index === EXPERIENCE.length - 1}
+            />
+          ))}
+        </div>
+      </div>
+    </Section>
+  );
+}
 
 // ─────────────────────────────────────────────
 // CONTACT SECTION
 // ─────────────────────────────────────────────
+/* v1 ContactSection
+function ContactSection() {
+  const visibleElements = useIntersectionObserver();
+  const isVisible = visibleElements.has("contact");
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const subject = encodeURIComponent(`Portfolio Contact from ${form.name}`);
+    const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`);
+    window.location.href = `mailto:sahirsood@gmail.com?subject=${subject}&body=${body}`;
+  };
+  return (
+    <Section id="contact" className="bg-gradient-to-br from-slate-50 via-blue-50/20 to-purple-50/20 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20">
+      <div className={`w-full max-w-2xl mx-auto transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+        <div className="text-center mb-10">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-4">Get In <span className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">Touch</span></h2>
+          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400">Always excited to discuss new opportunities and interesting projects.</p>
+        </div>
+        <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl p-6 sm:p-10">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="grid sm:grid-cols-2 gap-5">
+              <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Name</label><input type="text" required placeholder="Your name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" /></div>
+              <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label><input type="email" required placeholder="your@email.com" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" /></div>
+            </div>
+            <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Message</label><textarea required rows={5} placeholder="Tell me about your project or opportunity..." value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all resize-none text-sm" /></div>
+            <button type="submit" className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-2xl shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-300"><Send size={18} />Send Message</button>
+          </form>
+        </div>
+      </div>
+    </Section>
+  );
+}
+*/
 function ContactSection() {
   const visibleElements = useIntersectionObserver();
   const isVisible = visibleElements.has("contact");
@@ -865,10 +1245,12 @@ function ContactSection() {
     window.location.href = `mailto:sahirsood@gmail.com?subject=${subject}&body=${body}`;
   };
 
+  const inputClass = "w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all text-sm";
+
   return (
     <Section
       id="contact"
-      className="bg-gradient-to-br from-slate-50 via-blue-50/20 to-purple-50/20 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20"
+      className="bg-slate-50 dark:bg-slate-900"
     >
       <div
         className={`w-full max-w-2xl mx-auto transition-all duration-1000 ${
@@ -876,65 +1258,37 @@ function ContactSection() {
         }`}
       >
         <div className="text-center mb-10">
+          <p className="text-xs font-semibold tracking-widest text-teal-600 uppercase mb-3">Contact</p>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-4">
             Get In{" "}
-            <span className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
-              Touch
-            </span>
+            <span className="text-teal-600">Touch</span>
           </h2>
-          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400">
+          <p className="text-lg sm:text-xl text-slate-500 dark:text-slate-400">
             Always excited to discuss new opportunities and interesting projects.
           </p>
         </div>
 
-        <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl p-6 sm:p-10">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 sm:p-10">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid sm:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Your name"
-                  value={form.name}
-                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm"
-                />
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Name</label>
+                <input type="text" required placeholder="Your name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className={inputClass} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  required
-                  placeholder="your@email.com"
-                  value={form.email}
-                  onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm"
-                />
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
+                <input type="email" required placeholder="your@email.com" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className={inputClass} />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                Message
-              </label>
-              <textarea
-                required
-                rows={5}
-                placeholder="Tell me about your project or opportunity..."
-                value={form.message}
-                onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all resize-none text-sm"
-              />
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Message</label>
+              <textarea required rows={5} placeholder="Tell me about your project or opportunity..." value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} className={`${inputClass} resize-none`} />
             </div>
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-2xl shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-300"
+              className="w-full flex items-center justify-center gap-2 px-8 py-3.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg shadow-sm hover:-translate-y-0.5 transition-all duration-200"
             >
-              <Send size={18} />
+              <Send size={16} />
               Send Message
             </button>
           </form>
@@ -947,6 +1301,7 @@ function ContactSection() {
 // ─────────────────────────────────────────────
 // FOOTER
 // ─────────────────────────────────────────────
+/* v1 Footer
 function Footer() {
   return (
     <footer className="bg-slate-900 text-white py-12 sm:py-16">
@@ -954,35 +1309,60 @@ function Footer() {
         <div className="text-center space-y-6 sm:space-y-8">
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
             {HOT_LINKS.map(({ label, href, icon: Icon }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                className="group flex flex-col items-center gap-2 p-4 sm:p-5 rounded-2xl bg-slate-800 hover:bg-slate-700 transition-all duration-300 hover:scale-105 hover:-translate-y-1 min-w-[80px]"
-              >
+              <a key={label} href={href} target="_blank" rel="noreferrer" className="group flex flex-col items-center gap-2 p-4 sm:p-5 rounded-2xl bg-slate-800 hover:bg-slate-700 transition-all duration-300 hover:scale-105 hover:-translate-y-1 min-w-[80px]">
                 <Icon size={22} className="group-hover:scale-110 transition-transform text-slate-300 group-hover:text-white" />
-                <span className="text-xs font-medium text-slate-400 group-hover:text-white transition-colors text-center leading-tight">
-                  {label}
-                </span>
+                <span className="text-xs font-medium text-slate-400 group-hover:text-white transition-colors text-center leading-tight">{label}</span>
               </a>
             ))}
           </div>
           <div className="pt-6 border-t border-slate-800">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-              <p className="text-slate-400 text-sm">
-                © {new Date().getFullYear()} Sahir Sood. Crafted with passion.
-              </p>
+              <p className="text-slate-400 text-sm">© {new Date().getFullYear()} Sahir Sood. Crafted with passion.</p>
+              <a href="https://github.com/SahirSood/portfolio" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors hover:text-purple-400"><Github size={16} />View Source</a>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </footer>
+  );
+}
+*/
+function Footer() {
+  return (
+    <footer className="bg-slate-950 border-t border-slate-800 text-white py-10 sm:py-14">
+      <Container>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div>
+            <p className="text-base font-semibold text-white">
+              Sahir<span className="text-teal-500"> Sood</span>
+            </p>
+            <p className="text-sm text-slate-500 mt-0.5">
+              © {new Date().getFullYear()} All rights reserved.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {HOT_LINKS.map(({ label, href, icon: Icon }) => (
               <a
-                href="https://github.com/SahirSood/portfolio"
+                key={label}
+                href={href}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors hover:text-purple-400"
+                title={label}
+                className="p-2.5 rounded-lg text-slate-400 hover:text-teal-400 hover:bg-slate-800 transition-colors duration-200"
               >
-                <Github size={16} />
-                View Source
+                <Icon size={18} />
               </a>
-            </div>
+            ))}
+            <a
+              href="https://github.com/SahirSood/portfolio"
+              target="_blank"
+              rel="noreferrer"
+              className="ml-2 flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-700 hover:border-teal-600 text-slate-400 hover:text-teal-400 text-sm font-medium transition-colors duration-200"
+            >
+              <Github size={15} />
+              Source
+            </a>
           </div>
         </div>
       </Container>

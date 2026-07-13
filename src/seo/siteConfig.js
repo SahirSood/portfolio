@@ -15,7 +15,7 @@ export const SITE_CONFIG = {
   siteUrl: normalizeSiteUrl(env.VITE_SITE_URL),
   inferredSiteUrl: "https://sahir.dev",
   description:
-    "Portfolio of Sahir Sood, a full-stack software developer building AI, web, mobile, and finance-focused projects with React, Python, and JavaScript.",
+    "Portfolio of Sahir Sood, a full-stack software developer building AI, web, mobile, systems, and finance-focused projects with React, Python, JavaScript, and C++.",
   profileImage: "/img/sahir-headshot.JPEG",
   profileImageAlt: "Portrait of Sahir Sood",
   themeColor: "#4285f4",
@@ -33,6 +33,8 @@ export const SITE_CONFIG = {
     "Firebase",
     "AI applications",
     "Financial technology",
+    "Market simulation",
+    "C++ systems",
     "Mobile applications",
     "Data analysis",
   ],
@@ -47,6 +49,7 @@ export const ROUTE_PATHS = {
   education: "/education",
   experience: "/experience",
   projects: "/projects",
+  "ai-trading-arena": "/projects/ai-trading-arena",
   skills: "/skills",
   resume: "/resume",
   contact: "/contact",
@@ -80,7 +83,7 @@ export const SEO_ROUTES = [
         heading: "About Sahir Sood",
         paragraphs: [
           "Sahir Sood is a Vancouver-based software developer and Simon Fraser University Computing Science and Finance student. His portfolio covers full-stack development, AI-enabled products, mobile applications, backend systems, data analysis, and finance-focused software.",
-          "He has practical experience at RBC, RedBrick/Paved, MotherTongue, and Kapali Developments, with projects that span React, React Native, Node.js, Python, Ruby on Rails, Firebase, PostgreSQL, Kotlin, and modern JavaScript.",
+          "He has practical experience at RBC, RedBrick/Paved, MotherTongue, and Kapali Developments, with projects that span React, React Native, Node.js, Python, C++, FastAPI, Ruby on Rails, Firebase, PostgreSQL, Kotlin, and modern JavaScript.",
         ],
       },
       {
@@ -95,6 +98,7 @@ export const SEO_ROUTES = [
       {
         heading: "Selected Software and AI Projects",
         list: [
+          "AI Trading Arena - an ongoing full-stack market simulation platform where Claude and OpenAI trading agents compete through a custom C++ limit order book, Python/FastAPI backend, SEC/RAG evidence layer, WebSocket events, and React dashboard.",
           "UniVerse - a React Native campus app for shared rides, errands, micro-tasks, GPS workflows, and zone-based communication.",
           "Spotify Playlist Generator - an AI-backed playlist workflow using Python, React, Node.js, AWS, and the OpenAI API.",
           "Financial Fast Feed - login and bookmark flows for a personalized financial news feed built with React, Node.js, Flask, and REST APIs.",
@@ -106,6 +110,7 @@ export const SEO_ROUTES = [
       { label: "About Sahir", href: ROUTE_PATHS.profile },
       { label: "Experience", href: ROUTE_PATHS.experience },
       { label: "Projects", href: ROUTE_PATHS.projects },
+      { label: "AI Trading Arena project", href: ROUTE_PATHS["ai-trading-arena"] },
       { label: "Contact", href: ROUTE_PATHS.contact },
     ],
   },
@@ -272,7 +277,7 @@ export const SEO_ROUTES = [
     path: ROUTE_PATHS.projects,
     title: "Software, AI, Mobile and Data Projects | Sahir Sood",
     description:
-      "Explore Sahir Sood's projects across React Native, AI playlists, financial news, Kotlin Android, Rails, Python data analysis, and Pygame.",
+      "Explore Sahir Sood's projects across AI trading agents, C++ market simulation, React Native, AI playlists, financial news, Kotlin Android, Rails, Python data analysis, and Pygame.",
     h1: "Selected Software and AI Projects",
     eyebrow: "Projects",
     priority: "0.9",
@@ -282,6 +287,7 @@ export const SEO_ROUTES = [
       {
         heading: "Project Portfolio",
         list: [
+          "AI Trading Arena - C++17, Python, FastAPI, React, SQLAlchemy, PostgreSQL, WebSockets, OpenAI, Claude, and SEC/RAG retrieval for an ongoing full-stack capital markets simulation platform.",
           "UniVerse - React Native, Node.js, Firebase Auth, Socket.IO, TypeScript, and GeoJSON for a real-time campus app.",
           "Spotify Playlist Generator - Python, React, Node.js, AWS, OpenAI API, and GitHub Actions for AI-backed playlist creation.",
           "BeerIQ - Kotlin, Firebase, Android Studio, Google Maps API, and Python for social brewery and drink discovery.",
@@ -293,9 +299,54 @@ export const SEO_ROUTES = [
       },
     ],
     links: [
+      { label: "AI Trading Arena case study", href: ROUTE_PATHS["ai-trading-arena"] },
       { label: "GitHub profile", href: SITE_CONFIG.githubUrl, external: true },
       { label: "Experience", href: ROUTE_PATHS.experience },
       { label: "Contact", href: ROUTE_PATHS.contact },
+    ],
+  },
+  {
+    id: "ai-trading-arena",
+    path: ROUTE_PATHS["ai-trading-arena"],
+    title: "AI Trading Arena Market Simulation Project | Sahir Sood",
+    description:
+      "AI Trading Arena is Sahir Sood's ongoing full-stack market simulation platform with Claude and OpenAI trading agents, a C++ limit order book, FastAPI, SQLAlchemy, SEC/RAG evidence, WebSockets, and React.",
+    h1: "AI Trading Arena",
+    eyebrow: "Featured Project",
+    priority: "0.8",
+    changefreq: "monthly",
+    lastmod: "2026-07-13",
+    sections: [
+      {
+        heading: "Project Overview",
+        paragraphs: [
+          "AI Trading Arena is a full-stack capital markets simulation where Claude and OpenAI-powered trading bots compete against each other in a simulated stock market.",
+          "Each bot reads market prices, financial news, and optional SEC filing evidence, makes a structured trade decision, submits orders into a custom C++ limit order book, and logs its reasoning, fills, portfolio state, and PnL.",
+        ],
+      },
+      {
+        heading: "Technical Scope",
+        list: [
+          "Custom C++17 central limit order book with limit orders, market orders, price-time priority, FIFO price levels, order cancellation, depth snapshots, spread and mid-price calculation, and trade logs.",
+          "Python simulation scheduler and FastAPI backend with SQLAlchemy persistence, PostgreSQL for live data, SQLite for tests or sandbox mode, and WebSocket live event streams.",
+          "Claude and OpenAI bot competition across BearBot, DegenBot, AnalystBot, ContrarianBot, and MacroBot personalities.",
+          "SEC EDGAR ingestion, document chunking, optional OpenAI embeddings, RAG retrieval, evidence guardrails, and persisted evidence citations.",
+          "React dashboard for arena summaries, bot reasoning, order book depth, trade history, sandbox controls, rankings, portfolio state, and PnL.",
+        ],
+      },
+      {
+        heading: "Roadmap",
+        list: [
+          "Deterministic risk controls before every non-HOLD order.",
+          "MCP tools for market snapshots, portfolio state, evidence retrieval, and risk checks.",
+          "Historical replay with an as-of clock, retrieval evaluation, evidence citation scoring, and model comparison on identical replay inputs.",
+        ],
+      },
+    ],
+    links: [
+      { label: "Back to projects", href: ROUTE_PATHS.projects },
+      { label: "Experience", href: ROUTE_PATHS.experience },
+      { label: "Contact Sahir", href: ROUTE_PATHS.contact },
     ],
   },
   {

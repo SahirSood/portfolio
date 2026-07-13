@@ -37,6 +37,7 @@ Indexable:
 - `/experience/redbrick-paved`
 - `/experience/mothertongue`
 - `/projects`
+- `/projects/ai-trading-arena`
 - `/skills`
 - `/resume`
 - `/contact`

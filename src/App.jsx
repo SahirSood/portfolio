@@ -58,6 +58,23 @@ const SKILLS = {
 
 const PROJECTS = [
   {
+    title: "AI Trading Arena",
+    eyebrow: "Market Simulation Platform - Ongoing",
+    img: "/img/no-img.jpg",
+    imgWidth: 453,
+    imgHeight: 340,
+    description:
+      "Full-stack capital markets simulation where Claude and OpenAI trading agents compete inside a custom C++ limit order book.",
+    stack: ["C++17", "Python", "FastAPI", "React", "SQLAlchemy", "PostgreSQL", "WebSockets", "OpenAI", "Claude"],
+    repo: "",
+    type: "Featured AI + Finance",
+    signal:
+      "Native matching engine, bot orchestration, SEC/RAG evidence, portfolio and PnL tracking, and a live React dashboard.",
+    action: "ai-trading-arena",
+    featured: true,
+    featuredLabel: "Featured project",
+  },
+  {
     title: "UniVerse",
     eyebrow: "Campus app - 2025",
     img: "/img/no-img.jpg",
@@ -158,6 +175,63 @@ const PROJECTS = [
   //   signal: "Ambitious stack exposure and fast team delivery under hackathon pressure.",
   // },
 ];
+
+const PROJECT_DETAILS = {
+  "ai-trading-arena": {
+    title: "AI Trading Arena",
+    eyebrow: "Featured project",
+    status: "Ongoing",
+    timeframe: "Ongoing",
+    category: "AI + finance systems",
+    description:
+      "A full-stack capital markets simulation where Claude and OpenAI trading agents compete inside a custom C++ limit order book.",
+    overview: [
+      "AI Trading Arena is a market simulation platform where trading agents read market prices, finance news, and optional SEC filing evidence before producing structured trade decisions.",
+      "The system connects a native C++ matching engine, Python simulation scheduler, FastAPI backend, SQLAlchemy persistence, WebSocket live events, and a React dashboard so model behavior can be compared across identical trading personas.",
+    ],
+    technologies: ["C++17", "Python", "FastAPI", "React", "SQLAlchemy", "PostgreSQL", "WebSockets", "OpenAI", "Claude", "SEC EDGAR", "RAG"],
+    highlights: [
+      { label: "Core engine", value: "C++ order book" },
+      { label: "Agents", value: "Claude vs OpenAI" },
+      { label: "Live layer", value: "FastAPI + WebSockets" },
+    ],
+    featuredTitle: "Why it stands out",
+    featured:
+      "This project brings together market structure, systems programming, AI agents, backend orchestration, evidence retrieval, and a live product dashboard. It is not just an AI wrapper; the agents have to operate inside a simulated market with fills, portfolios, PnL, and recorded reasoning.",
+    sections: [
+      {
+        title: "Problem",
+        body: "Most AI finance demos stop at generating a recommendation. This project asks a harder question: what happens when multiple model-backed trading agents make decisions repeatedly inside the same simulated market, with a real order book, portfolio state, and decision logs?",
+      },
+      {
+        title: "My role",
+        body: "I built the native matching engine, Python simulation scheduler, bot personalities, FastAPI backend, SQLAlchemy persistence layer, SEC/RAG ingestion pipeline, and React dashboard. I also designed the strict JSON decision format used to log actions, reasoning, confidence, evidence, fills, and portfolio snapshots.",
+      },
+      {
+        title: "Market engine",
+        body: "The core finance engine is a custom C++ central limit order book with buy and sell books, limit and market orders, price-time priority matching, FIFO ordering within price levels, order cancellation, top-of-book snapshots, depth snapshots, spread and mid-price calculation, and trade logs exposed to Python through pybind11.",
+      },
+      {
+        title: "AI layer",
+        body: "Five bot personalities are duplicated across Claude and OpenAI providers: BearBot, DegenBot, AnalystBot, ContrarianBot, and MacroBot. They consume market, news, portfolio, and optional evidence context, then return structured decisions that the scheduler can submit into the engine or convert to HOLD when calls fail.",
+      },
+      {
+        title: "Evidence layer",
+        body: "The RAG layer ingests SEC EDGAR filings, stores documents and chunks, supports embeddings with optional FAISS ranking, and falls back to cosine or keyword retrieval when needed. Retrieved evidence can be injected into prompts and persisted with decision logs.",
+      },
+      {
+        title: "Dashboard",
+        body: "The React frontend shows the live arena, bot summaries, reasoning details, order book depth, trade history, sandbox controls, PnL, rankings, and live decision or heartbeat events streamed over WebSockets.",
+      },
+      {
+        title: "Roadmap",
+        body: "Next phases include deterministic risk controls before non-HOLD orders, an MCP-backed bot decision path, historical replay with an as-of clock, retrieval quality evaluation, evidence citation scoring, and model comparison on identical replay inputs.",
+      },
+    ],
+    personal:
+      "This is the project that best connects my computing science and finance interests: low-level market mechanics, backend systems, AI behavior, and product presentation all have to work together.",
+  },
+};
 
 const EXPERIENCE = [
   {
@@ -695,13 +769,13 @@ const QUESTION_BANK = [
 
 const ANSWERS = {
   "why should we interview sahir":
-    "Sahir combines practical software experience, product sense, and a broad build history: current full stack work at RBC, RedBrick/Paved production software work, MotherTongue MVP leadership, and projects across web, mobile, AI, backend, data, and games.",
+    "Sahir combines practical software experience, product sense, and a broad build history: current full stack work at RBC, RedBrick/Paved production software work, MotherTongue MVP leadership, and projects across AI, finance, web, mobile, backend, data, and games.",
   "show me sahir's strongest engineering work":
-    "Start with MotherTongue for AI + Chrome extension architecture, RedBrick/Paved for production engineering, UniVerse for realtime mobile systems, and Financial Fast Feed for full-stack auth/bookmark flows.",
+    "Start with AI Trading Arena for AI + finance systems work, MotherTongue for AI + Chrome extension architecture, RedBrick/Paved for production engineering, and UniVerse for realtime mobile systems.",
   "what experience does sahir have":
     "Sahir is currently a Full Stack Developer at RBC, previously worked as a Software Developer at RedBrick/Paved, built the MotherTongue MVP as lead developer, and has contract dashboard experience with Kapali Developments.",
   "which projects prove full-stack ability":
-    "UniVerse, Spotify Playlist Generator, Financial Fast Feed, and TripMate show full-stack range across mobile, AI APIs, auth flows, backend services, databases, and realtime features.",
+    "AI Trading Arena, UniVerse, Spotify Playlist Generator, Financial Fast Feed, and TripMate show full-stack range across AI agents, native systems, market simulation, mobile, auth flows, backend services, databases, and realtime features.",
   "what is sahir like outside code":
     "Sahir is a Vancouver-based CS + Finance student who likes basketball, snowboarding, travel, the outdoors, and building projects with a mix of curiosity and competitiveness.",
   "how can i contact sahir":
@@ -1145,7 +1219,8 @@ function BrowserPortfolio({ profile, onSwitchProfile }) {
             {page === "profile" && <ProfilePage onNavigate={navigate} />}
             {page === "education" && <EducationPage />}
             {page === "experience" && <ExperiencePage onNavigate={navigate} />}
-            {page === "projects" && <ProjectsPage />}
+            {page === "projects" && <ProjectsPage onNavigate={navigate} />}
+            {page === "ai-trading-arena" && <ProjectSpotlightPage kind="ai-trading-arena" onNavigate={navigate} />}
             {page === "skills" && <SkillsPage />}
             {page === "resume" && <ResumePage onNavigate={navigate} />}
             {page === "contact" && <ContactPage copied={copied} onCopy={copyEmail} />}
@@ -1562,10 +1637,10 @@ function ExperiencePage({ onNavigate }) {
   );
 }
 
-function ProjectsPage() {
+function ProjectsPage({ onNavigate }) {
   const results = PROJECTS.map((project) => ({
     title: project.title,
-    url: project.repo || `projects.sahir.dev/${slugify(project.title)}`,
+    url: project.repo || `projects.sahir.dev${project.action ? routeForPage(project.action) : `/${slugify(project.title)}`}`,
     source: `${project.type} - ${project.eyebrow}`,
     description: `${project.description} ${project.signal}`,
     tags: project.stack,
@@ -1574,7 +1649,11 @@ function ProjectsPage() {
     imageWidth: project.imgWidth,
     imageHeight: project.imgHeight,
     href: project.repo,
+    action: project.action,
+    featured: project.featured,
+    featuredLabel: project.featuredLabel,
   }));
+  const featuredProject = PROJECTS.find((project) => project.featured);
 
   return (
     <GoogleResultsShell query="projects" heading="Selected Software and AI Projects">
@@ -1582,17 +1661,44 @@ function ProjectsPage() {
         <div>
           <AiOverview
             title="AI Overview"
-            body="Sahir's project history shows range: realtime mobile apps, AI music workflows, financial web features, Android maps, Rails planning tools, ML analysis, and early game builds."
+            body="Sahir's strongest current project is AI Trading Arena, a full-stack AI and capital markets simulation with a C++ matching engine, Python/FastAPI backend, SEC/RAG evidence, WebSocket events, and a React dashboard. The broader project history adds realtime mobile apps, AI music workflows, financial web features, Android maps, Rails planning tools, ML analysis, and early game builds."
           />
           <div className="mt-8 space-y-8">
             {results.map((result) => (
-              <SearchResult key={result.title} result={result} />
+              <SearchResult key={result.title} result={result} onNavigate={onNavigate} />
             ))}
           </div>
         </div>
-        <SideCard title="Project filters">
-          <div className="flex flex-wrap gap-2">
-            {["Full-stack", "Mobile", "AI", "Data", "Games", "Backend"].map((item) => (
+        <SideCard title="Featured project">
+          {featuredProject && (
+            <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-emerald-50 p-4">
+              <div className="flex items-center gap-2 text-sm font-semibold text-blue-700">
+                <Trophy size={16} />
+                <span>{featuredProject.featuredLabel}</span>
+              </div>
+              <h3 className="mt-3 text-lg font-semibold text-neutral-950">{featuredProject.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-neutral-700">
+                AI agents, market microstructure, RAG evidence, and a live dashboard in one ongoing full-stack build.
+              </p>
+              <a
+                href={routeForPage("ai-trading-arena")}
+                onClick={(event) => {
+                  event.preventDefault();
+                  onNavigate?.("ai-trading-arena");
+                }}
+                className="mt-4 inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                View case study
+                <ChevronRight size={16} />
+              </a>
+              <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
+                <Metric label="Core engine" value="C++ order book" />
+                <Metric label="Live layer" value="FastAPI + WS" />
+              </div>
+            </div>
+          )}
+          <div className="mt-5 flex flex-wrap gap-2">
+            {["AI + Finance", "Full-stack", "Systems", "Backend", "Realtime", "RAG"].map((item) => (
               <Chip key={item} tone="blue">
                 {item}
               </Chip>
@@ -1699,7 +1805,15 @@ function SearchResult({ result, onNavigate }) {
             </div>
             <MoreVertical size={18} className="shrink-0 text-neutral-500" />
           </div>
-          <p className="mt-2 text-sm text-neutral-500">{result.source}</p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            {result.featured && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+                <Trophy size={13} />
+                {result.featuredLabel ?? "Featured"}
+              </span>
+            )}
+            <p className="text-sm text-neutral-500">{result.source}</p>
+          </div>
           <p className="mt-2 leading-7 text-neutral-700">{result.description}</p>
           {result.tags && (
             <div className="mt-3 flex flex-wrap gap-2">
@@ -1715,7 +1829,15 @@ function SearchResult({ result, onNavigate }) {
 
   if (result.href) {
     return (
-      <a href={result.href} target="_blank" rel="noreferrer" className="block rounded-2xl p-2 transition hover:bg-neutral-50">
+      <a
+        href={result.href}
+        target="_blank"
+        rel="noreferrer"
+        className={classNames(
+          "block rounded-2xl p-2 transition hover:bg-neutral-50",
+          result.featured && "border border-blue-100 bg-gradient-to-br from-white via-blue-50/45 to-emerald-50/60 shadow-sm",
+        )}
+      >
         {content}
       </a>
     );
@@ -1729,14 +1851,26 @@ function SearchResult({ result, onNavigate }) {
           event.preventDefault();
           onNavigate(result.action);
         }}
-        className="block w-full rounded-2xl p-2 text-left transition hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className={classNames(
+          "block w-full rounded-2xl p-2 text-left transition hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+          result.featured && "border border-blue-100 bg-gradient-to-br from-white via-blue-50/45 to-emerald-50/60 shadow-sm",
+        )}
       >
         {content}
       </a>
     );
   }
 
-  return <article className="rounded-2xl p-2">{content}</article>;
+  return (
+    <article
+      className={classNames(
+        "rounded-2xl p-2",
+        result.featured && "border border-blue-100 bg-gradient-to-br from-white via-blue-50/45 to-emerald-50/60 shadow-sm",
+      )}
+    >
+      {content}
+    </article>
+  );
 }
 
 function KnowledgePanel({ onNavigate }) {
@@ -2924,6 +3058,116 @@ function SpotlightPage({ kind }) {
   );
 }
 
+function ProjectSpotlightPage({ kind, onNavigate }) {
+  const detail = PROJECT_DETAILS[kind] ?? PROJECT_DETAILS["ai-trading-arena"];
+  const glance = detail.sections.filter((section) => ["Problem", "My role", "Market engine"].includes(section.title));
+
+  return (
+    <PageShell eyebrow={detail.eyebrow} title={detail.title} description={detail.description}>
+      <article className="overflow-hidden rounded-3xl border border-blue-100 bg-white shadow-sm">
+        <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="p-6 sm:p-7">
+            <div className="flex flex-wrap gap-2">
+              <Chip tone="blue">{detail.category}</Chip>
+              <Chip tone="green">{detail.status}</Chip>
+              <Chip>{detail.timeframe}</Chip>
+            </div>
+            <h2 className="mt-5 max-w-3xl text-2xl font-semibold tracking-tight text-neutral-950 sm:text-3xl">
+              Claude and OpenAI trading agents competing inside a custom market.
+            </h2>
+            <div className="mt-5 space-y-3 text-sm leading-6 text-neutral-700 sm:text-base sm:leading-7">
+              {detail.overview.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {detail.technologies.slice(0, 9).map((tag) => (
+                <Chip key={tag}>{tag}</Chip>
+              ))}
+            </div>
+          </div>
+          <div className="border-t border-blue-100 bg-gradient-to-br from-blue-50 via-white to-emerald-50 p-6 lg:border-l lg:border-t-0">
+            <div className="flex items-center gap-2 text-sm font-semibold text-blue-700">
+              <Trophy size={17} />
+              Featured build
+            </div>
+            <div className="mt-5 grid gap-3">
+              {detail.highlights.map((item) => (
+                <Metric key={item.label} label={item.label} value={item.value} />
+              ))}
+            </div>
+            <a
+              href={routeForPage("projects")}
+              onClick={(event) => {
+                event.preventDefault();
+                onNavigate?.("projects");
+              }}
+              className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm ring-1 ring-blue-100 transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Back to projects
+              <ChevronRight size={16} />
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <div className="mt-6 grid gap-4 md:grid-cols-3">
+        {glance.map((section) => (
+          <article key={section.title} className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">{section.title}</p>
+            <p className="mt-3 text-sm leading-6 text-neutral-700">{firstSentence(section.body)}</p>
+          </article>
+        ))}
+      </div>
+
+      <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="space-y-5">
+          <section className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm sm:p-6">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">Featured work</p>
+            <h3 className="mt-2 text-2xl font-semibold">{detail.featuredTitle}</h3>
+            <p className="mt-4 text-sm leading-6 text-neutral-700 sm:text-base sm:leading-7">{detail.featured}</p>
+          </section>
+
+          <section className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+            <h3 className="font-semibold">Case study</h3>
+            <div className="mt-4 divide-y divide-neutral-100">
+              {detail.sections.map((section) => (
+                <details key={section.title} className="group py-3" open={["My role", "Market engine"].includes(section.title)}>
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium text-neutral-900">
+                    <span>{section.title}</span>
+                    <ChevronRight size={18} className="shrink-0 text-neutral-400 transition group-open:rotate-90" />
+                  </summary>
+                  <p className="mt-3 text-sm leading-6 text-neutral-600">{section.body}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <aside className="h-fit rounded-3xl border border-neutral-200 bg-neutral-50 p-5 lg:sticky lg:top-6">
+          <h3 className="font-semibold">System scan</h3>
+          <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-1">
+            <Metric label="Status" value={detail.status} />
+            <Metric label="Category" value={detail.category} />
+          </div>
+          <div className="mt-5">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">Stack</p>
+            <div className="flex flex-wrap gap-2">
+              {detail.technologies.map((tag) => (
+                <Chip key={tag}>{tag}</Chip>
+              ))}
+            </div>
+          </div>
+          <div className="mt-5 rounded-2xl bg-white p-4 text-sm leading-6 text-neutral-700 shadow-sm">
+            <p className="font-semibold text-neutral-900">Personal note</p>
+            <p className="mt-2">{detail.personal}</p>
+          </div>
+        </aside>
+      </div>
+    </PageShell>
+  );
+}
+
 function PageShell({ eyebrow, title, description, children }) {
   return (
     <section className="mx-auto min-h-[calc(100vh-100px)] w-full max-w-6xl px-4 pb-10 pt-5 sm:px-5 sm:pt-6">
@@ -3011,8 +3255,8 @@ function getSearchResults(value) {
         title: "Projects - Sahir Sood",
         url: "projects.sahir.dev",
         source: "Case studies and repos",
-        description: "UniVerse, Spotify Playlist Generator, Financial Fast Feed, BeerIQ, TripMate, Sensor Movement Data Analysis, and game builds.",
-        tags: ["React", "Node", "Firebase", "Rails", "Python", "Kotlin"],
+        description: "AI Trading Arena, UniVerse, Spotify Playlist Generator, Financial Fast Feed, BeerIQ, TripMate, Sensor Movement Data Analysis, and game builds.",
+        tags: ["C++", "FastAPI", "React", "AI", "Finance", "Python"],
         action: "projects",
       },
       ...baseResults(),
@@ -3035,7 +3279,7 @@ function baseResults() {
       title: "Projects - Sahir Sood",
       url: "projects.sahir.dev",
       source: "Portfolio",
-      description: "Full project list covering mobile apps, AI tools, financial web features, Android maps, data analysis, and games.",
+      description: "Full project list covering AI trading agents, market simulation, mobile apps, AI tools, financial web features, Android maps, data analysis, and games.",
       tags: ["Projects", "Repos", "Case studies"],
       action: "projects",
     },

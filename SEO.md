@@ -33,6 +33,7 @@ The prerender script reads `dist/index.html`, injects route-specific metadata, a
 - `/experience/redbrick-paved`
 - `/experience/mothertongue`
 - `/projects`
+- `/projects/ai-trading-arena`
 - `/skills`
 - `/resume`
 - `/contact`
@@ -132,7 +133,7 @@ After deployment, also verify:
 - `/robots.txt` returns HTTP 200.
 - `/sitemap.xml` returns HTTP 200 and contains only canonical indexable routes.
 - `/does-not-exist` returns HTTP 404, not a fake homepage.
-- Direct refresh works on `/about`, `/experience`, `/projects`, `/resume`, `/contact`, and the experience detail routes.
+- Direct refresh works on `/about`, `/experience`, `/projects`, `/projects/ai-trading-arena`, `/resume`, `/contact`, and the experience detail routes.
 
 ## Analytics
 
@@ -141,6 +142,7 @@ No analytics provider was added. If analytics is added later, prefer privacy-con
 ## Ongoing Maintenance
 
 - Keep `src/seo/siteConfig.js` and visible page content in agreement.
+- When adding or featuring projects, update both the visible `PROJECTS` data in `src/App.jsx` and the relevant project/home route copy in `src/seo/siteConfig.js`.
 - Do not add schema for facts, awards, roles, ratings, reviews, or metrics unless they are true and visible.
 - Add project detail pages only when there is enough real case-study content: problem, role, technologies, decisions, challenges, outcome, screenshots, and links.
 - Replace the portrait-based Open Graph image with a dedicated 1200 by 630 PNG when a high-quality branded social image is available.

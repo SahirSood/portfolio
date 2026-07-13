@@ -7,6 +7,7 @@ Use this file for short, human-readable notes when an agent makes project-shapin
 - Added build-time SEO prerendering, clean public routes, generated sitemap/robots, JSON-LD, route metadata, favicon, manifest, and `SEO.md`.
 - Added agent documentation through `AGENTS.md` and `agent-docs/`.
 - Cleaned dead browser-chrome controls and removed unused Vite template artifacts.
+- Refined mobile behavior and long-form content patterns so experience, education, contact, and map pages lead with scannable summaries instead of uninterrupted text blocks.
 
 ## How To Update
 

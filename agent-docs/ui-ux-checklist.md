@@ -30,6 +30,7 @@ The fake browser controls should still behave enough to avoid frustration:
 - Keep tap targets comfortable.
 - Avoid text overflowing buttons, cards, and compact browser chrome areas.
 - Do not add heavy decorative backgrounds that obscure the portfolio content.
+- Keep the browser chrome compact on phones; hide secondary controls before shrinking primary content into unreadability.
 
 ## Accessibility Pass
 
@@ -54,5 +55,11 @@ Prefer improvements that help visitors reach useful content faster:
 - more direct contact paths
 - better route links from related pages
 - fewer decorative controls that pretend to be features
+- scannable summaries before long explanations
+- accordions or details rows for deeper case-study context
 
 Avoid adding more animation, novelty, or visual noise unless it improves comprehension or delight without slowing the site.
+
+## Long Content Pattern
+
+Experience, education, map, and contact pages should not open with walls of text. Lead with a short summary, compact cards, or key facts. Put longer context into progressive-disclosure controls such as `details` when the content is useful but not needed for first scan.

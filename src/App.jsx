@@ -382,9 +382,10 @@ const EDUCATION = [
     program: "Computing Science + Finance",
     timeframe: "Vancouver, BC",
     detail:
-      "Studying Computing Science with a finance focus has let me connect technical problem solving with the systems that move money, risk, and decisions through real organizations. Computing Science gave me the foundation to design systems, work with lower-level concepts, understand data structures and APIs, and turn ideas into functioning products.",
+      "Studying Computing Science with a finance focus lets me connect technical problem solving with the systems that move money, risk, and decisions through real organizations.",
     extra:
-      "My finance coursework keeps me connected to the industry that originally interested me. Through subjects such as international finance, capital markets, and real-estate investment, I have learned how financial systems, institutions, currencies, risk, and investment decisions work. That combination helps me approach software as more than code. I want to understand the users, the financial process, and the system behind the product.",
+      "The mix helps me approach software as more than code: I want to understand the user, the financial process, and the system behind the product.",
+    highlights: ["Systems and APIs", "Data structures", "Financial markets", "Risk and investment"],
   },
   {
     school: "University of Leeds",
@@ -392,9 +393,10 @@ const EDUCATION = [
     timeframe: "Spring 2024 - Leeds, United Kingdom",
     area: "Finance",
     detail:
-      "Going on exchange was one of the most important personal decisions I have made. SFU is largely a commuter school for me, and I wanted to place myself in an environment where I had to build a life independently, meet people from completely different backgrounds, and navigate unfamiliar situations without relying on what was comfortable.",
+      "Exchange pushed me into a setting where I had to build a life independently, meet people from different backgrounds, and navigate unfamiliar situations.",
     extra:
-      "Living in Leeds gave me a much broader view of the world and made me realize how easy it is to stay inside the environment you already know. I became more independent, more confident, and better at communicating with people whose experiences, habits, and perspectives were different from mine.",
+      "Living in Leeds made me more independent, more confident, and better at communicating with people whose habits and perspectives were different from mine.",
+    highlights: ["Finance exchange", "Independence", "Cross-cultural teams", "Travel perspective"],
   },
 ];
 
@@ -1172,14 +1174,14 @@ function ChromeFrame({ profile, page, address, onNavigate, onSwitchProfile, onTo
     <header className="select-none border-b border-[#d7dce3] bg-[#edf2fa]">
       <div className="flex h-10 items-end gap-1 px-2 pt-2">
         <div
-          className="flex h-8 min-w-0 max-w-[270px] items-center gap-2 rounded-t-xl bg-white px-4 text-sm shadow-sm"
+          className="flex h-8 min-w-0 max-w-[180px] items-center gap-2 rounded-t-xl bg-white px-2 text-sm shadow-sm sm:max-w-[270px] sm:px-4"
           aria-current="page"
         >
           <PageIcon size={16} className="shrink-0 text-blue-600" />
           <span className="truncate">{page === "home" ? "New Tab" : titleCase(page)}</span>
           <X size={14} aria-hidden="true" className="text-neutral-500" />
         </div>
-        <button type="button" onClick={() => onNavigate("home")} className="grid size-8 place-items-center rounded-full text-neutral-600 hover:bg-black/5" aria-label="Open new portfolio tab">
+        <button type="button" onClick={() => onNavigate("home")} className="hidden size-8 place-items-center rounded-full text-neutral-600 hover:bg-black/5 sm:grid" aria-label="Open new portfolio tab">
           <Plus size={18} />
         </button>
         <div className="ml-auto flex h-8 items-center gap-4 px-3 text-neutral-700">
@@ -1189,11 +1191,11 @@ function ChromeFrame({ profile, page, address, onNavigate, onSwitchProfile, onTo
         </div>
       </div>
 
-      <div className="flex items-center gap-2 px-3 py-2">
+      <div className="flex items-center gap-1 px-2 py-2 sm:gap-2 sm:px-3">
         <button type="button" onClick={goBack} className="grid size-8 place-items-center rounded-full text-neutral-500 hover:bg-black/5" aria-label="Go back">
           <ArrowLeft size={18} />
         </button>
-        <button type="button" onClick={goForward} className="grid size-8 place-items-center rounded-full text-neutral-500 hover:bg-black/5" aria-label="Go forward">
+        <button type="button" onClick={goForward} className="hidden size-8 place-items-center rounded-full text-neutral-500 hover:bg-black/5 sm:grid" aria-label="Go forward">
           <ArrowRight size={18} />
         </button>
         <button
@@ -1204,10 +1206,10 @@ function ChromeFrame({ profile, page, address, onNavigate, onSwitchProfile, onTo
         >
           <RefreshCw size={16} />
         </button>
-        <div className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-transparent bg-white px-4 shadow-sm focus-within:border-blue-500">
+        <div className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-full border border-transparent bg-white px-3 shadow-sm focus-within:border-blue-500 sm:h-10 sm:px-4">
           <Search size={17} className="shrink-0 text-blue-600" />
-          <span className="truncate text-sm text-neutral-700">{address}</span>
-          <Star size={17} className="ml-auto shrink-0 text-neutral-500" />
+          <span className="truncate text-xs text-neutral-700 sm:text-sm">{address}</span>
+          <Star size={17} className="ml-auto hidden shrink-0 text-neutral-500 sm:block" />
         </div>
         <button type="button" onClick={() => onNavigate("ask")} className="hidden rounded-full border border-blue-200 bg-white px-3 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-blue-50 sm:inline-flex">
           AI Mode
@@ -1355,8 +1357,9 @@ function NewTabPage({ query, setQuery, submitSearch, onNavigate, onSearch }) {
           aria-label="Ask about Sahir's portfolio"
         />
         <Mic size={20} aria-hidden="true" className="shrink-0 text-neutral-600" />
-        <button type="submit" className="shrink-0 rounded-full bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-200">
-          AI Mode
+        <button type="submit" className="shrink-0 rounded-full bg-neutral-100 px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-200 sm:px-4">
+          <span className="sm:hidden">Go</span>
+          <span className="hidden sm:inline">AI Mode</span>
         </button>
       </form>
 
@@ -1618,19 +1621,19 @@ function ProjectsPage() {
 
 function GoogleResultsShell({ query, heading, children }) {
   return (
-    <section className="mx-auto w-full max-w-7xl px-5 pb-14 pt-0">
+    <section className="mx-auto w-full max-w-7xl px-4 pb-14 pt-0 sm:px-5">
       <div className="sticky top-0 z-20 border-b border-neutral-200 bg-white/95 py-4 backdrop-blur">
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-3 sm:gap-5">
           <SahirMiniLogo />
-          <div className="flex h-12 min-w-0 max-w-3xl flex-1 items-center gap-3 rounded-full border border-neutral-200 bg-white px-5 shadow-sm">
-            <span className="min-w-0 flex-1 truncate text-base">{query}</span>
+          <div className="flex h-11 min-w-0 max-w-3xl flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 shadow-sm sm:h-12 sm:gap-3 sm:px-5">
+            <span className="min-w-0 flex-1 truncate text-sm sm:text-base">{query}</span>
             <X size={18} className="text-neutral-500" />
             <span className="h-6 w-px bg-neutral-200" />
             <Mic size={18} className="text-neutral-600" />
             <Search size={19} className="text-blue-600" />
           </div>
         </div>
-        <div className="mt-3 flex gap-5 pl-0 text-sm text-neutral-600 sm:pl-24">
+        <div className="mt-3 flex gap-5 overflow-x-auto pl-0 text-sm text-neutral-600 sm:pl-24">
           {["All", "Experience", "Projects", "Skills", "Contact"].map((tab, index) => (
             <span key={tab} className={classNames(index === 0 && "border-b-2 border-blue-600 pb-2 text-blue-600")}>
               {tab}
@@ -1822,6 +1825,12 @@ function InfoCard({ title, body }) {
   );
 }
 
+function firstSentence(value) {
+  const text = String(value || "").trim();
+  const match = text.match(/^.*?[.!?](\s|$)/);
+  return match ? match[0].trim() : text;
+}
+
 function ProfilePage({ onNavigate }) {
   return (
     <PageShell eyebrow="Account" title="Sahir Sood" description="Software developer, SFU CS + Finance student, study-abroad explorer, and practical full-stack builder.">
@@ -1925,7 +1934,7 @@ function MiniMapCard({ onNavigate }) {
 
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">
-      <div ref={previewRef} className="relative h-72 overflow-hidden bg-[#cfe8f7]">
+      <div ref={previewRef} className="relative h-56 overflow-hidden bg-[#cfe8f7] sm:h-72">
         {tiles.map((tile) => (
           <img
             key={tile.key}
@@ -2010,13 +2019,16 @@ function ExtraCurricularCard() {
         <p className="mt-2 text-sm leading-6">{active.detail}</p>
       </div>
       <div className="mt-4 flex-1 rounded-2xl bg-neutral-50 p-4">
-        <div className="space-y-3">
+        <ul className="space-y-3">
           {active.points.map((point) => (
-            <p key={point} className="text-sm leading-6 text-neutral-700">
+            <li key={point} className="flex gap-2 text-sm leading-6 text-neutral-700">
+              <span className="mt-2 size-1.5 shrink-0 rounded-full bg-blue-500" />
+              <span>
               {point}
-            </p>
+              </span>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </div>
   );
@@ -2027,14 +2039,21 @@ function EducationPage() {
     <PageShell eyebrow="Education" title="Education and study abroad" description="The academic and personal context behind Sahir's software path.">
       <div className="grid gap-5 lg:grid-cols-2">
         {EDUCATION.map((item) => (
-          <article key={item.school} className="h-full rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <article key={item.school} className="h-full rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm sm:p-6">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">{item.timeframe}</p>
             <h2 className="mt-3 text-2xl font-semibold">{item.school}</h2>
             <p className="mt-1 text-blue-700">{item.program}</p>
             {item.area && <p className="mt-1 text-sm text-neutral-500">Area of study: {item.area}</p>}
-            <div className="mt-4 space-y-4 leading-7 text-neutral-700">
+            <div className="mt-4 space-y-3 text-sm leading-6 text-neutral-700 sm:text-base sm:leading-7">
               <p>{item.detail}</p>
               <p>{item.extra}</p>
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-2">
+              {item.highlights.map((highlight) => (
+                <span key={highlight} className="rounded-2xl bg-neutral-50 px-3 py-2 text-sm font-medium text-neutral-700">
+                  {highlight}
+                </span>
+              ))}
             </div>
           </article>
         ))}
@@ -2245,10 +2264,10 @@ function ContactPage({ copied, onCopy }) {
           </div>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             {[
-              ["Best-fit roles", "Backend and full-stack software development, platform and product engineering, internal developer tools, AI-enabled applications, and technology within capital markets or financial services."],
-              ["What to mention", "Tell me what you are building, what problem the team is trying to solve, and where you think my experience might be relevant."],
-              ["Personal blurb", "I enjoy working on products where I can move between the technical details and the larger reason the system exists. I am especially drawn to collaborative teams, meaningful ownership, backend or full-stack problems, and industries where there is a lot to learn beneath the surface."],
-              ["Response note", "Email is usually the easiest way to reach me for opportunities, project conversations, or coffee chats. LinkedIn also works for a quick introduction."],
+              ["Best-fit roles", "Backend, full-stack, platform, internal tools, AI-enabled apps, and financial technology."],
+              ["What to mention", "What you are building, the problem your team is solving, and why my experience may fit."],
+              ["What I like", "Teams where I can understand the product, the users, and the reason the system exists."],
+              ["Response note", "Email is easiest for opportunities, project conversations, or coffee chats. LinkedIn works too."],
             ].map(([title, copy]) => (
               <div key={title} className="rounded-2xl bg-neutral-50 p-4">
                 <p className="font-medium">{title}</p>
@@ -2356,11 +2375,11 @@ function MapPage() {
       <section className="mb-6 grid gap-5 lg:grid-cols-[1fr_1.1fr]">
         <div className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-semibold">Why travel matters to me</h2>
-          <div className="mt-4 space-y-4 leading-7 text-neutral-700">
-            {TRAVEL_INTRO.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
+          <p className="mt-4 text-sm leading-6 text-neutral-700 sm:text-base sm:leading-7">{TRAVEL_INTRO[0]}</p>
+          <details className="mt-4 rounded-2xl bg-neutral-50 p-4 text-sm leading-6 text-neutral-700">
+            <summary className="cursor-pointer font-medium text-neutral-900">Study abroad context</summary>
+            <p className="mt-3">{TRAVEL_INTRO[1]}</p>
+          </details>
         </div>
         <div className="grid gap-3 md:grid-cols-2">
           {TRAVEL_HIGHLIGHTS.map((highlight) => (
@@ -2374,7 +2393,7 @@ function MapPage() {
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
         <section
           ref={mapRef}
-          className="relative h-[460px] overflow-hidden rounded-3xl border border-neutral-200 bg-[#cfe8f7] shadow-sm touch-none cursor-grab active:cursor-grabbing md:h-[560px]"
+          className="relative h-[360px] overflow-hidden rounded-3xl border border-neutral-200 bg-[#cfe8f7] shadow-sm touch-none cursor-grab active:cursor-grabbing sm:h-[460px] md:h-[560px]"
           onPointerDown={handleMapPointerDown}
           onPointerMove={handleMapPointerMove}
           onPointerUp={handleMapPointerUp}
@@ -2804,6 +2823,9 @@ function GoogleSnakeGame() {
 
 function SpotlightPage({ kind }) {
   const detail = EXPERIENCE_DETAILS[kind] ?? EXPERIENCE_DETAILS["redbrick-paved"];
+  const glance = ["Problem", "My role", "Result"]
+    .map((title) => detail.sections.find((section) => section.title === title))
+    .filter(Boolean);
 
   return (
     <PageShell
@@ -2830,11 +2852,13 @@ function SpotlightPage({ kind }) {
             {detail.industry && <Chip>{detail.industry}</Chip>}
           </div>
           <h2 className="mt-4 text-3xl font-semibold">{detail.company}</h2>
-          <div className="mt-4 space-y-4 leading-7 text-neutral-700">
-            {detail.overview.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
+          <p className="mt-4 text-sm leading-6 text-neutral-700 sm:text-base sm:leading-7">{detail.overview[0]}</p>
+          {detail.overview[1] && (
+            <details className="mt-4 rounded-2xl bg-neutral-50 p-4 text-sm leading-6 text-neutral-700">
+              <summary className="cursor-pointer font-medium text-neutral-900">More role context</summary>
+              <p className="mt-3">{detail.overview[1]}</p>
+            </details>
+          )}
           <div className="mt-5 flex flex-wrap gap-2">
             {detail.technologies.map((tag) => (
               <Chip key={tag}>{tag}</Chip>
@@ -2843,36 +2867,70 @@ function SpotlightPage({ kind }) {
         </div>
       </article>
 
-      <section className="mt-6 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">Featured work</p>
-        <h3 className="mt-2 text-2xl font-semibold">{detail.featuredTitle}</h3>
-        <p className="mt-4 leading-7 text-neutral-700">{detail.featured}</p>
-      </section>
-
-      <div className="mt-6 grid gap-5 md:grid-cols-2">
-        {detail.sections.map((section) => (
-          <section key={section.title} className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
-            <h3 className="font-semibold">{section.title}</h3>
-            <p className="mt-3 text-sm leading-6 text-neutral-600">{section.body}</p>
-          </section>
+      <div className="mt-6 grid gap-4 md:grid-cols-3">
+        {glance.map((section) => (
+          <article key={section.title} className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">{section.title}</p>
+            <p className="mt-3 text-sm leading-6 text-neutral-700">{firstSentence(section.body)}</p>
+          </article>
         ))}
       </div>
 
-      <section className="mt-6 rounded-3xl border border-neutral-200 bg-neutral-50 p-5">
-        <h3 className="font-semibold">Personal note</h3>
-        <p className="mt-3 leading-7 text-neutral-700">{detail.personal}</p>
-      </section>
+      <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <div className="space-y-5">
+          <section className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm sm:p-6">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">Featured work</p>
+            <h3 className="mt-2 text-2xl font-semibold">{detail.featuredTitle}</h3>
+            <p className="mt-4 text-sm leading-6 text-neutral-700 sm:text-base sm:leading-7">{detail.featured}</p>
+          </section>
+
+          <section className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+            <h3 className="font-semibold">Details</h3>
+            <div className="mt-4 divide-y divide-neutral-100">
+              {detail.sections.map((section) => (
+                <details key={section.title} className="group py-3" open={section.title === "My role"}>
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium text-neutral-900">
+                    <span>{section.title}</span>
+                    <ChevronRight size={18} className="shrink-0 text-neutral-400 transition group-open:rotate-90" />
+                  </summary>
+                  <p className="mt-3 text-sm leading-6 text-neutral-600">{section.body}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <aside className="h-fit rounded-3xl border border-neutral-200 bg-neutral-50 p-5 lg:sticky lg:top-6">
+          <h3 className="font-semibold">Quick scan</h3>
+          <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-1">
+            <Metric label="Dates" value={detail.dates} />
+            <Metric label="Status" value={detail.status} />
+          </div>
+          <div className="mt-5">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">Stack</p>
+            <div className="flex flex-wrap gap-2">
+              {detail.technologies.map((tag) => (
+                <Chip key={tag}>{tag}</Chip>
+              ))}
+            </div>
+          </div>
+          <div className="mt-5 rounded-2xl bg-white p-4 text-sm leading-6 text-neutral-700 shadow-sm">
+            <p className="font-semibold text-neutral-900">Personal note</p>
+            <p className="mt-2">{detail.personal}</p>
+          </div>
+        </aside>
+      </div>
     </PageShell>
   );
 }
 
 function PageShell({ eyebrow, title, description, children }) {
   return (
-    <section className="mx-auto min-h-[calc(100vh-100px)] w-full max-w-6xl px-5 pb-10 pt-6">
+    <section className="mx-auto min-h-[calc(100vh-100px)] w-full max-w-6xl px-4 pb-10 pt-5 sm:px-5 sm:pt-6">
       <div className="mb-5">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">{eyebrow}</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-neutral-950 md:text-4xl">{title}</h1>
-        <p className="mt-3 max-w-3xl leading-7 text-neutral-600">{description}</p>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-neutral-950 sm:text-3xl md:text-4xl">{title}</h1>
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-neutral-600 sm:text-base sm:leading-7">{description}</p>
       </div>
       {children}
     </section>

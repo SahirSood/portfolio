@@ -1,1395 +1,2803 @@
-// App.jsx — Single‑file React portfolio
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Github, Linkedin, Mail, Moon, Sun, ExternalLink,
-  Calendar, ChevronDown, Menu, X, Send,
+  ArrowLeft,
+  ArrowRight,
+  BriefcaseBusiness,
+  CheckCircle2,
+  ChevronRight,
+  Code2,
+  Compass,
+  ContactRound,
+  Copy,
+  FileText,
+  Folder,
+  FolderKanban,
+  Gamepad2,
+  Github,
+  GraduationCap,
+  Grid3X3,
+  Linkedin,
+  Mail,
+  Map,
+  MapPin,
+  Mic,
+  MoreVertical,
+  Pause,
+  Play,
+  Plus,
+  RefreshCw,
+  RotateCcw,
+  Search,
+  Send,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  Trophy,
+  UserRound,
+  X,
 } from "lucide-react";
-import pavedLogo from './assets/Paved.png';
-import rbcLogo from './assets/RBC.jpg';
+import pavedLogo from "./assets/Paved.png";
+import rbcLogo from "./assets/RBC.jpg";
 
-// ─────────────────────────────────────────────
-// HOOKS
-// ─────────────────────────────────────────────
-function useScrollAnimation() {
-  const [scrollY, setScrollY] = useState(0);
-  useEffect(() => {
-    const fn = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", fn, { passive: true });
-    return () => window.removeEventListener("scroll", fn);
-  }, []);
-  return scrollY;
-}
-
-function useIntersectionObserver() {
-  const [visibleElements, setVisibleElements] = useState(new Set());
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisibleElements(prev => new Set([...prev, entry.target.id]));
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "-40px" }
-    );
-    document.querySelectorAll("[data-animate]").forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-  return visibleElements;
-}
-
-function useTheme() {
-  const [theme, setTheme] = useState(() =>
-    typeof window !== "undefined" && localStorage.getItem("theme")
-      ? localStorage.getItem("theme")
-      : window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light"
-  );
-  useEffect(() => {
-    if (!document?.documentElement) return;
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-  return { theme, setTheme };
-}
-
-// Typewriter cycling animation
-function useTypewriter(words, typeSpeed = 75, deleteSpeed = 35, pauseTime = 1800) {
-  const [wordIdx, setWordIdx] = useState(0);
-  const [charIdx, setCharIdx] = useState(0);
-  const [deleting, setDeleting] = useState(false);
-  const [paused, setPaused] = useState(false);
-  const word = words[wordIdx % words.length];
-
-  useEffect(() => {
-    if (paused) {
-      const t = setTimeout(() => { setPaused(false); setDeleting(true); }, pauseTime);
-      return () => clearTimeout(t);
-    }
-    if (!deleting) {
-      if (charIdx >= word.length) { setPaused(true); return; }
-      const t = setTimeout(() => setCharIdx(c => c + 1), typeSpeed);
-      return () => clearTimeout(t);
-    } else {
-      if (charIdx <= 0) {
-        setDeleting(false);
-        setWordIdx(i => (i + 1) % words.length);
-        return;
-      }
-      const t = setTimeout(() => setCharIdx(c => c - 1), deleteSpeed);
-      return () => clearTimeout(t);
-    }
-  }, [charIdx, deleting, paused, word, typeSpeed, deleteSpeed, pauseTime]);
-
-  return word.slice(0, charIdx);
-}
-
-// Tracks which nav section is currently in view
-const NAV_SECTION_IDS = ["home", "skills", "projects", "experience", "contact"];
-
-function useActiveSection() {
-  const [activeId, setActiveId] = useState("home");
-  useEffect(() => {
-    const update = () => {
-      const scrollPos = window.scrollY + window.innerHeight * 0.35;
-      let current = "home";
-      for (const id of NAV_SECTION_IDS) {
-        const el = document.getElementById(id);
-        if (el && el.offsetTop <= scrollPos) current = id;
-      }
-      setActiveId(current);
-    };
-    window.addEventListener("scroll", update, { passive: true });
-    update();
-    return () => window.removeEventListener("scroll", update);
-  }, []);
-  return activeId;
-}
-
-// ─────────────────────────────────────────────
-// DATA
-// ─────────────────────────────────────────────
 const PROFILE_IMG = "/img/sahir-headshot.JPEG";
+const TILE_SIZE = 256;
+
 const HOT_LINKS = [
-  { label: "sahirsood@gmail.com", href: "mailto:sahirsood@gmail.com", icon: Mail },
-  { label: "GitHub", href: "https://github.com/SahirSood", icon: Github },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/sahir-sood/", icon: Linkedin },
+  { label: "Email", detail: "sahirsood@gmail.com", href: "mailto:sahirsood@gmail.com", icon: Mail },
+  { label: "GitHub", detail: "github.com/SahirSood", href: "https://github.com/SahirSood", icon: Github },
+  { label: "LinkedIn", detail: "linkedin.com/in/sahir-sood", href: "https://www.linkedin.com/in/sahir-sood/", icon: Linkedin },
 ];
 
-const DEVICON = "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons";
 const SKILLS = {
-  Languages: [
-    { label: "Python",      icon: "python/python-original" },
-    { label: "JavaScript",  icon: "javascript/javascript-original" },
-    { label: "TypeScript",  icon: "typescript/typescript-original" },
-    { label: "Java",        icon: "java/java-original" },
-    { label: "Ruby",        icon: "ruby/ruby-original" },
-    { label: "Kotlin",      icon: "kotlin/kotlin-original" },
-    { label: "SQL",         icon: "mysql/mysql-original" },
-    { label: "HTML/CSS",    icon: "html5/html5-original" },
-  ],
-  Frameworks: [
-    { label: "React",        icon: "react/react-original" },
-    { label: "React Native", icon: "react/react-original" },
-    { label: "Node.js",      icon: "nodejs/nodejs-original" },
-    { label: "Rails",        icon: "rails/rails-original-wordmark" },
-    { label: "Flask",        icon: "flask/flask-original" },
-    { label: "Firebase",     icon: "firebase/firebase-plain" },
-    { label: "Android",      icon: "android/android-plain" },
-    { label: "Angular",      icon: "angularjs/angularjs-original" },
-  ],
-  Tools: [
-    { label: "AWS",         icon: "amazonwebservices/amazonwebservices-plain-wordmark" },
-    { label: "Docker",      icon: "docker/docker-original" },
-    { label: "PostgreSQL",  icon: "postgresql/postgresql-original" },
-    { label: "Git",         icon: "git/git-original" },
-    { label: "GitHub",      icon: "github/github-original" },
-    { label: "Postman",     icon: "postman/postman-original" },
-    { label: "Kubernetes",  icon: "kubernetes/kubernetes-plain" },
-    { label: "Jira",        icon: "jira/jira-original" },
-  ],
+  Languages: ["Python", "JavaScript", "TypeScript", "Java", "Ruby", "Kotlin", "SQL", "HTML/CSS"],
+  Frameworks: ["React", "React Native", "Node.js", "Rails", "Flask", "Firebase", "Android", "Angular"],
+  Tools: ["AWS", "Docker", "PostgreSQL", "Git", "GitHub", "Postman", "Kubernetes", "Jira"],
 };
 
 const PROJECTS = [
   {
-    title: "UniVerse - StormHacks 2025",
-    img: "/img/universe.png",
-    description: "Built UniVerse, a real-time campus app for shared rides, errands, and micro-tasks (campus gig economy). Integrated phone GPS with GeoJSON mapping for auto room detection and zone-based communication. Developed a Node.js + Socket.IO backend for sub-250 ms real-time broadcast routing and user matching.",
-    date: "StormHacks 2025",
+    title: "UniVerse",
+    eyebrow: "Campus app - 2025",
+    img: "/img/no-img.jpg",
+    description:
+      "Real-time campus app for shared rides, errands, and micro-tasks with GPS, GeoJSON room detection, and zone-based communication.",
     stack: ["React Native", "Node.js", "Firebase Auth", "Socket.IO", "TypeScript", "GeoJSON"],
     repo: "https://github.com/SahirSood/UniVerse",
+    type: "Mobile",
+    signal: "Realtime mobile systems, live location, and student workflow constraints.",
   },
   {
     title: "Spotify Playlist Generator",
+    eyebrow: "Mar 2025 - Present",
     img: "/img/spotify-project.png",
-    description: "A real-time playlist generator that creates personalized Spotify playlists based on user mood and preferences using AI.",
-    date: "Mar 2025 – Present",
+    description:
+      "A real-time playlist generator that creates personalized Spotify playlists from mood and preferences using an AI-backed workflow.",
     stack: ["Python", "React", "Node.js", "AWS", "OpenAI API", "GitHub Actions"],
     repo: "https://github.com/SahirSood/Spotify-Playlist-Generator",
+    type: "AI",
+    signal: "API orchestration, AI product thinking, deployment, and a music-first user flow.",
   },
   {
     title: "BeerIQ",
-    img: "https://thumbs.dreamstime.com/b/cartoon-style-illustration-pint-glass-filled-golden-beer-topped-frothy-white-head-slightly-overflows-365646594.jpg",
-    description: "A beer-based social media platform that allows users to share reviews, rate beers, and discover new breweries.",
-    date: "Oct – Dec 2024",
+    eyebrow: "Oct - Dec 2024",
+    img: "/img/no-img.jpg",
+    description:
+      "A social review platform for discovering breweries, rating drinks, and sharing recommendations with friends.",
     stack: ["Kotlin", "Firebase", "Android Studio", "Google Maps API", "Python"],
     repo: "https://github.com/SahirSood/BeerIQ/tree/main",
+    type: "Mobile",
+    signal: "Android product work with maps, Firebase data, and social review mechanics.",
   },
   {
     title: "TripMate",
+    eyebrow: "Oct - Dec 2023",
     img: "/img/tripmate-logo.png",
-    description: "A travel planning app that helps users organize trips, share itineraries, and discover new destinations.",
-    date: "Oct – Dec 2023",
+    description:
+      "A travel planning app that helps users organize trips, share itineraries, and discover new destinations.",
     stack: ["Ruby", "Rails", "PostgreSQL", "WebSockets"],
     repo: "",
+    type: "Web",
+    signal: "Backend-heavy app structure with collaborative planning features.",
   },
   {
     title: "Financial Fast Feed",
+    eyebrow: "Jan - Apr 2025",
     img: "/img/fff.jpg",
-    description: "Built a login and bookmark system enabling users to save and revisit articles from a personalized financial news feed.",
-    date: "Jan – Apr 2025",
+    description:
+      "Login and bookmark flows for a personalized financial news feed so users can save, revisit, and manage articles.",
     stack: ["React", "Postman", "Node.js", "Flask", "RESTful APIs"],
     repo: "https://github.com/SahirSood/financial-fast-feed",
+    type: "Web",
+    signal: "Authentication, saved-state product flows, and team API integration.",
   },
   {
     title: "Sensor Movement Data Analysis",
+    eyebrow: "Feb - Mar 2025",
     img: "/img/kmeans.png",
-    description: "Developed ML models using smartphone sensor data to detect and classify human activities with high accuracy.",
-    date: "Feb – Mar 2025",
+    description:
+      "ML models using smartphone sensor data to detect and classify human activities with clear analysis and visualization.",
     stack: ["Python", "Pandas", "Matplotlib", "Scikit-learn"],
     repo: "",
+    type: "Data",
+    signal: "Data cleaning, model training, visualization, and evaluation.",
   },
   {
     title: "Apocalypse Rerising",
+    eyebrow: "Dec 2022",
     img: "/img/img-zmb.jpg",
-    description: "A 2D zombie survival game with wave-based enemies and power-ups.",
-    date: "Dec 2022",
+    description: "A 2D survival game with wave-based enemies, power-ups, and arcade progression.",
     stack: ["Python", "Pygame"],
     repo: "https://github.com/SahirSood/Apocalypse-Rerising/commits/main/",
+    type: "Game",
+    signal: "Early game-loop thinking, collision logic, progression, and player feedback.",
   },
-  {
-    title: "Fall Hackathon – Endless Scroller",
-    img: "/img/no-img.jpg",
-    description: "An endless 2D scroller with score-based obstacles and power-ups.",
-    date: "Fall 2022",
-    stack: ["Java", "Spring Boot", "Angular", "Docker", "Kubernetes", "PostgreSQL"],
-    repo: "https://github.com/SahirSood/FallHackathonProject",
-  },
+  // {
+  //   title: "Fall Hackathon - Endless Scroller",
+  //   eyebrow: "Fall 2022",
+  //   img: "/img/no-img.jpg",
+  //   description: "An endless 2D scroller with score-based obstacles, power-ups, and hackathon build pace.",
+  //   stack: ["Java", "Spring Boot", "Angular", "Docker", "Kubernetes", "PostgreSQL"],
+  //   repo: "https://github.com/SahirSood/FallHackathonProject",
+  //   type: "Game",
+  //   signal: "Ambitious stack exposure and fast team delivery under hackathon pressure.",
+  // },
 ];
 
 const EXPERIENCE = [
   {
+    id: "rbc",
     company: "RBC",
-    role: "Software Developer",
-    timeframe: "Incoming",
-    incoming: true,
+    role: "Full Stack Developer",
+    timeframe: "May 2026 - Dec 2026",
+    status: "Current",
+    team: "Global Functions Technology under ASEDA",
     logo: rbcLogo,
+    summary:
+      "I work on Functions Assist, RBC's internal AI platform for building specialized tools for departments across the organization. My work is primarily frontend-focused, with backend debugging and integration work when needed.",
+    tags: ["Python", "React", "JavaScript", "AI Platform", "Internal Tools"],
+    priority: true,
   },
   {
+    id: "redbrick-paved",
     company: "RedBrick (Paved)",
     role: "Software Developer",
-    timeframe: "Jan – Apr 2026",
-    summary:
-      "Software Developer at RedBrick (Paved) — an ad-tech platform serving 3K+ publishers and 253M+ subscribers including Uber and NYT. Contributing to a focused 4-month feature project from design to production within agile development cycles. Working across backend and CI/CD with Ruby, Python, JavaScript, TypeScript, and GitHub Actions.",
-    tags: ["Ruby", "Python", "JavaScript", "TypeScript", "GitHub Actions", "Ad-Tech", "CI/CD"],
+    timeframe: "Jan 2026 - Apr 2026",
+    industry: "Ad-tech",
     logo: pavedLogo,
+    summary:
+      "At RedBrick, I worked on Paved, an ad-tech platform used by publishers and advertisers to manage newsletter advertising. It was my first experience contributing to an established production codebase.",
+    tags: ["Ruby", "Python", "JavaScript", "TypeScript", "GitHub Actions", "Ad-Tech", "CI/CD"],
+    priority: true,
   },
   {
+    id: "mothertongue",
     company: "MotherTongue",
-    role: "Lead Developer – Startup",
-    timeframe: "May 2025 – Present",
-    summary:
-      "Developed a comprehensive Chrome extension for writing feedback that provides sentence-level analysis and adaptive learning capabilities. Built a responsive React UI and integrated Chrome Extension APIs to enable real-time writing analysis directly in users' browsers. Connected OpenAI API through a custom Node.js backend to deliver targeted writing suggestions. Implemented a scoring system powered by Firestore that maps writing patterns to adaptive course modules.",
-    tags: ["React", "JavaScript", "ChatGPT API", "JMeter", "Selenium", "GitHub Actions", "Chrome API", "Node.js", "Firestore"],
+    role: "Lead Developer",
+    timeframe: "May - Aug 2025",
     logo: "/img/mothertongue-logo.jpg",
+    summary:
+      "MotherTongue is an AI-powered writing coach designed to help people improve how they communicate, not simply correct individual sentences. I helped build the MVP from the ground up.",
+    tags: ["React", "JavaScript", "OpenAI API", "JMeter", "Selenium", "Chrome API", "Node.js", "Firestore"],
+    priority: true,
   },
   {
     company: "Kapali Developments",
     role: "Contract Software Developer",
-    timeframe: "Jan – Apr 2025",
-    summary:
-      "Developed a comprehensive React dashboard connected to Firestore for real-time financial tracking across multiple properties and investment projects. Designed SQL schemas to model complex financial relationships including rental income, mortgage payments, and partner equity contributions. Built a scalable backend using Node.js and Firebase Functions that automates monthly reporting and calculates equity splits between partners.",
-    tags: ["Firestore", "React", "JavaScript", "Node.js", "Firebase Functions", "SQL"],
+    timeframe: "Jan - Apr 2025",
     logo: "/img/kapali.png",
+    summary:
+      "Built a React and Firestore financial dashboard for property and investment tracking, with backend automation for reporting and equity splits.",
+    tags: ["Firestore", "React", "JavaScript", "Node.js", "Firebase Functions", "SQL"],
   },
   {
     company: "Kapali Developments",
     role: "Part-time Assistant",
-    timeframe: "July 2022 – September 2024",
-    summary:
-      "Increased client engagement by 20% through social media optimization, driving new leads for the business. Streamlined financial reporting using Excel, improving accounting accuracy and reducing reporting time by 30%. Redesigned the company website and business cards, elevating branding and enhancing client engagement.",
-    tags: ["Excel", "Social Media", "Web Design", "Project Management", "Client Relations"],
+    timeframe: "Jul 2022 - Sep 2024",
     logo: "/img/kapali.png",
+    summary:
+      "Improved social media engagement, streamlined financial reporting in Excel, and helped redesign brand touchpoints.",
+    tags: ["Excel", "Social Media", "Web Design", "Project Management"],
   },
   {
     company: "PedalHeads",
     role: "Camp Counselor",
-    timeframe: "June – August 2021",
-    summary:
-      "Taught bike riding skills to young children while enforcing safety protocols to build confidence. Administered first aid and independently managed injuries, ensuring camper safety. Resolved behavioral challenges through creative problem-solving, maintaining a positive environment for 25+ children.",
-    tags: ["Leadership", "First Aid", "Communication", "Problem Solving"],
+    timeframe: "Jun - Aug 2021",
     logo: "/img/pedalheads.jpg",
+    summary:
+      "Taught children bike riding skills, handled first aid, and kept groups safe and confident through clear communication and creative problem solving.",
+    tags: ["Leadership", "First Aid", "Communication", "Problem Solving"],
   },
 ];
 
-// ─────────────────────────────────────────────
-// UI PRIMITIVES
-// ─────────────────────────────────────────────
-function Container({ children, className = "" }) {
-  return (
-    <div className={`mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 ${className}`}>
-      {children}
-    </div>
-  );
-}
+const EXPERIENCE_DETAILS = {
+  rbc: {
+    id: "rbc",
+    title: "Full Stack Developer",
+    company: "RBC",
+    dates: "May 2026 to December 2026",
+    status: "Current",
+    team: "Global Functions Technology under ASEDA",
+    logo: rbcLogo,
+    technologies: ["Python", "React", "JavaScript"],
+    overview: [
+      "I work on Functions Assist, RBC's internal AI platform for building specialized tools for departments across the organization. Teams such as HR and Finance bring us problems involving documents, policies, internal information, or complex workflows, and we help turn those needs into focused AI applications.",
+      "My work has primarily been frontend-focused, with additional backend debugging and integration work. I have contributed to tools that make large collections of internal information easier to search, understand, filter, and explore.",
+    ],
+    featuredTitle: "ARC Lineage",
+    featured:
+      "I built the full user interface for a lineage and document-exploration experience. Users can visually explore documents, understand where information came from, view relationships and authorship, and narrow large result sets through search and filtering. I also helped with backend debugging and integration issues when needed.",
+    sections: [
+      {
+        title: "Problem",
+        body: "Internal policies and documents can be difficult to navigate when information is spread across large collections and connected through relationships that are not immediately visible. The goal was to make this information easier to search, understand, and trace back to its source.",
+      },
+      {
+        title: "My role",
+        body: "I owned the frontend implementation for the document and lineage exploration experience. I translated product requirements and evolving designs into a usable React interface, built the search and filtering interactions, and worked with backend developers to debug integration issues. I also had to make practical product decisions about how filtering, search timing, loading behavior, and the visualization should feel when users were working with large result sets.",
+      },
+      {
+        title: "Technical decisions",
+        body: "I focused on keeping the interface responsive and understandable as users searched, filtered, and moved through connected information. This included deciding how search input should be handled, when filtered results should update, how state should be represented in the UI, and how backend responses should be transformed into a clear visual experience.",
+      },
+      {
+        title: "Hard part",
+        body: "The hardest part was building against requirements that continued to evolve while coordinating with people working across different components, teams, and locations. The UI had to remain intuitive even though the underlying information and relationships were complex.",
+      },
+      {
+        title: "Result",
+        body: "I shipped the complete UI for the explorer experience, including document visualization, authorship and source context, search, and filtering. The result was a much faster and more approachable way to move through connected information than manually searching through documents one at a time.",
+      },
+      {
+        title: "What I learned",
+        body: "This role has taught me how product development works inside a large engineering organization. I have become more comfortable collaborating in person, communicating across countries and time zones, debugging work across the frontend and backend boundary, and turning an initially broad business request into something people can actually use.",
+      },
+    ],
+    personal:
+      "What I enjoy most about this work is that every internal team brings a different kind of problem. It has pushed me to think beyond simply building screens and to understand what information people actually need, how they expect to find it, and what makes an AI product useful in practice.",
+  },
+  "redbrick-paved": {
+    id: "redbrick-paved",
+    title: "Software Developer",
+    company: "RedBrick, working on Paved",
+    dates: "January 2026 to April 2026",
+    status: "Completed co-op",
+    industry: "Ad-tech",
+    logo: pavedLogo,
+    technologies: ["Ruby", "Python", "JavaScript", "TypeScript", "GitHub Actions", "CI/CD"],
+    overview: [
+      "At RedBrick, I worked on Paved, an ad-tech platform used by publishers and advertisers to manage newsletter advertising. It was my first experience contributing to an established production codebase where reliability, testing, code review, and understanding existing systems mattered just as much as writing new code.",
+      "My work crossed backend development, validation, testing, caching, and internal product improvements. I learned how seemingly small changes can affect campaign workflows, publisher data, dynamic links, and the reliability of a larger platform.",
+    ],
+    featuredTitle: "Production codebase work",
+    featured:
+      "I contributed production code across the Paved codebase, worked through bugs and feature requests, participated in code review and daily team workflows, and improved automated testing around important application behavior.",
+    sections: [
+      {
+        title: "Problem",
+        body: "Paved processes campaign data, publisher information, newsletter content, and dynamic links across a mature product. Features need to behave correctly across many possible inputs, while regressions can affect real advertising workflows.",
+      },
+      {
+        title: "My role",
+        body: "I contributed production code across the Paved codebase, worked through bugs and feature requests, participated in code review and daily team workflows, and improved automated testing around important application behavior. One of my larger testing contributions increased coverage for the relevant area from approximately 15% to 93% through render-focused tests. I also worked on validating dynamic URL parameters and contributed to backend systems involving application data and caching.",
+      },
+      {
+        title: "Technical decisions",
+        body: "Much of the work required understanding how existing code behaved before changing it. I had to decide where validation belonged, which edge cases needed explicit coverage, and how to make changes without breaking existing campaign or publishing workflows. I also gained experience with caching, CI/CD checks, test reliability, and working inside an established development process rather than building an isolated project from scratch.",
+      },
+      {
+        title: "Hard part",
+        body: "The hardest part was learning a large unfamiliar system quickly enough to make safe changes. A task that looked small on the surface could touch data models, rendering behavior, dynamic parameters, tests, or downstream campaign logic.",
+      },
+      {
+        title: "Result",
+        body: "I shipped production changes, substantially improved test coverage in an area of the application, strengthened validation for dynamic inputs, and left parts of the codebase safer to modify in the future.",
+      },
+      {
+        title: "What I learned",
+        body: "RedBrick taught me how professional software teams protect production systems. I became more disciplined about reading unfamiliar code, testing edge cases, communicating through reviews, responding to feedback, and considering the downstream consequences of a change.",
+      },
+    ],
+    personal:
+      "What stood out to me was how different real product development felt from school projects. The goal was not simply to make something work once. It had to fit the existing system, pass review, remain maintainable, and continue working for people who already depended on it.",
+  },
+  mothertongue: {
+    id: "mothertongue",
+    title: "Lead Developer",
+    company: "MotherTongue",
+    dates: "May 2025 to August 2025",
+    status: "MVP build",
+    logo: "/img/mothertongue-logo.jpg",
+    technologies: ["React", "JavaScript", "Node.js", "OpenAI API", "Chrome APIs", "Firestore", "JMeter", "Selenium"],
+    overview: [
+      "MotherTongue is an AI-powered writing coach designed to help people improve how they communicate, not simply correct individual sentences. The product analyzes writing for areas such as clarity, grammar, tone, conciseness, and structure, then turns those patterns into personalized feedback and learning.",
+      "I helped build the product from the ground up, with a focus on the backend, AI integrations, browser-extension architecture, data storage, and the systems connecting the analysis experience to the React interface.",
+    ],
+    featuredTitle: "Product story",
+    featured:
+      "The idea came from seeing that writing tools often fix the sentence in front of the user without helping them understand their recurring habits. MotherTongue is intended to identify those patterns over time and provide feedback, lessons, and quizzes that help users become stronger writers independently.",
+    sections: [
+      {
+        title: "Problem",
+        body: "Traditional grammar tools are useful for immediate corrections, but they can make users dependent on suggestions. We wanted to explore a different approach: identify recurring weaknesses, explain them clearly, and help users improve through personalized practice.",
+      },
+      {
+        title: "My role",
+        body: "I helped build the MVP end to end and took primary responsibility for backend services and technical integrations. This included connecting the application to OpenAI models, building the Node.js service layer, storing user progress in Firestore, supporting the Chrome extension, and connecting the analysis pipeline to the frontend experience. I also helped coordinate product development, worked through ambiguous requirements, and onboarded another developer to contribute to the frontend.",
+      },
+      {
+        title: "Technical decisions",
+        body: "A major design challenge was deciding what belonged in the browser extension, what belonged in the backend, and how much writing context should be analyzed at once. The system needed enough context to produce useful feedback without creating unnecessary model calls, delays, or cost. The implementation used structured analysis categories, Firestore for user state and progress, Chrome extension APIs, a Node.js backend, OpenAI integration for feedback, and testing with JMeter and Selenium.",
+      },
+      {
+        title: "Hard part",
+        body: "The hardest part was turning a broad idea into a coherent product. Writing quality is subjective, AI responses are not always consistent, and the browser environment creates its own limitations. I had to work through product ambiguity, model-output structure, state management, extension behavior, and integration issues at the same time.",
+      },
+      {
+        title: "Result",
+        body: "We produced a functional MVP that could capture writing, analyze it across multiple categories, return sentence-level feedback, and store user progress for future learning experiences.",
+      },
+      {
+        title: "What I learned",
+        body: "MotherTongue taught me how different it is to build a product when there is no existing roadmap. I learned to break an unclear vision into smaller technical systems, make tradeoffs with limited time, communicate work to another developer, and think about whether a feature is genuinely useful rather than merely technically impressive.",
+      },
+    ],
+    personal:
+      "This is one of the projects I care about most because it combines engineering with a real human problem. It pushed me to think like a developer, product owner, and user at the same time.",
+  },
+};
 
-function Section({ id, children, className = "", animate = true }) {
-  return (
-    <section
-      id={id}
-      data-animate={animate}
-      className={`flex items-center justify-center py-16 sm:py-24 ${className}`}
-    >
-      <Container>{children}</Container>
-    </section>
-  );
-}
-
-/* v1 Tech
-function Tech({ label }) {
-  return (
-    <span className="rounded-lg bg-gradient-to-r from-slate-100 to-slate-200 px-2.5 py-1 text-xs font-medium text-slate-700 transition-all duration-200 hover:scale-105 hover:shadow-sm dark:from-slate-700 dark:to-slate-800 dark:text-slate-300">
-      {label}
-    </span>
-  );
-}
-*/
-function Tech({ label }) {
-  return (
-    <span className="px-2.5 py-0.5 text-xs font-medium rounded-md bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-400 border border-teal-200/70 dark:border-teal-800/60">
-      {label}
-    </span>
-  );
-}
-
-// ─────────────────────────────────────────────
-// HEADER
-// ─────────────────────────────────────────────
-const NAV_LINKS = [
-  { key: "home",       label: "Home" },
-  { key: "skills",     label: "Skills" },
-  { key: "experience", label: "Experience" },
-  { key: "projects",   label: "Projects" },
-  { key: "contact",    label: "Contact" },
+const EDUCATION = [
+  {
+    school: "Simon Fraser University",
+    program: "Computing Science + Finance",
+    timeframe: "Vancouver, BC",
+    detail:
+      "Studying Computing Science with a finance focus has let me connect technical problem solving with the systems that move money, risk, and decisions through real organizations. Computing Science gave me the foundation to design systems, work with lower-level concepts, understand data structures and APIs, and turn ideas into functioning products.",
+    extra:
+      "My finance coursework keeps me connected to the industry that originally interested me. Through subjects such as international finance, capital markets, and real-estate investment, I have learned how financial systems, institutions, currencies, risk, and investment decisions work. That combination helps me approach software as more than code. I want to understand the users, the financial process, and the system behind the product.",
+  },
+  {
+    school: "University of Leeds",
+    program: "International Exchange Semester",
+    timeframe: "Spring 2024 - Leeds, United Kingdom",
+    area: "Finance",
+    detail:
+      "Going on exchange was one of the most important personal decisions I have made. SFU is largely a commuter school for me, and I wanted to place myself in an environment where I had to build a life independently, meet people from completely different backgrounds, and navigate unfamiliar situations without relying on what was comfortable.",
+    extra:
+      "Living in Leeds gave me a much broader view of the world and made me realize how easy it is to stay inside the environment you already know. I became more independent, more confident, and better at communicating with people whose experiences, habits, and perspectives were different from mine.",
+  },
 ];
 
-/* v1 Header
-function Header() {
-  const { theme, setTheme } = useTheme();
-  const scrollY = useScrollAnimation();
-  const activeSection = useActiveSection();
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    setMenuOpen(false);
-  };
-
-  const scrolled = scrollY > 50;
-
-  return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-white/80 backdrop-blur-xl border-b border-slate-200/50 dark:bg-slate-950/80 dark:border-slate-800/50"
-          : "bg-transparent"
-      }`}
-    >
-      <Container>
-        <div className="flex items-center justify-between py-4 sm:py-5">
-          <button
-            onClick={() => scrollTo("home")}
-            className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white hover:scale-105 transition-transform"
-          >
-            Sahir Sood
-          </button>
-          <div className="hidden lg:flex items-center gap-1">
-            {NAV_LINKS.map(link => (
-              <button
-                key={link.key}
-                onClick={() => scrollTo(link.key)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 ${
-                  activeSection === link.key
-                    ? "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300"
-                    : scrolled
-                    ? "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                    : "text-slate-700 hover:bg-slate-100/50 dark:text-white/90 dark:hover:bg-white/10"
-                }`}
-              >
-                {link.label}
-              </button>
-            ))}
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className={`ml-2 p-2.5 rounded-full transition-all duration-300 hover:scale-105 ${
-                scrolled
-                  ? "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
-                  : "bg-slate-100/80 text-slate-700 dark:bg-white/10 dark:text-white"
-              }`}
-            >
-              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-          </div>
-          <div className="flex lg:hidden items-center gap-2">
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="p-2.5 rounded-full bg-slate-100/80 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:scale-105 transition-transform"
-            >
-              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-            <button
-              onClick={() => setMenuOpen(o => !o)}
-              className="p-2.5 rounded-full bg-slate-100/80 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:scale-105 transition-transform"
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
-          </div>
-        </div>
-      </Container>
-      <div
-        className={`lg:hidden overflow-hidden transition-all duration-300 ${
-          menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-        } bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50`}
-      >
-        <Container>
-          <div className="py-3 flex flex-col gap-1">
-            {NAV_LINKS.map(link => (
-              <button
-                key={link.key}
-                onClick={() => scrollTo(link.key)}
-                className={`text-left px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  activeSection === link.key
-                    ? "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300"
-                    : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                }`}
-              >
-                {link.label}
-              </button>
-            ))}
-          </div>
-        </Container>
-      </div>
-    </header>
-  );
-}
-*/
-function Header() {
-  const { theme, setTheme } = useTheme();
-  const scrollY = useScrollAnimation();
-  const activeSection = useActiveSection();
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    setMenuOpen(false);
-  };
-
-  const scrolled = scrollY > 50;
-
-  return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-white/90 backdrop-blur-xl border-b border-slate-200 dark:bg-slate-950/90 dark:border-slate-800"
-          : "bg-transparent"
-      }`}
-    >
-      <Container>
-        <div className="flex items-center justify-between py-4 sm:py-5">
-          <button
-            onClick={() => scrollTo("home")}
-            className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white"
-          >
-            Sahir<span className="text-teal-600"> Sood</span>
-          </button>
-
-          {/* Desktop nav */}
-          <div className="hidden lg:flex items-center gap-0.5">
-            {NAV_LINKS.map(link => (
-              <button
-                key={link.key}
-                onClick={() => scrollTo(link.key)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
-                  activeSection === link.key
-                    ? "bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800"
-                }`}
-              >
-                {link.label}
-              </button>
-            ))}
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="ml-3 p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
-            >
-              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-          </div>
-
-          {/* Mobile */}
-          <div className="flex lg:hidden items-center gap-2">
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
-            >
-              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-            <button
-              onClick={() => setMenuOpen(o => !o)}
-              className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
-          </div>
-        </div>
-      </Container>
-
-      {/* Mobile dropdown */}
-      <div
-        className={`lg:hidden overflow-hidden transition-all duration-300 ${
-          menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-        } bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800`}
-      >
-        <Container>
-          <div className="py-3 flex flex-col gap-0.5">
-            {NAV_LINKS.map(link => (
-              <button
-                key={link.key}
-                onClick={() => scrollTo(link.key)}
-                className={`text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
-                  activeSection === link.key
-                    ? "bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800"
-                }`}
-              >
-                {link.label}
-              </button>
-            ))}
-          </div>
-        </Container>
-      </div>
-    </header>
-  );
-}
-
-// ─────────────────────────────────────────────
-// HERO SECTION
-// ─────────────────────────────────────────────
-const TYPEWRITER_WORDS = [
-  "Software Developer @ RedBrick",
-  "CS Student @ SFU",
-  "Full-Stack Builder",
-  "Problem Solver",
+const EDUCATION_CARDS = [
+  {
+    title: "Computing Science",
+    body: "Areas studied include data structures, algorithms, databases, web systems, APIs, software design, lower-level programming, data science, computer vision, multimedia systems, and project-based development.",
+  },
+  {
+    title: "Finance",
+    body: "Areas studied include international finance, capital markets, real-estate investment, financial analysis, risk, institutions, currencies, and how financial decisions move through organizations.",
+  },
+  {
+    title: "Learning through projects",
+    body: "Many of my courses have involved group projects where the technical work was only part of the challenge. I learned how to divide ambiguous work, communicate across different strengths, manage deadlines, resolve disagreements, and bring separate contributions into one finished product.",
+  },
 ];
 
-/* v1 HeroSection
-function HeroSection() {
-  const scrollY = useScrollAnimation();
-  const visibleElements = useIntersectionObserver();
-  const isVisible = visibleElements.has("home");
-  const typedText = useTypewriter(TYPEWRITER_WORDS);
+const STUDY_ABROAD_CARDS = [
+  {
+    title: "Independence",
+    body: "I arrived without an existing support system and had to handle daily life, travel, unfamiliar environments, and unexpected problems on my own. That experience made me much more comfortable entering situations where I do not already know the answer.",
+  },
+  {
+    title: "People",
+    body: "The most meaningful part of the semester was the friendships I formed. Some of my closest friends are now from France, Spain, Mexico, South America, Australia, and other parts of the world.",
+  },
+  {
+    title: "Perspective",
+    body: "Travelling and meeting people outside my usual environment gave me a more compassionate and less siloed view of the world. I became better at adapting how I communicate instead of expecting everyone to think or work the same way I do.",
+  },
+  {
+    title: "Memorable part",
+    body: "The places were unforgettable, but the people defined the experience. Travelling together, learning one another's cultures, and building friendships in such a short period made the semester feel like much more than school abroad.",
+  },
+];
 
-  return (
-    <section
-      id="home"
-      data-animate="true"
-      className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-purple-50/30 to-slate-50 dark:from-slate-950 dark:via-purple-950/50 dark:to-slate-950 min-h-screen flex items-center pt-20"
-    >
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/5 via-pink-600/5 to-blue-600/5 dark:from-purple-600/10 dark:via-pink-600/10 dark:to-blue-600/10" style={{ transform: `translateY(${scrollY * 0.2}px)` }} />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(147,51,234,0.05),transparent_70%)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(147,51,234,0.08),transparent_70%)]" />
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl" />
-      </div>
-      <Container className="relative z-10 py-12 sm:py-16">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          <div className={`flex justify-center lg:order-2 transition-all duration-1000 delay-500 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
-            <div className="relative">
-              <div className="absolute -inset-10 sm:-inset-12 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: "4s" }} />
-              <div className="absolute -inset-4 sm:-inset-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 rounded-full opacity-20 blur-sm" />
-              <img src={PROFILE_IMG} alt="Sahir Sood" className="relative w-48 h-48 sm:w-64 sm:h-64 lg:w-96 lg:h-96 object-cover rounded-full border-4 border-white/10 shadow-2xl hover:scale-105 transition-all duration-500" style={{ transform: `translateY(${-scrollY * 0.08}px)` }} />
-            </div>
-          </div>
-          <div className={`lg:order-1 text-slate-900 dark:text-white space-y-6 sm:space-y-8 transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"}`}>
-            <div>
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight tracking-tight">
-                Hi! I&apos;m{" "}
-                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">Sahir Sood</span>
-              </h1>
-              <p className="text-lg sm:text-xl lg:text-2xl mt-4 text-slate-600 dark:text-slate-200 font-light min-h-[2rem] sm:min-h-[2.5rem]">
-                {typedText}<span className="animate-pulse text-purple-500 font-thin ml-0.5">|</span>
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2 sm:gap-3">
-              {HOT_LINKS.map(({ label, href, icon: Icon }, index) => {
-                const colors = ["from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-purple-500/25","from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-blue-500/25","from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 shadow-pink-500/25"];
-                return (
-                  <a key={label} href={href} target="_blank" rel="noreferrer" className={`group flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl text-white shadow-lg bg-gradient-to-r transition-all duration-300 hover:scale-105 hover:-translate-y-1 ${colors[index]}`}>
-                    <Icon size={15} className="group-hover:scale-110 transition-transform shrink-0" />
-                    <span className="text-xs sm:text-sm font-medium">{label}</span>
-                  </a>
-                );
-              })}
-            </div>
-            <div className="space-y-4 text-slate-700 dark:text-slate-100 leading-relaxed">
-              <p className="text-base sm:text-lg">An Intro to CS elective completely shifted my path. What started as curiosity quickly turned into a real passion for <span className="font-medium">solving problems</span>, which led me to transfer into the joint CS and Business program at SFU.</p>
-              <p className="text-base sm:text-lg">Since then I&apos;ve built projects that tested both my technical skills and my ability to collaborate. I enjoy <span className="font-medium">backend systems and data-driven development</span>, but what stands out most is how much <span className="font-medium">teamwork and adaptability</span> shape the success of a project.</p>
-              <p className="text-base sm:text-lg">Outside of coding I keep balance through <span className="font-medium">basketball, travel, and exploring the outdoors</span>.</p>
-            </div>
-            <button onClick={() => document.getElementById("skills")?.scrollIntoView({ behavior: "smooth" })} className="group flex items-center gap-2 text-slate-600 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white transition-colors">
-              <span className="text-sm font-medium">Explore My Work</span>
-              <ChevronDown size={18} className="group-hover:translate-y-1 transition-transform" />
-            </button>
-          </div>
-        </div>
-      </Container>
-    </section>
-  );
-}
-*/
-function HeroSection() {
-  const scrollY = useScrollAnimation();
-  const visibleElements = useIntersectionObserver();
-  const isVisible = visibleElements.has("home");
-  const typedText = useTypewriter(TYPEWRITER_WORDS);
+const EXTRACURRICULARS = [
+  // {
+  //   title: "Hackathons",
+  //   detail:
+  //     "I enjoy hackathons because they compress an entire product cycle into a single day. A team has to understand the prompt, choose an idea that is ambitious but realistic, divide the work, build under pressure, and prepare something worth demonstrating before time runs out.",
+  //   points: [
+  //     "I have participated in hackathons such as nwHacks, StormHacks, and Hack the Mountain.",
+  //     "Teams were generally around four people, and I worked as a developer.",
+  //     "Most projects were built within approximately one day, demonstrated at the end, and shaped by useful feedback.",
+  //     "One project I am especially proud of is UniVerse, a campus-focused application designed around helping students coordinate shared rides, errands, and small tasks.",
+  //     "The time pressure is what makes hackathons enjoyable for me. There is no room to overthink every decision. You have to communicate clearly, control the scope, solve the next problem, and keep moving until there is something real to show.",
+  //   ],
+  //   color: "bg-blue-50 text-blue-700 border-blue-100",
+  // },
+  {
+    title: "Basketball",
+    detail:
+      "I have played basketball for most of my life, especially pickup basketball. I enjoy showing up at different parks and gyms, finding the best available competition, and playing with people I may never have met before that day.",
+    points: [
+      "What I like about pickup is that every game is different. Some players move the ball, some want to control every possession, some communicate constantly, and some barely speak.",
+      "You have to understand the personalities on your team quickly and figure out how to contribute.",
+      "Basketball is also one of my favourite ways to release energy. I enjoy the competition, the pressure of having the ball when a possession matters, and the feeling that my effort and decision-making are directly in my control.",
+    ],
+    color: "bg-orange-50 text-orange-700 border-orange-100",
+  },
+  {
+    title: "Snowboarding",
+    detail:
+      "Snowboarding is its own reset for me. It is physical, technical, and completely absorbing in a way that feels different from hiking or team sports.",
+    points: [
+      "I like the mix of speed, control, and progression. Small improvements in balance or edge control are immediately noticeable.",
+      "A good day on the mountain forces me to stay present because the conditions, terrain, and visibility keep changing.",
+      "It also connects naturally to living near Vancouver, where getting outside in the winter can be just as energizing as summer hikes or beach days.",
+    ],
+    color: "bg-sky-50 text-sky-700 border-sky-100",
+  },
+  {
+    title: "Travel",
+    detail:
+      "Travel is one of the biggest influences on how I see people and the world. I enjoy going beyond the main attractions, talking to locals, eating regional food, walking through neighbourhoods, and seeing what everyday life feels like somewhere unfamiliar.",
+    points: [
+      "Studying abroad gave me the opportunity to travel extensively, but the most meaningful part was learning to adapt to people and environments that worked differently from what I knew.",
+      "Prague, Morocco and the Sahara, Italy, and a spontaneous football game in Florence are some of the memories that shaped how I think about travel.",
+      "Travel has made me more independent, more curious, and much better at communicating across different personalities and cultures.",
+    ],
+    color: "bg-emerald-50 text-emerald-700 border-emerald-100",
+  },
+  {
+    title: "Outdoors",
+    detail:
+      "I spend a lot of my free time hiking, biking, paddleboarding, going to the beach, cliff jumping, and playing basketball outside. Much of school and software development happens in front of a screen, so being outside gives me a complete change of pace.",
+    points: [
+      "I enjoy both the scenery and the challenge. A long hike forces me to remain present, work through fatigue, and spend an entire day away from notifications, schoolwork, and technology.",
+      "Panorama Ridge is one of my favourite hikes and one of the outdoor accomplishments I am most proud of.",
+      "The route was roughly 30 kilometres and exhausting, but the final view made the full day of effort worth it.",
+    ],
+    color: "bg-lime-50 text-lime-700 border-lime-100",
+  },
+];
 
-  return (
-    <section
-      id="home"
-      data-animate="true"
-      className="relative min-h-screen flex items-center pt-20 bg-white dark:bg-slate-950 overflow-hidden"
-    >
-      {/* Subtle teal glow top-right */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-teal-500/5 dark:bg-teal-500/8 rounded-full blur-3xl pointer-events-none" />
+const TRAVEL_PLACES = [
+  {
+    country: "United Kingdom",
+    code: "UK",
+    places: [
+      { name: "Leeds", lat: 53.8008, lng: -1.5491, note: "My home during exchange and the place where I met some of my favourite people. Leeds became much more than the city where I studied." },
+      { name: "London", lat: 51.5072, lng: -0.1276, note: "Seeing London in person felt surreal. One of my favourite memories was exploring its food markets and trying completely different things in one place." },
+      { name: "Edinburgh", lat: 55.9533, lng: -3.1883, note: "A beautiful and atmospheric city. Hiking Arthur's Seat at night was memorable, even though parts of it felt much sketchier than expected." },
+      { name: "York", lat: 53.959, lng: -1.0815, note: "York felt like walking through a Harry Potter setting. Visiting it with much of my exchange group made the day especially memorable." },
+      { name: "Manchester", lat: 53.4808, lng: -2.2426, note: "Watching both Manchester City and Manchester United play was an unbelievable experience. The atmosphere was unlike anything I had experienced at a North American sporting event." },
+      { name: "Knaresborough", lat: 54.0091, lng: -1.4685, note: "A small, historic town that felt almost unreal because of how old and picturesque everything looked." },
+      { name: "Birmingham", lat: 52.4862, lng: -1.8904, note: "Birmingham felt unexpectedly familiar and comfortable. It gave me a different view of England outside the destinations that dominate most travel itineraries." },
+    ],
+  },
+  {
+    country: "France",
+    code: "FR",
+    places: [
+      { name: "Paris", lat: 48.8566, lng: 2.3522, note: "Paris already felt larger than life, and seeing Kanye West perform there made the trip even more surreal." },
+      { name: "Lyon", lat: 45.764, lng: 4.8357, note: "I met a group of people through the hostel and had one of the best nights of the trip with them. I am still connected with some of those people today." },
+      { name: "Nice", lat: 43.7102, lng: 7.262, note: "Nice was peaceful, bright, and one of the most naturally beautiful stops of the exchange." },
+    ],
+  },
+  {
+    country: "Monaco",
+    code: "MC",
+    places: [
+      { name: "Monaco", lat: 43.7384, lng: 7.4246, note: "Monaco was surreal to see in person. The scale of wealth and the environment changed how I thought about goals, lifestyle, and different versions of success." },
+    ],
+  },
+  {
+    country: "Italy",
+    code: "IT",
+    places: [
+      { name: "Rome", lat: 41.9028, lng: 12.4964, note: "Rome makes history feel physical. Walking beside structures that have existed for around two thousand years, including the Colosseum, was difficult to comprehend. Being there on Easter Sunday and seeing the Pope was also a unique cultural experience, even though I am not Catholic." },
+      { name: "Florence", lat: 43.7696, lng: 11.2558, note: "Florence was beautiful, but my favourite memory was the spontaneous football game with a local kid. It made the city feel personal rather than simply historic." },
+      { name: "Pisa", lat: 43.7228, lng: 10.4017, note: "Pisa was a quick and memorable stop centred largely around finally seeing the famous leaning tower in person." },
+      { name: "Venice", lat: 45.4408, lng: 12.3155, note: "Venice was unlike anywhere else I visited. Getting lost in its narrow routes and eventually working out how to return became part of the fun." },
+    ],
+  },
+  {
+    country: "Spain",
+    code: "ES",
+    places: [
+      { name: "Barcelona", lat: 41.3874, lng: 2.1686, note: "Barcelona felt unexpectedly familiar in certain ways and reminded me of parts of India. It was colourful, energetic, and unlike the other European cities I visited." },
+      { name: "Madrid", lat: 40.4168, lng: -3.7038, note: "Madrid reminded me of London in its size and city energy. The trip had a couple of very difficult mornings, but I still left appreciating the city and Spain overall." },
+    ],
+  },
+  {
+    country: "Portugal",
+    code: "PT",
+    note: "I travelled through Portugal alone, which made the trip especially important for my confidence and independence.",
+    places: [
+      { name: "Porto", lat: 41.1579, lng: -8.6291, note: "Porto felt compact, historic, and easy to explore alone. Visiting its unusually ornate McDonald's location was a funny and memorable stop." },
+      { name: "Lisbon", lat: 38.7223, lng: -9.1393, note: "Lisbon had some of my favourite food, views, music, and overall energy of the entire exchange. Music seemed to appear everywhere, and the city always felt alive." },
+      { name: "Sintra", lat: 38.8029, lng: -9.3817, note: "Sintra felt completely different from Lisbon despite being so close. Its scenery and architecture made it feel like a separate world within the same solo trip." },
+    ],
+  },
+  { country: "Czech Republic", code: "CZ", places: [{ name: "Prague", lat: 50.0755, lng: 14.4378, note: "Prague combined remarkable architecture with the energy of a much more modern party city. Visiting with my closest exchange friends at the end of the year made it especially meaningful." }] },
+  { country: "Denmark", code: "DK", places: [{ name: "Copenhagen", lat: 55.6761, lng: 12.5683, note: "Copenhagen stood out because it felt like a city where daily life would genuinely be comfortable. It was beautiful, organized, lively, and far easier to imagine living in than many places that were primarily exciting to visit." }] },
+  { country: "Ireland", code: "IE", places: [{ name: "Dublin", lat: 53.3498, lng: -6.2603, note: "Dublin was centred around local pubs, live atmosphere, and finally visiting the Guinness Storehouse as someone who genuinely enjoys Guinness." }] },
+  {
+    country: "Morocco",
+    code: "MA",
+    places: [
+      { name: "Morocco", lat: 31.7917, lng: -7.0926, note: "Morocco had some of the best food of my travels and gave me a completely different perspective from Western Europe. The markets, streets, hospitality, and pace of life made the trip feel genuinely new." },
+      { name: "Sahara Desert", lat: 30.5595, lng: -4.876, note: "Seeing the Sahara was astounding. The scale, silence, landscape, and night sky made it one of the most unforgettable environments I have ever experienced." },
+    ],
+  },
+  {
+    country: "Canada",
+    code: "CA",
+    places: [
+      { name: "Vancouver", lat: 49.2827, lng: -123.1207, note: "Home base and the standard I naturally compare other cities against. It combines city life, mountains, water, and access to the outdoors in a way that is difficult to replace." },
+      { name: "Victoria", lat: 48.4284, lng: -123.3656, note: "A familiar getaway that I have visited frequently. It is slower and more relaxed than Vancouver while still feeling close to home." },
+      { name: "Tofino", lat: 49.153, lng: -125.9066, note: "A west-coast destination known for its ocean scenery and slower pace." },
+      { name: "Kelowna", lat: 49.888, lng: -119.496, note: "A regular British Columbia getaway associated with warm weather, lakes, and time away from the city." },
+      { name: "Kamloops", lat: 50.6745, lng: -120.3273, note: "A very different side of British Columbia, with a drier landscape and a more open, interior feel." },
+      { name: "Osoyoos", lat: 49.0323, lng: -119.4682, note: "One of the warmest-feeling parts of British Columbia and a place that feels dramatically different from the coast." },
+      { name: "Calgary", lat: 51.0447, lng: -114.0719, note: "A major western Canadian city and a useful starting point for exploring Alberta and the Rockies." },
+      { name: "Edmonton", lat: 53.5461, lng: -113.4938, note: "A northern prairie city that gave me another view of life outside British Columbia." },
+      { name: "Banff", lat: 51.1784, lng: -115.5708, note: "One of the most striking mountain environments I have visited, surrounded by scenery that rarely looks real in photographs." },
+      { name: "Jasper", lat: 52.8737, lng: -118.0814, note: "A quieter and more spread-out Rocky Mountain experience, with the landscape being the main reason to be there." },
+      { name: "Saskatoon", lat: 52.1579, lng: -106.6702, note: "A chance to experience the Canadian Prairies and a city with a very different scale and landscape from Vancouver." },
+    ],
+  },
+  {
+    country: "United States",
+    code: "US",
+    places: [
+      { name: "Seattle", lat: 47.6062, lng: -122.3321, note: "Seattle feels like Vancouver's close relative. The weather, landscape, culture, and proximity make it feel familiar while still being distinctly American." },
+      { name: "Portland", lat: 45.5152, lng: -122.6784, note: "Portland offered a different Pacific Northwest atmosphere, with a strong local identity and sports culture." },
+      { name: "Los Angeles", lat: 34.0522, lng: -118.2437, note: "Los Angeles felt enormous and spread out, but the Mexican food was one of the clearest highlights." },
+      { name: "San Diego", lat: 32.7157, lng: -117.1611, note: "San Diego may be the most naturally beautiful American city I have visited. The coastline, weather, and overall pace stood out immediately." },
+      { name: "Miami", lat: 25.7617, lng: -80.1918, note: "Miami was energetic, excessive, and a lot of fun to experience on a budget. It felt completely different from the Pacific Northwest." },
+      { name: "New York City", lat: 40.7128, lng: -74.006, note: "New York is my favourite American city and the place I most hope to work for a period of my career. I love its pace, density, ambition, food, and the feeling that something is always happening." },
+      { name: "New Jersey", lat: 40.0583, lng: -74.4057, note: "New Jersey is personally meaningful because I have family there, even though I do not remember every visit clearly." },
+    ],
+  },
+  { country: "Hong Kong SAR", code: "HK", places: [{ name: "Hong Kong", lat: 22.3193, lng: 114.1694, note: "I visited when I was young, so my memories are limited. It remains one of the places I would like to experience again with an adult perspective." }] },
+  { country: "Macau SAR", code: "MO", places: [{ name: "Macau", lat: 22.1987, lng: 113.5439, note: "I also visited Macau when I was young. One of the clearest impressions I retained was how expensive and extravagant parts of it felt." }] },
+  {
+    country: "India",
+    code: "IN",
+    places: [
+      { name: "Punjab", lat: 31.1471, lng: 75.3412, note: "Punjab feels like home because of my family and cultural connection to the region. It is different from travelling somewhere as an outsider because the food, language, people, and traditions are personally familiar." },
+      { name: "New Delhi", lat: 28.6139, lng: 77.209, note: "New Delhi showed me the scale, history, intensity, and complexity of India's capital." },
+    ],
+  },
+  {
+    country: "Mexico",
+    code: "MX",
+    places: [
+      { name: "Mexico City", lat: 19.4326, lng: -99.1332, note: "Food, museums, and city scale." },
+      { name: "Puebla", lat: 19.0414, lng: -98.2063, note: "Color, food, and a slower day trip." },
+    ],
+  },
+];
 
-      <Container className="relative z-10 py-12 sm:py-16">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
+const TRAVEL_INTRO = [
+  "Travel is one of the biggest influences on how I see people and the world. I enjoy going beyond the main attractions, talking to locals, eating regional food, walking through neighbourhoods, and seeing what everyday life feels like somewhere unfamiliar.",
+  "Studying abroad gave me the opportunity to travel extensively, but the most meaningful part was learning to adapt to people and environments that worked differently from what I knew. It made me more independent, more curious, and much better at communicating across different personalities and cultures.",
+];
 
-          {/* Profile image */}
-          <div
-            className={`flex justify-center lg:order-2 transition-all duration-1000 delay-300 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          >
-            <div className="relative">
-              <div className="absolute -inset-3 rounded-full bg-teal-500/15 dark:bg-teal-500/20 blur-xl" />
-              <div className="absolute -inset-1 rounded-full ring-2 ring-teal-500/30" />
-              <img
-                src={PROFILE_IMG}
-                alt="Sahir Sood"
-                className="relative w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 object-cover rounded-full shadow-xl"
-                style={{ transform: `translateY(${-scrollY * 0.05}px)` }}
-              />
-            </div>
-          </div>
+const TRAVEL_HIGHLIGHTS = [
+  {
+    title: "Prague",
+    body: "I visited Prague near the end of my exchange with some of my closest friends from the year. The food, architecture, energy, and the people I shared it with made it one of my favourite trips.",
+  },
+  {
+    title: "Morocco and the Sahara",
+    body: "Morocco gave me one of the most different cultural experiences of my travels. The food, especially tagine, was unforgettable, and seeing the Sahara in person was almost impossible to process.",
+  },
+  {
+    title: "Italy",
+    body: "Italy had been one of my dream destinations. Having enough time to wander, speak with people, eat slowly, and experience several very different cities made it feel less like checking off attractions and more like briefly living there.",
+  },
+  {
+    title: "Favourite local interaction",
+    body: "One of my favourite travel memories happened after leaving a restaurant in Florence. We saw a kid playing football near his home and ended up joining him for close to two hours. He spoke six languages and had an incredible personality. It was a small, unplanned experience, but it captured what I enjoy most about travelling.",
+  },
+];
 
-          {/* Text content */}
-          <div
-            className={`lg:order-1 space-y-7 transition-all duration-1000 ${
-              isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"
-            }`}
-          >
-            <div>
-              <p className="text-xs font-semibold tracking-widest text-teal-600 uppercase mb-4">
-                Portfolio
-              </p>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white">
-                Hi, I&apos;m{" "}
-                <span className="text-teal-600">Sahir Sood</span>
-              </h1>
-              <p className="text-lg sm:text-xl mt-4 text-slate-500 dark:text-slate-400 min-h-[2rem] sm:min-h-[2.5rem]">
-                {typedText}
-                <span className="animate-pulse text-teal-500 ml-0.5">|</span>
-              </p>
-            </div>
+const PROFILES = [
+  {
+    id: "recruiter",
+    name: "Recruiter",
+    owner: "Hiring team",
+    avatar: "R",
+    accent: "#4285f4",
+    bg: "bg-blue-500",
+    icon: BriefcaseBusiness,
+    message: "Experience, projects, resume, and contact in the shortest path.",
+    startQuery: "Why should we interview Sahir?",
+  },
+  {
+    id: "builder",
+    name: "Builder",
+    owner: "Engineering peer",
+    avatar: "B",
+    accent: "#34a853",
+    bg: "bg-emerald-500",
+    icon: Code2,
+    message: "Technical decisions, stacks, case studies, and product systems.",
+    startQuery: "Show me Sahir's strongest engineering work",
+  },
+  {
+    id: "explorer",
+    name: "Explorer",
+    owner: "Creative visitor",
+    avatar: "E",
+    accent: "#fbbc04",
+    bg: "bg-amber-400",
+    icon: Compass,
+    message: "Travel map, personal story, projects, and the Snake game.",
+    startQuery: "What makes this portfolio personal?",
+  },
+  {
+    id: "sahir",
+    name: "Sahir Sood",
+    owner: "About profile",
+    avatar: "photo",
+    accent: "#ea4335",
+    bg: "bg-red-500",
+    icon: UserRound,
+    message: "A personal about page with education, map, and extracurriculars.",
+    startQuery: "Tell me about Sahir",
+  },
+];
 
-            {/* Links */}
-            <div className="flex flex-wrap gap-2 sm:gap-3">
-              {HOT_LINKS.map(({ label, href, icon: Icon }, index) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 ${
-                    index === 0
-                      ? "bg-teal-600 hover:bg-teal-700 text-white shadow-sm shadow-teal-600/20"
-                      : "border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-400 dark:hover:border-teal-600 hover:text-teal-700 dark:hover:text-teal-400"
-                  }`}
-                >
-                  <Icon size={15} className="shrink-0" />
-                  {label}
-                </a>
-              ))}
-            </div>
+const QUESTION_BANK = [
+  "Why should we interview Sahir?",
+  "Show me Sahir's strongest engineering work",
+  "What experience does Sahir have?",
+  "Which projects prove full-stack ability?",
+  "What is Sahir like outside code?",
+  "How can I contact Sahir?",
+];
 
-            {/* Bio */}
-            <div className="space-y-3 text-slate-600 dark:text-slate-400 leading-relaxed text-sm sm:text-base border-l-2 border-teal-500/30 pl-4">
-              <p>
-                An Intro to CS elective completely shifted my path. What started as curiosity
-                quickly turned into a real passion for{" "}
-                <span className="text-slate-800 dark:text-slate-200 font-medium">solving problems</span>,
-                which led me to transfer into the joint CS and Business program at SFU.
-              </p>
-              <p>
-                I enjoy{" "}
-                <span className="text-slate-800 dark:text-slate-200 font-medium">backend systems and data-driven development</span>,
-                and I thrive when{" "}
-                <span className="text-slate-800 dark:text-slate-200 font-medium">teamwork and adaptability</span>{" "}
-                are at the core of a project.
-              </p>
-              <p>
-                Outside of code —{" "}
-                <span className="text-slate-800 dark:text-slate-200 font-medium">basketball, travel, and the outdoors</span>.
-              </p>
-            </div>
+const ANSWERS = {
+  "why should we interview sahir":
+    "Sahir combines practical software experience, product sense, and a broad build history: current full stack work at RBC, RedBrick/Paved production software work, MotherTongue MVP leadership, and projects across web, mobile, AI, backend, data, and games.",
+  "show me sahir's strongest engineering work":
+    "Start with MotherTongue for AI + Chrome extension architecture, RedBrick/Paved for production engineering, UniVerse for realtime mobile systems, and Financial Fast Feed for full-stack auth/bookmark flows.",
+  "what experience does sahir have":
+    "Sahir is currently a Full Stack Developer at RBC, previously worked as a Software Developer at RedBrick/Paved, built the MotherTongue MVP as lead developer, and has contract dashboard experience with Kapali Developments.",
+  "which projects prove full-stack ability":
+    "UniVerse, Spotify Playlist Generator, Financial Fast Feed, and TripMate show full-stack range across mobile, AI APIs, auth flows, backend services, databases, and realtime features.",
+  "what is sahir like outside code":
+    "Sahir is a Vancouver-based CS + Finance student who likes basketball, snowboarding, travel, the outdoors, and building projects with a mix of curiosity and competitiveness.",
+  "how can i contact sahir":
+    "Email Sahir at sahirsood@gmail.com, or open the Contact page to copy the email, launch a prefilled message, and find GitHub or LinkedIn.",
+};
 
-            <button
-              onClick={() => document.getElementById("experience")?.scrollIntoView({ behavior: "smooth" })}
-              className="group flex items-center gap-2 text-sm text-slate-500 hover:text-teal-600 dark:text-slate-400 dark:hover:text-teal-400 transition-colors"
-            >
-              Explore My Work
-              <ChevronDown size={16} className="group-hover:translate-y-0.5 transition-transform" />
-            </button>
-          </div>
-        </div>
-      </Container>
-    </section>
-  );
-}
+const BOOKMARKS = [
+  { label: "Education", icon: GraduationCap, action: "education" },
+  { label: "Resume", icon: FileText, action: "resume" },
+  { label: "Experience", icon: BriefcaseBusiness, action: "experience" },
+  { label: "Projects", icon: FolderKanban, action: "projects" },
+  { label: "Skills", icon: Code2, action: "skills" },
+  { label: "Map", icon: Map, action: "map" },
+  { label: "Snake", icon: Gamepad2, action: "snake" },
+  { label: "GitHub", icon: Github, href: "https://github.com/SahirSood" },
+  { label: "Contact", icon: Mail, action: "contact" },
+];
 
-// ─────────────────────────────────────────────
-// SKILLS SECTION
-// ─────────────────────────────────────────────
-/* v1 SkillIcon + SkillsSection
-function SkillIcon({ skill }) {
-  const [errored, setErrored] = useState(false);
-  return (
-    <div className="flex flex-col items-center gap-2 p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 hover:scale-110 hover:shadow-md hover:border-purple-200 dark:hover:border-purple-700 transition-all duration-200 cursor-default group">
-      {!errored ? (
-        <img src={`${DEVICON}/${skill.icon}.svg`} alt={skill.label} className="w-8 h-8 sm:w-10 sm:h-10 object-contain" onError={() => setErrored(true)} />
-      ) : (
-        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white text-xs font-bold">{skill.label.slice(0, 2).toUpperCase()}</div>
-      )}
-      <span className="text-xs font-medium text-slate-600 dark:text-slate-400 text-center leading-tight group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">{skill.label}</span>
-    </div>
-  );
-}
-function SkillsSection() {
-  const visibleElements = useIntersectionObserver();
-  const isVisible = visibleElements.has("skills");
-  const [activeTab, setActiveTab] = useState("Languages");
-  const tabs = Object.keys(SKILLS);
-  return (
-    <Section id="skills" className="bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 dark:from-slate-900 dark:via-purple-950/20 dark:to-slate-900">
-      <div className="w-full max-w-4xl mx-auto">
-        <div className={`text-center mb-10 sm:mb-12 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-3">Technical <span className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">Skills</span></h2>
-          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400">Technologies I work with</p>
-        </div>
-        <div className={`flex justify-center gap-2 sm:gap-3 mb-8 transition-all duration-1000 delay-200 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
-          {tabs.map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={`px-5 sm:px-7 py-2 sm:py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === tab ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-lg scale-105" : "border-2 border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-500 hover:scale-105"}`}>{tab}</button>
-          ))}
-        </div>
-        <div className={`transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
-          <div className="rounded-3xl bg-slate-100/60 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 p-5 sm:p-8 shadow-xl">
-            <div className="grid grid-cols-4 md:grid-cols-8 gap-3 sm:gap-4">
-              {SKILLS[activeTab].map(skill => (<SkillIcon key={skill.label} skill={skill} />))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </Section>
-  );
-}
-*/
-function SkillIcon({ skill }) {
-  const [errored, setErrored] = useState(false);
-  return (
-    <div className="flex flex-col items-center gap-2 p-3 sm:p-4 rounded-xl bg-white dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 hover:border-teal-300 dark:hover:border-teal-600 hover:shadow-sm transition-all duration-200 cursor-default group">
-      {!errored ? (
-        <img
-          src={`${DEVICON}/${skill.icon}.svg`}
-          alt={skill.label}
-          className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
-          onError={() => setErrored(true)}
-        />
-      ) : (
-        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-teal-600 flex items-center justify-center text-white text-xs font-bold">
-          {skill.label.slice(0, 2).toUpperCase()}
-        </div>
-      )}
-      <span className="text-xs font-medium text-slate-500 dark:text-slate-400 text-center leading-tight group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
-        {skill.label}
-      </span>
-    </div>
-  );
-}
+const SHORTCUTS = [
+  { label: "Experience", icon: BriefcaseBusiness, color: "bg-blue-500", action: "experience" },
+  { label: "Projects", icon: FolderKanban, color: "bg-amber-400", action: "projects" },
+  { label: "Resume", icon: FileText, color: "bg-emerald-500", action: "resume" },
+  { label: "Education", icon: GraduationCap, color: "bg-red-500", action: "education" },
+  { label: "Skills", icon: Code2, color: "bg-violet-500", action: "skills" },
+  { label: "About", icon: UserRound, color: "bg-cyan-500", action: "profile" },
+  { label: "Map", icon: Map, color: "bg-lime-500", action: "map" },
+  { label: "Snake", icon: Gamepad2, color: "bg-green-600", action: "snake" },
+  { label: "Contact", icon: Mail, color: "bg-rose-500", action: "contact" },
+];
 
-function SkillsSection() {
-  const visibleElements = useIntersectionObserver();
-  const isVisible = visibleElements.has("skills");
-  const [activeTab, setActiveTab] = useState("Languages");
-  const tabs = Object.keys(SKILLS);
+const FAVORITES = [
+  { label: "Account", icon: UserRound, color: "text-sky-600", action: "profile" },
+  { label: "Contact", icon: Mail, color: "text-red-500", action: "contact" },
+  { label: "Search", icon: Search, color: "text-blue-500", action: "home" },
+  { label: "Resume", icon: FileText, color: "text-emerald-500", action: "resume" },
+  { label: "Skills", icon: Code2, color: "text-green-600", action: "skills" },
+  { label: "Experience", icon: BriefcaseBusiness, color: "text-blue-600", action: "experience" },
+  { label: "Projects", icon: FolderKanban, color: "text-amber-600", action: "projects" },
+  { label: "Education", icon: GraduationCap, color: "text-violet-600", action: "education" },
+  { label: "Map", icon: Map, color: "text-emerald-600", action: "map" },
+  { label: "Snake", icon: Gamepad2, color: "text-lime-600", action: "snake" },
+  { label: "MotherTongue", icon: Sparkles, color: "text-purple-600", action: "mothertongue" },
+  { label: "Paved", icon: ShieldCheck, color: "text-neutral-700", action: "paved" },
+];
 
-  return (
-    <Section
-      id="skills"
-      className="bg-slate-50 dark:bg-slate-900"
-    >
-      <div className="w-full max-w-4xl mx-auto">
-        <div
-          className={`text-center mb-10 sm:mb-12 transition-all duration-1000 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
-          <p className="text-xs font-semibold tracking-widest text-teal-600 uppercase mb-3">Stack</p>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-3">
-            Technical{" "}
-            <span className="text-teal-600">Skills</span>
-          </h2>
-          <p className="text-lg sm:text-xl text-slate-500 dark:text-slate-400">
-            Technologies I work with
-          </p>
-        </div>
+const RECENT_TABS = [
+  {
+    title: "RBC full stack developer",
+    source: "experience.sahir.dev",
+    visited: "primary hiring signal",
+    action: "rbc",
+    icon: BriefcaseBusiness,
+  },
+  {
+    title: "MotherTongue Chrome extension and AI writing feedback",
+    source: "projects.sahir.dev",
+    visited: "MVP build",
+    action: "mothertongue",
+    icon: Sparkles,
+  },
+  {
+    title: "Where Sahir has been",
+    source: "maps.sahir.dev",
+    visited: "travel notes",
+    action: "map",
+    icon: Map,
+  },
+  {
+    title: "Google-style Snake",
+    source: "games.sahir.dev",
+    visited: "playable easter egg",
+    action: "snake",
+    icon: Gamepad2,
+  },
+];
 
-        {/* Tabs */}
-        <div
-          className={`flex justify-center gap-2 mb-8 transition-all duration-1000 delay-200 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
-          {tabs.map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-5 sm:px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                activeTab === tab
-                  ? "bg-teal-600 text-white shadow-sm"
-                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+const SNAKE_CONFIG = {
+  size: 15,
+  baseSpeed: 130,
+  tokens: ["API", "RBC", "SFU", "JS", "SQL", "AI", "YVR"],
+};
 
-        {/* Grid */}
-        <div
-          className={`transition-all duration-1000 delay-300 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
-          <div className="rounded-2xl bg-white dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700 p-5 sm:p-8 shadow-sm">
-            <div className="grid grid-cols-4 md:grid-cols-8 gap-3 sm:gap-4">
-              {SKILLS[activeTab].map(skill => (
-                <SkillIcon key={skill.label} skill={skill} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </Section>
-  );
-}
+const SKILL_LANES = [
+  {
+    title: "Most recruiter-relevant",
+    summary: "React, Node.js, Python, TypeScript, SQL, GitHub Actions",
+    detail: "The stack I would expect to use fastest on full-stack/product teams.",
+    tone: "blue",
+  },
+  {
+    title: "Backend and data",
+    summary: "Rails, Flask, Firebase, PostgreSQL, REST APIs, automation",
+    detail: "Useful for dashboards, auth flows, reporting, API work, and service glue.",
+    tone: "green",
+  },
+  {
+    title: "Mobile and product",
+    summary: "React Native, Kotlin, Android, Maps, WebSockets, UI flows",
+    detail: "Used across UniVerse, BeerIQ, and travel/product-style projects.",
+    tone: "neutral",
+  },
+  {
+    title: "AI and testing",
+    summary: "OpenAI API, Python analysis, JMeter, Selenium, GitHub Actions",
+    detail: "Useful for MotherTongue-style AI tools and reliability-minded workflows.",
+    tone: "blue",
+  },
+];
 
-// ─────────────────────────────────────────────
-// PROJECTS SECTION
-// ─────────────────────────────────────────────
-/* v1 ProjectCard + ProjectsSection
-function ProjectCard({ p, index }) {
-  const visibleElements = useIntersectionObserver();
-  const isVisible = visibleElements.has("projects");
-  const inner = (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50/50 to-white dark:from-slate-900 dark:via-slate-800/50 dark:to-slate-900 border border-slate-200/80 dark:border-slate-700/80 shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 hover:-translate-y-2 h-full flex flex-col">
-      <div className="relative h-44 sm:h-48 overflow-hidden shrink-0">
-        <img src={p.img} alt={p.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        {p.repo && (<div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"><ExternalLink size={20} className="text-white" /></div>)}
-      </div>
-      <div className="p-5 sm:p-6 space-y-3 flex-1 flex flex-col">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors leading-tight">{p.title}</h3>
-          <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 shrink-0 mt-0.5"><Calendar size={11} /> {p.date}</span>
-        </div>
-        <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed flex-1">{p.description}</p>
-        <div className="flex flex-wrap gap-1.5 pt-1">{p.stack.map(tech => <Tech key={tech} label={tech} />)}</div>
-      </div>
-    </div>
-  );
-  const classes = `group block transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`;
-  const delay = { transitionDelay: `${index * 100}ms` };
-  return p.repo ? (<a href={p.repo} target="_blank" rel="noreferrer" className={classes} style={delay}>{inner}</a>) : (<div className={classes} style={delay}>{inner}</div>);
-}
-function ProjectsSection() {
-  const visibleElements = useIntersectionObserver();
-  const isVisible = visibleElements.has("projects");
-  return (
-    <Section id="projects" className="bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-900 dark:via-blue-950/30 dark:to-slate-900">
-      <div className="w-full">
-        <div className={`text-center mb-12 sm:mb-16 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-4">Featured <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Projects</span></h2>
-          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">A showcase of my technical work spanning various domains and technologies</p>
-        </div>
-        <div className="grid gap-5 sm:gap-7 sm:grid-cols-2 lg:grid-cols-3">
-          {PROJECTS.map((project, index) => (<ProjectCard key={project.title} p={project} index={index} />))}
-        </div>
-      </div>
-    </Section>
-  );
-}
-*/
-function ProjectCard({ p, index }) {
-  const visibleElements = useIntersectionObserver();
-  const isVisible = visibleElements.has("projects");
-
-  const inner = (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 h-full flex flex-col overflow-hidden">
-      <div className="relative h-44 sm:h-48 overflow-hidden shrink-0">
-        <img
-          src={p.img}
-          alt={p.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        {p.repo && (
-          <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <ExternalLink size={22} className="text-white" />
-          </div>
-        )}
-      </div>
-      <div className="p-5 sm:p-6 flex-1 flex flex-col gap-3">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors leading-tight">
-            {p.title}
-          </h3>
-          <span className="text-xs text-slate-400 flex items-center gap-1 shrink-0 mt-0.5">
-            <Calendar size={11} /> {p.date}
-          </span>
-        </div>
-        <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed flex-1">
-          {p.description}
-        </p>
-        <div className="flex flex-wrap gap-1.5">
-          {p.stack.map(tech => <Tech key={tech} label={tech} />)}
-        </div>
-      </div>
-    </div>
-  );
-
-  const classes = `group block transition-all duration-700 ${
-    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-  }`;
-  const delay = { transitionDelay: `${index * 80}ms` };
-
-  return p.repo ? (
-    <a href={p.repo} target="_blank" rel="noreferrer" className={classes} style={delay}>
-      {inner}
-    </a>
-  ) : (
-    <div className={classes} style={delay}>{inner}</div>
-  );
+function classNames(...values) {
+  return values.filter(Boolean).join(" ");
 }
 
-function ProjectsSection() {
-  const visibleElements = useIntersectionObserver();
-  const isVisible = visibleElements.has("projects");
+const ROUTES = {
+  home: "",
+  search: "search",
+  profile: "profile",
+  education: "education",
+  experience: "experience",
+  projects: "projects",
+  skills: "skills",
+  resume: "resume",
+  contact: "contact",
+  map: "map",
+  snake: "snake",
+  rbc: "experience/rbc",
+  "redbrick-paved": "experience/redbrick-paved",
+  paved: "experience/redbrick-paved",
+  mothertongue: "experience/mothertongue",
+};
 
-  return (
-    <Section
-      id="projects"
-      className="bg-white dark:bg-slate-950"
-    >
-      <div className="w-full">
-        <div
-          className={`text-center mb-12 sm:mb-16 transition-all duration-1000 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
-          <p className="text-xs font-semibold tracking-widest text-teal-600 uppercase mb-3">Work</p>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-4">
-            Featured{" "}
-            <span className="text-teal-600">Projects</span>
-          </h2>
-          <p className="text-lg sm:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
-            A showcase of my technical work spanning various domains and technologies
-          </p>
-        </div>
-        <div className="grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {PROJECTS.map((project, index) => (
-            <ProjectCard key={project.title} p={project} index={index} />
-          ))}
-        </div>
-      </div>
-    </Section>
-  );
+function routeForPage(page) {
+  return `#/${ROUTES[page] ?? page}`;
 }
 
-// ─────────────────────────────────────────────
-// EXPERIENCE SECTION (v1 — bold purple/pink, commented out)
-// ─────────────────────────────────────────────
-/* v1 ExperienceCard
-function ExperienceCard({ e, index, isLast }) {
-  const visibleElements = useIntersectionObserver();
-  const isVisible = visibleElements.has("experience");
-
-  return (
-    <div
-      className={`relative transition-all duration-700 ${
-        isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
-      }`}
-      style={{ transitionDelay: `${index * 200}ms` }}
-    >
-      {!isLast && (
-        <div className="absolute left-[13px] top-14 w-0.5 h-full bg-gradient-to-b from-purple-500 to-pink-500 opacity-50" />
-      )}
-      <div className="absolute left-0 top-5 w-7 h-7 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-lg ring-4 ring-white dark:ring-slate-950 flex items-center justify-center z-10">
-        <Briefcase size={12} className="text-white" />
-      </div>
-
-      <div className="ml-12 sm:ml-16 group">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-purple-50/30 to-white dark:from-slate-900 dark:via-purple-950/30 dark:to-slate-900 border border-slate-200/80 dark:border-slate-700/80 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:scale-[1.01]">
-          <div className="p-5 sm:p-8">
-            <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-5">
-              <div className="relative shrink-0">
-                <div className="absolute -inset-2 bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <img
-                  src={e.logo}
-                  alt={`${e.company} logo`}
-                  className="relative w-12 h-12 sm:w-16 sm:h-16 object-contain rounded-xl bg-white dark:bg-slate-800 p-2 ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm group-hover:scale-110 transition-transform duration-300"
-                />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                  {e.company}
-                </h3>
-                <p className="text-base sm:text-lg font-medium text-slate-600 dark:text-slate-300 mb-1">
-                  {e.role}
-                </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2 flex-wrap">
-                  <Calendar size={13} /> {e.timeframe}
-                  {e.incoming && (
-                    <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400">
-                      Upcoming
-                    </span>
-                  )}
-                </p>
-              </div>
-            </div>
-            {e.summary && (
-              <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed mb-5">
-                {e.summary}
-              </p>
-            )}
-            {e.tags?.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {e.tags.map(tag => <Tech key={tag} label={tag} />)}
-              </div>
-            )}
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-transparent to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-        </div>
-      </div>
-    </div>
-  );
+function pageFromHash(hash) {
+  const route = String(hash || "")
+    .replace(/^#\/?/, "")
+    .split("?")[0];
+  if (!route) return "home";
+  if (route === "paved") return "redbrick-paved";
+  if (route === "experience/rbc") return "rbc";
+  if (route === "experience/redbrick-paved") return "redbrick-paved";
+  if (route === "experience/mothertongue") return "mothertongue";
+  return Object.entries(ROUTES).find(([, value]) => value === route)?.[0] ?? route;
 }
 
-function ExperienceSection() {
-  const visibleElements = useIntersectionObserver();
-  const isVisible = visibleElements.has("experience");
-
-  return (
-    <Section
-      id="experience"
-      className="bg-gradient-to-br from-purple-50 via-slate-50 to-pink-50 dark:from-purple-950/20 dark:via-slate-900 dark:to-pink-950/20"
-    >
-      <div className="w-full">
-        <div
-          className={`text-center mb-12 sm:mb-16 transition-all duration-1000 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-4">
-            Professional{" "}
-            <span className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
-              Experience
-            </span>
-          </h2>
-          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            My journey through various roles in technology and development
-          </p>
-        </div>
-        <div className="relative max-w-4xl mx-auto space-y-10 sm:space-y-12">
-          {EXPERIENCE.map((exp, index) => (
-            <ExperienceCard
-              key={`${exp.company}-${exp.role}`}
-              e={exp}
-              index={index}
-              isLast={index === EXPERIENCE.length - 1}
-            />
-          ))}
-        </div>
-      </div>
-    </Section>
-  );
-}
-*/
-
-// ─────────────────────────────────────────────
-// EXPERIENCE SECTION (v2 — professional / clean)
-// ─────────────────────────────────────────────
-function ExperienceCard({ e, index, isLast }) {
-  const visibleElements = useIntersectionObserver();
-  const isVisible = visibleElements.has("experience");
-
-  return (
-    <div
-      className={`relative transition-all duration-700 ${
-        isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"
-      }`}
-      style={{ transitionDelay: `${index * 150}ms` }}
-    >
-      {!isLast && (
-        <div className="absolute left-[13px] top-14 w-px h-full bg-slate-200 dark:bg-slate-700" />
-      )}
-      <div className="absolute left-0 top-5 w-7 h-7 bg-white dark:bg-slate-900 rounded-full border-2 border-teal-500 shadow-sm flex items-center justify-center z-10">
-        <div className="w-2.5 h-2.5 bg-teal-500 rounded-full" />
-      </div>
-
-      <div className="ml-12 sm:ml-16">
-        <div className="relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
-          <div className="absolute left-0 top-0 bottom-0 w-1 bg-teal-500 rounded-l-2xl" />
-          <div className="pl-6 pr-5 sm:pr-8 py-5 sm:py-6">
-            <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5 mb-4">
-              <img
-                src={e.logo}
-                alt={`${e.company} logo`}
-                className="w-11 h-11 sm:w-14 sm:h-14 object-contain rounded-xl bg-slate-50 dark:bg-slate-800 p-2 border border-slate-100 dark:border-slate-700 shrink-0"
-              />
-              <div className="flex-1 min-w-0">
-                <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">
-                  {e.company}
-                </h3>
-                <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mb-1.5">
-                  {e.role}
-                </p>
-                <p className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1.5 flex-wrap">
-                  <Calendar size={11} /> {e.timeframe}
-                  {e.incoming && (
-                    <span className="px-2 py-0.5 text-xs font-medium rounded-md bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800">
-                      Upcoming
-                    </span>
-                  )}
-                </p>
-              </div>
-            </div>
-            {e.summary && (
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
-                {e.summary}
-              </p>
-            )}
-            {e.tags?.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {e.tags.map(tag => (
-                  <span key={tag} className="px-2.5 py-0.5 text-xs font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
 }
 
-function ExperienceSection() {
-  const visibleElements = useIntersectionObserver();
-  const isVisible = visibleElements.has("experience");
-
-  return (
-    <Section
-      id="experience"
-      className="bg-slate-50 dark:bg-slate-950"
-    >
-      <div className="w-full">
-        <div
-          className={`text-center mb-12 sm:mb-16 transition-all duration-1000 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
-          <p className="text-xs font-semibold tracking-widest text-teal-600 uppercase mb-3">Career</p>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-4">
-            Professional{" "}
-            <span className="text-teal-600">
-              Experience
-            </span>
-          </h2>
-          <p className="text-lg sm:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
-            My journey through various roles in technology and development
-          </p>
-        </div>
-        <div className="relative max-w-4xl mx-auto space-y-8 sm:space-y-10">
-          {EXPERIENCE.map((exp, index) => (
-            <ExperienceCard
-              key={`${exp.company}-${exp.role}`}
-              e={exp}
-              index={index}
-              isLast={index === EXPERIENCE.length - 1}
-            />
-          ))}
-        </div>
-      </div>
-    </Section>
-  );
+function wrapValue(value, max) {
+  if (!max) return value;
+  return ((value % max) + max) % max;
 }
 
-// ─────────────────────────────────────────────
-// CONTACT SECTION
-// ─────────────────────────────────────────────
-/* v1 ContactSection
-function ContactSection() {
-  const visibleElements = useIntersectionObserver();
-  const isVisible = visibleElements.has("contact");
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const subject = encodeURIComponent(`Portfolio Contact from ${form.name}`);
-    const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`);
-    window.location.href = `mailto:sahirsood@gmail.com?subject=${subject}&body=${body}`;
+function projectLatLng(lat, lng, zoom) {
+  const scale = TILE_SIZE * 2 ** zoom;
+  const sinLat = Math.sin((clamp(lat, -85.0511, 85.0511) * Math.PI) / 180);
+  return {
+    x: ((lng + 180) / 360) * scale,
+    y: (0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI)) * scale,
   };
-  return (
-    <Section id="contact" className="bg-gradient-to-br from-slate-50 via-blue-50/20 to-purple-50/20 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20">
-      <div className={`w-full max-w-2xl mx-auto transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
-        <div className="text-center mb-10">
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-4">Get In <span className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">Touch</span></h2>
-          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400">Always excited to discuss new opportunities and interesting projects.</p>
-        </div>
-        <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl p-6 sm:p-10">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="grid sm:grid-cols-2 gap-5">
-              <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Name</label><input type="text" required placeholder="Your name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" /></div>
-              <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label><input type="email" required placeholder="your@email.com" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" /></div>
-            </div>
-            <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Message</label><textarea required rows={5} placeholder="Tell me about your project or opportunity..." value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all resize-none text-sm" /></div>
-            <button type="submit" className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-2xl shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-300"><Send size={18} />Send Message</button>
-          </form>
-        </div>
-      </div>
-    </Section>
-  );
-}
-*/
-function ContactSection() {
-  const visibleElements = useIntersectionObserver();
-  const isVisible = visibleElements.has("contact");
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const subject = encodeURIComponent(`Portfolio Contact from ${form.name}`);
-    const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`);
-    window.location.href = `mailto:sahirsood@gmail.com?subject=${subject}&body=${body}`;
-  };
-
-  const inputClass = "w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all text-sm";
-
-  return (
-    <Section
-      id="contact"
-      className="bg-slate-50 dark:bg-slate-900"
-    >
-      <div
-        className={`w-full max-w-2xl mx-auto transition-all duration-1000 ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-        }`}
-      >
-        <div className="text-center mb-10">
-          <p className="text-xs font-semibold tracking-widest text-teal-600 uppercase mb-3">Contact</p>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-4">
-            Get In{" "}
-            <span className="text-teal-600">Touch</span>
-          </h2>
-          <p className="text-lg sm:text-xl text-slate-500 dark:text-slate-400">
-            Always excited to discuss new opportunities and interesting projects.
-          </p>
-        </div>
-
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 sm:p-10">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="grid sm:grid-cols-2 gap-5">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Name</label>
-                <input type="text" required placeholder="Your name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className={inputClass} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
-                <input type="email" required placeholder="your@email.com" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className={inputClass} />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Message</label>
-              <textarea required rows={5} placeholder="Tell me about your project or opportunity..." value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} className={`${inputClass} resize-none`} />
-            </div>
-            <button
-              type="submit"
-              className="w-full flex items-center justify-center gap-2 px-8 py-3.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg shadow-sm hover:-translate-y-0.5 transition-all duration-200"
-            >
-              <Send size={16} />
-              Send Message
-            </button>
-          </form>
-        </div>
-      </div>
-    </Section>
-  );
 }
 
-// ─────────────────────────────────────────────
-// FOOTER
-// ─────────────────────────────────────────────
-/* v1 Footer
-function Footer() {
-  return (
-    <footer className="bg-slate-900 text-white py-12 sm:py-16">
-      <Container>
-        <div className="text-center space-y-6 sm:space-y-8">
-          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-            {HOT_LINKS.map(({ label, href, icon: Icon }) => (
-              <a key={label} href={href} target="_blank" rel="noreferrer" className="group flex flex-col items-center gap-2 p-4 sm:p-5 rounded-2xl bg-slate-800 hover:bg-slate-700 transition-all duration-300 hover:scale-105 hover:-translate-y-1 min-w-[80px]">
-                <Icon size={22} className="group-hover:scale-110 transition-transform text-slate-300 group-hover:text-white" />
-                <span className="text-xs font-medium text-slate-400 group-hover:text-white transition-colors text-center leading-tight">{label}</span>
-              </a>
-            ))}
-          </div>
-          <div className="pt-6 border-t border-slate-800">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-              <p className="text-slate-400 text-sm">© {new Date().getFullYear()} Sahir Sood. Crafted with passion.</p>
-              <a href="https://github.com/SahirSood/portfolio" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors hover:text-purple-400"><Github size={16} />View Source</a>
-            </div>
-          </div>
-        </div>
-      </Container>
-    </footer>
-  );
-}
-*/
-function Footer() {
-  return (
-    <footer className="bg-slate-950 border-t border-slate-800 text-white py-10 sm:py-14">
-      <Container>
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div>
-            <p className="text-base font-semibold text-white">
-              Sahir<span className="text-teal-500"> Sood</span>
-            </p>
-            <p className="text-sm text-slate-500 mt-0.5">
-              © {new Date().getFullYear()} All rights reserved.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {HOT_LINKS.map(({ label, href, icon: Icon }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                title={label}
-                className="p-2.5 rounded-lg text-slate-400 hover:text-teal-400 hover:bg-slate-800 transition-colors duration-200"
-              >
-                <Icon size={18} />
-              </a>
-            ))}
-            <a
-              href="https://github.com/SahirSood/portfolio"
-              target="_blank"
-              rel="noreferrer"
-              className="ml-2 flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-700 hover:border-teal-600 text-slate-400 hover:text-teal-400 text-sm font-medium transition-colors duration-200"
-            >
-              <Github size={15} />
-              Source
-            </a>
-          </div>
-        </div>
-      </Container>
-    </footer>
-  );
+function unprojectPoint(x, y, zoom) {
+  const scale = TILE_SIZE * 2 ** zoom;
+  const normalizedX = wrapValue(x, scale);
+  const lng = (normalizedX / scale) * 360 - 180;
+  const n = Math.PI - (2 * Math.PI * y) / scale;
+  const lat = (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
+  return { lat, lng };
 }
 
-// ─────────────────────────────────────────────
-// MAIN APP
-// ─────────────────────────────────────────────
-export default function App() {
+function nearestWrappedLeft(projectedX, viewportLeft, viewportWidth, worldSize) {
+  if (!viewportWidth || !worldSize) return projectedX - viewportLeft;
+  const viewportCenter = viewportLeft + viewportWidth / 2;
+  const wrappedX = projectedX + Math.round((viewportCenter - projectedX) / worldSize) * worldSize;
+  return wrappedX - viewportLeft;
+}
+
+function getCountryCenter(country) {
+  const count = country.places.length || 1;
+  const totals = country.places.reduce(
+    (sum, place) => ({
+      lat: sum.lat + place.lat,
+      lng: sum.lng + place.lng,
+    }),
+    { lat: 0, lng: 0 },
+  );
+
+  return { lat: totals.lat / count, lng: totals.lng / count };
+}
+
+function useElementSize() {
+  const ref = useRef(null);
+  const [size, setSize] = useState({ width: 720, height: 430 });
+
   useEffect(() => {
-    document.documentElement.style.scrollBehavior = "smooth";
-    return () => { document.documentElement.style.scrollBehavior = "auto"; };
+    if (!ref.current) return undefined;
+    const update = () => {
+      const rect = ref.current.getBoundingClientRect();
+      setSize({ width: rect.width, height: rect.height });
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(ref.current);
+    return () => observer.disconnect();
   }, []);
 
+  return [ref, size];
+}
+
+function ProfilePicker({ onChoose }) {
   return (
-    <div className="min-h-screen bg-white text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100 overflow-x-hidden">
-      <Header />
-      <main>
-        <HeroSection />
-        <SkillsSection />
-        <ExperienceSection />
-        <ProjectsSection />
-        <ContactSection />
-      </main>
-      <Footer />
+    <main className="min-h-screen bg-white text-neutral-900">
+      <div className="flex min-h-screen flex-col overflow-hidden border border-neutral-300 bg-white shadow-2xl">
+        <div className="flex h-9 items-center justify-between border-b border-neutral-200 bg-neutral-50 px-3 text-sm">
+          <div className="flex items-center gap-2">
+            <span className="grid size-5 place-items-center rounded-full bg-gradient-to-br from-blue-500 via-red-500 to-yellow-400 text-[10px] font-black text-white">
+              S
+            </span>
+            <span>Sahir Chrome</span>
+          </div>
+          <div className="flex items-center gap-4 text-neutral-700">
+            <span className="h-px w-3 bg-neutral-700" />
+            <span className="size-3 border border-neutral-700" />
+            <X size={16} />
+          </div>
+        </div>
+
+        <section className="relative grid flex-1 place-items-center overflow-hidden px-5 py-10">
+          <DecorativeShapes />
+          <div className="relative z-10 w-full max-w-4xl text-center">
+            <div className="mx-auto grid size-14 place-items-center rounded-full bg-gradient-to-br from-blue-500 via-emerald-500 to-yellow-400 text-xl font-black text-white shadow-lg">
+              S
+            </div>
+            <h1 className="mt-7 text-3xl font-normal tracking-tight text-neutral-900 md:text-4xl">Who's viewing Sahir?</h1>
+            <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-neutral-600">
+              Pick a browser profile. Recruiter is the fastest path, Builder has technical depth, and Explorer keeps the
+              fun parts.
+            </p>
+
+            <div className="mx-auto mt-12 grid max-w-3xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {PROFILES.map((profile) => (
+                <button
+                  key={profile.id}
+                  type="button"
+                  onClick={() => onChoose(profile)}
+                  className="group relative rounded-lg bg-[#f8fafd] px-5 py-6 text-center transition hover:-translate-y-1 hover:bg-[#f1f5fb] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <MoreVertical className="absolute right-3 top-3 text-neutral-500" size={18} />
+                  <div
+                    className={classNames(
+                      "mx-auto grid size-20 place-items-center overflow-hidden rounded-full text-4xl font-medium text-white shadow-sm",
+                      profile.bg,
+                    )}
+                  >
+                    {profile.avatar === "photo" ? (
+                      <img src={PROFILE_IMG} alt="Sahir Sood" className="size-full object-cover" />
+                    ) : (
+                      profile.avatar
+                    )}
+                  </div>
+                  <p className="mt-5 text-sm font-medium text-neutral-900">{profile.name}</p>
+                  <p className="mt-1 text-xs text-neutral-500">{profile.owner}</p>
+                  <p className="mt-4 hidden text-xs leading-5 text-neutral-500 group-hover:block">{profile.message}</p>
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-12 flex flex-wrap items-center justify-between gap-4 text-sm">
+              <button
+                type="button"
+                onClick={() =>
+                  onChoose({
+                    id: "guest",
+                    name: "Guest",
+                    owner: "Quick visit",
+                    avatar: "G",
+                    accent: "#5f6368",
+                    bg: "bg-neutral-500",
+                    icon: ContactRound,
+                    message: "A short path to contact, links, and headline info.",
+                    startQuery: "How can I contact Sahir?",
+                  })
+                }
+                className="inline-flex items-center gap-2 rounded-full border border-blue-200 px-5 py-2.5 font-medium text-blue-700 transition hover:bg-blue-50"
+              >
+                <UserRound size={17} />
+                Guest mode
+              </button>
+              <label className="inline-flex items-center gap-2 text-neutral-600">
+                <input type="checkbox" defaultChecked className="size-4 accent-blue-600" />
+                Show on startup
+              </label>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}
+
+function DecorativeShapes() {
+  return (
+    <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
+      <span className="absolute left-[-18px] top-[28%] h-12 w-28 rounded-full bg-blue-500/90" />
+      <span className="absolute right-[-20px] top-[18%] h-16 w-28 rounded-l-2xl bg-yellow-400" />
+      <span className="absolute left-[13%] top-[18%] h-6 w-6 rounded bg-neutral-200" />
+      <span className="absolute left-[3%] top-[43%] size-7 rounded-full bg-neutral-200" />
+      <span className="absolute right-[4%] top-[44%] size-6 rounded-lg bg-neutral-200" />
+      <span className="absolute right-[4%] top-[36%] h-7 w-14 rounded-full bg-green-500" />
+      <span className="absolute right-[14%] top-[13%] h-0 w-0 border-y-[14px] border-r-[24px] border-y-transparent border-r-neutral-200" />
+      <span className="absolute left-[5%] top-[10%] h-6 w-12 bg-red-400 [clip-path:polygon(0_0,70%_0,100%_50%,70%_100%,0_100%,18%_50%)]" />
     </div>
   );
+}
+
+function BrowserPortfolio({ profile, onSwitchProfile }) {
+  const [page, setPage] = useState(() => {
+    const routed = pageFromHash(window.location.hash);
+    return routed === "home" && profile.id === "sahir" ? "profile" : routed;
+  });
+  const [favoritesOpen, setFavoritesOpen] = useState(false);
+  const [query, setQuery] = useState(profile.startQuery ?? "");
+  const [searchTerm, setSearchTerm] = useState(profile.startQuery ?? "");
+  const [copied, setCopied] = useState(false);
+  const contentRef = useRef(null);
+
+  const address = useMemo(() => {
+    if (page === "search") return `https://www.google.com/search?q=${encodeURIComponent(searchTerm || query || "Sahir Sood")}`;
+    const path = page === "home" ? "newtab" : page;
+    return `https://sahir.dev/${path}?profile=${profile.id}`;
+  }, [page, profile.id, query, searchTerm]);
+
+  const runSearch = useCallback(
+    (value) => {
+      const next = String(value || query || "Sahir Sood").trim();
+      setQuery(next);
+      setSearchTerm(next);
+      setPage("search");
+      setFavoritesOpen(false);
+      window.history.pushState(null, "", `${routeForPage("search")}?q=${encodeURIComponent(next)}`);
+    },
+    [query],
+  );
+
+  const navigate = (action) => {
+    if (action === "ask") {
+      runSearch("Why should we interview Sahir?");
+      return;
+    }
+    const next = action === "paved" ? "redbrick-paved" : action;
+    setPage(next);
+    setFavoritesOpen(false);
+    window.history.pushState(null, "", routeForPage(next));
+  };
+
+  const submitSearch = (event) => {
+    event.preventDefault();
+    runSearch(query);
+  };
+
+  useEffect(() => {
+    contentRef.current?.scrollTo({ top: 0, left: 0 });
+  }, [page, searchTerm]);
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setPage(pageFromHash(window.location.hash));
+    };
+    window.addEventListener("popstate", handleRouteChange);
+    window.addEventListener("hashchange", handleRouteChange);
+    return () => {
+      window.removeEventListener("popstate", handleRouteChange);
+      window.removeEventListener("hashchange", handleRouteChange);
+    };
+  }, []);
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText("sahirsood@gmail.com");
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch {
+      setCopied(false);
+    }
+  };
+  const isGoogleSurface = ["home", "search", "experience", "projects"].includes(page);
+
+  return (
+    <main className="min-h-screen bg-[#dfe3ea] text-[#202124]">
+      <div className="mx-auto flex min-h-screen max-w-[1920px] flex-col overflow-hidden bg-white shadow-2xl">
+        <ChromeFrame
+          profile={profile}
+          page={page}
+          address={address}
+          onNavigate={navigate}
+          onSwitchProfile={onSwitchProfile}
+          onToggleFavorites={() => setFavoritesOpen((value) => !value)}
+        />
+
+        <div className="relative flex flex-1 flex-col overflow-hidden bg-white">
+          {page === "home" && <HeaderLinks profile={profile} onNavigate={navigate} onToggleFavorites={() => setFavoritesOpen((value) => !value)} />}
+          <div ref={contentRef} className={classNames("flex-1 overflow-y-auto", isGoogleSurface ? "bg-white" : "bg-[#f8fafc]")}>
+            {page === "home" && (
+              <NewTabPage query={query} setQuery={setQuery} submitSearch={submitSearch} onNavigate={navigate} onSearch={runSearch} />
+            )}
+            {page === "search" && <SearchResultsPage query={searchTerm} onNavigate={navigate} />}
+            {page === "profile" && <ProfilePage onNavigate={navigate} />}
+            {page === "education" && <EducationPage />}
+            {page === "experience" && <ExperiencePage onNavigate={navigate} />}
+            {page === "projects" && <ProjectsPage />}
+            {page === "skills" && <SkillsPage />}
+            {page === "resume" && <ResumePage onNavigate={navigate} />}
+            {page === "contact" && <ContactPage copied={copied} onCopy={copyEmail} />}
+            {page === "map" && <MapPage />}
+            {page === "snake" && <SnakePage />}
+            {page === "rbc" && <SpotlightPage kind="rbc" />}
+            {page === "redbrick-paved" && <SpotlightPage kind="redbrick-paved" />}
+            {page === "mothertongue" && <SpotlightPage kind="mothertongue" />}
+          </div>
+
+          {favoritesOpen && <FavoritesPanel onNavigate={navigate} onClose={() => setFavoritesOpen(false)} />}
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function ChromeFrame({ profile, page, address, onNavigate, onSwitchProfile, onToggleFavorites }) {
+  const PageIcon = page === "contact" ? Mail : page === "snake" ? Gamepad2 : page === "map" ? Map : Search;
+
+  return (
+    <header className="select-none border-b border-[#d7dce3] bg-[#edf2fa]">
+      <div className="flex h-10 items-end gap-1 px-2 pt-2">
+        <button
+          type="button"
+          className="flex h-8 min-w-0 max-w-[270px] items-center gap-2 rounded-t-xl bg-white px-4 text-sm shadow-sm"
+        >
+          <PageIcon size={16} className="shrink-0 text-blue-600" />
+          <span className="truncate">{page === "home" ? "New Tab" : titleCase(page)}</span>
+          <X size={14} className="text-neutral-500" />
+        </button>
+        <button type="button" onClick={() => onNavigate("home")} className="grid size-8 place-items-center rounded-full text-neutral-600 hover:bg-black/5">
+          <Plus size={18} />
+        </button>
+        <div className="ml-auto flex h-8 items-center gap-4 px-3 text-neutral-700">
+          <span className="h-px w-3 bg-neutral-700" />
+          <span className="size-3 border border-neutral-700" />
+          <X size={16} />
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2 px-3 py-2">
+        <button type="button" onClick={() => onNavigate("home")} className="grid size-8 place-items-center rounded-full text-neutral-500 hover:bg-black/5">
+          <ArrowLeft size={18} />
+        </button>
+        <button type="button" className="grid size-8 place-items-center rounded-full text-neutral-500 hover:bg-black/5">
+          <ArrowRight size={18} />
+        </button>
+        <button
+          type="button"
+          onClick={() => onNavigate("home")}
+          className="grid size-8 place-items-center rounded-full text-neutral-600 hover:bg-black/5"
+        >
+          <RefreshCw size={16} />
+        </button>
+        <div className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-transparent bg-white px-4 shadow-sm focus-within:border-blue-500">
+          <Search size={17} className="shrink-0 text-blue-600" />
+          <span className="truncate text-sm text-neutral-700">{address}</span>
+          <Star size={17} className="ml-auto shrink-0 text-neutral-500" />
+        </div>
+        <button type="button" className="hidden rounded-full border border-blue-200 bg-white px-3 py-2 text-sm font-medium text-neutral-700 shadow-sm sm:inline-flex">
+          AI Mode
+        </button>
+        <button
+          type="button"
+          onClick={() => onNavigate("profile")}
+          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-neutral-700 shadow-sm hover:bg-blue-50 sm:h-9 sm:w-auto sm:gap-2 sm:px-3 sm:text-sm sm:font-medium"
+          aria-label="Open About page"
+        >
+          <UserRound size={17} />
+          <span className="hidden sm:inline">About</span>
+        </button>
+        <button type="button" onClick={onToggleFavorites} className="grid size-9 place-items-center rounded-full hover:bg-black/5">
+          <Grid3X3 size={19} />
+        </button>
+        <button
+          type="button"
+          onClick={onSwitchProfile}
+          className="grid size-9 place-items-center overflow-hidden rounded-full border-2"
+          style={{ borderColor: profile.accent }}
+          aria-label="Switch profile"
+        >
+          {profile.avatar === "photo" ? (
+            <img src={PROFILE_IMG} alt="Sahir Sood" className="size-full object-cover" />
+          ) : (
+            <span className={classNames("grid size-full place-items-center text-sm font-semibold text-white", profile.bg)}>
+              {profile.avatar}
+            </span>
+          )}
+        </button>
+        <MoreVertical size={19} className="text-neutral-600" />
+      </div>
+
+      <nav className="flex h-9 items-center gap-1 overflow-x-auto border-t border-[#d7dce3] bg-white px-3 text-sm">
+        {BOOKMARKS.map((bookmark) => {
+          const Icon = bookmark.icon;
+          if (bookmark.href) {
+            return (
+              <a
+                key={bookmark.label}
+                href={bookmark.href}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex shrink-0 items-center gap-2 rounded px-2 py-1.5 text-neutral-700 hover:bg-neutral-100"
+              >
+                <Icon size={16} />
+                {bookmark.label}
+              </a>
+            );
+          }
+          return (
+            <button
+              key={bookmark.label}
+              type="button"
+              onClick={() => onNavigate(bookmark.action)}
+              className="inline-flex shrink-0 items-center gap-2 rounded px-2 py-1.5 text-neutral-700 hover:bg-neutral-100"
+            >
+              <Icon size={16} />
+              {bookmark.label}
+            </button>
+          );
+        })}
+        <span className="ml-auto hidden shrink-0 items-center gap-2 border-l border-neutral-200 pl-3 text-neutral-700 lg:inline-flex">
+          <Folder size={16} />
+          All Bookmarks
+        </span>
+      </nav>
+    </header>
+  );
+}
+
+function HeaderLinks({ profile, onNavigate, onToggleFavorites }) {
+  return (
+    <div className="flex items-center justify-end gap-5 px-6 py-4 text-sm">
+      <button type="button" onClick={() => onNavigate("contact")} className="text-neutral-700 hover:underline">
+        Contact
+      </button>
+      <button type="button" onClick={() => onNavigate("projects")} className="text-neutral-700 hover:underline">
+        Projects
+      </button>
+      <button type="button" onClick={onToggleFavorites} className="grid size-10 place-items-center rounded-full hover:bg-neutral-100">
+        <Grid3X3 size={21} />
+      </button>
+      <button
+        type="button"
+        onClick={() => onNavigate("profile")}
+        className="grid size-10 place-items-center overflow-hidden rounded-full border-2"
+        style={{ borderColor: profile.accent }}
+      >
+        {profile.avatar === "photo" ? (
+          <img src={PROFILE_IMG} alt="Sahir Sood" className="size-full object-cover" />
+        ) : (
+          <span className={classNames("grid size-full place-items-center text-sm font-semibold text-white", profile.bg)}>
+            {profile.avatar}
+          </span>
+        )}
+      </button>
+    </div>
+  );
+}
+
+function NewTabPage({ query, setQuery, submitSearch, onNavigate, onSearch }) {
+  return (
+    <section className="mx-auto flex min-h-[calc(100vh-138px)] w-full max-w-5xl flex-col items-center px-5 pb-12 pt-14">
+      <SahirLogo />
+
+      <form
+        onSubmit={submitSearch}
+        className="mt-9 flex h-14 w-full max-w-3xl items-center gap-3 rounded-full border border-neutral-200 bg-white px-5 shadow-[0_2px_8px_rgba(60,64,67,0.18)] transition focus-within:border-transparent focus-within:shadow-[0_2px_12px_rgba(60,64,67,0.24)]"
+      >
+        <Plus size={22} className="shrink-0 text-neutral-700" />
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-neutral-400"
+          placeholder="Ask Sahir"
+        />
+        <Mic size={20} className="shrink-0 text-neutral-600" />
+        <button type="submit" className="shrink-0 rounded-full bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-200">
+          AI Mode
+        </button>
+      </form>
+
+      <div className="mt-5 flex max-w-3xl flex-wrap justify-center gap-2">
+        {QUESTION_BANK.map((question) => (
+          <button
+            key={question}
+            type="button"
+            onClick={() => onSearch(question)}
+            className="rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-sm text-neutral-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50"
+          >
+            {question}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-8 grid w-full max-w-3xl grid-cols-3 gap-y-6 sm:grid-cols-5 md:grid-cols-9">
+        {SHORTCUTS.map((shortcut) => (
+          <ShortcutButton key={shortcut.label} shortcut={shortcut} onNavigate={onNavigate} />
+        ))}
+      </div>
+
+      <ContinueTabs onNavigate={onNavigate} />
+    </section>
+  );
+}
+
+function SahirLogo() {
+  const letters = [
+    ["S", "text-blue-500"],
+    ["a", "text-red-500"],
+    ["h", "text-yellow-500"],
+    ["i", "text-blue-500"],
+    ["r", "text-emerald-500"],
+  ];
+  return (
+    <h1 className="text-6xl font-semibold tracking-tight sm:text-8xl" aria-label="Sahir">
+      {letters.map(([letter, color]) => (
+        <span key={letter} className={color}>
+          {letter}
+        </span>
+      ))}
+    </h1>
+  );
+}
+
+function ShortcutButton({ shortcut, onNavigate }) {
+  const Icon = shortcut.icon;
+  return (
+    <button
+      type="button"
+      onClick={() => onNavigate(shortcut.action)}
+      className="group flex flex-col items-center gap-2 rounded-2xl p-2 text-center transition hover:bg-neutral-100"
+    >
+      <span className={classNames("grid size-12 place-items-center rounded-full text-white shadow-sm", shortcut.color)}>
+        <Icon size={22} />
+      </span>
+      <span className="max-w-20 truncate text-xs text-neutral-800">{shortcut.label}</span>
+    </button>
+  );
+}
+
+function ContinueTabs({ onNavigate }) {
+  return (
+    <section className="mt-12 w-full max-w-3xl rounded-3xl bg-[#f1f3f4] p-3 shadow-sm">
+      <div className="flex items-center justify-between px-3 py-2">
+        <h2 className="text-sm font-medium text-neutral-800">Continue with these tabs</h2>
+        <MoreVertical size={18} className="text-neutral-600" />
+      </div>
+      <div className="space-y-2 rounded-2xl bg-white p-2">
+        {RECENT_TABS.map((tab) => {
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.title}
+              type="button"
+              onClick={() => onNavigate(tab.action)}
+              className="flex w-full items-center gap-3 rounded-xl p-2 text-left transition hover:bg-neutral-50"
+            >
+              <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-blue-50 text-blue-600">
+                <Icon size={19} />
+              </span>
+              <span className="min-w-0">
+                <span className="block truncate text-sm font-medium text-neutral-900">{tab.title}</span>
+                <span className="block truncate text-xs text-neutral-500">
+                  {tab.source} - {tab.visited}
+                </span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function FavoritesPanel({ onNavigate, onClose }) {
+  return (
+    <aside className="absolute right-4 top-4 z-40 w-[min(92vw,380px)] overflow-hidden rounded-[2rem] border border-blue-100 bg-[#eef4ff] p-2 shadow-2xl">
+      <div className="rounded-[1.6rem] bg-white p-5">
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-neutral-800">Your favorites</h2>
+          <div className="flex items-center gap-2">
+            <button type="button" className="grid size-11 place-items-center rounded-full bg-blue-100 text-neutral-700" aria-label="Customize favorites">
+              <Settings size={19} />
+            </button>
+            <button type="button" onClick={onClose} className="grid size-9 place-items-center rounded-full hover:bg-neutral-100">
+              <X size={17} />
+            </button>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-5">
+          {FAVORITES.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.label}
+                type="button"
+                onClick={() => onNavigate(item.action)}
+                className="group grid justify-items-center gap-2 rounded-2xl p-2 transition hover:bg-blue-50"
+              >
+                <span className={classNames("grid size-12 place-items-center rounded-2xl bg-neutral-50", item.color)}>
+                  <Icon size={26} />
+                </span>
+                <span className="max-w-24 truncate text-sm text-neutral-800">{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function SearchResultsPage({ query, onNavigate }) {
+  const answer = getAnswer(query);
+  const results = getSearchResults(query);
+
+  return (
+    <GoogleResultsShell query={query}>
+      <section className="grid gap-8 lg:grid-cols-[minmax(0,760px)_360px]">
+        <div>
+          <AiOverview title="AI Overview" body={answer} />
+          <div className="mt-8 space-y-8">
+            {results.map((result) => (
+              <SearchResult key={result.title} result={result} onNavigate={onNavigate} />
+            ))}
+          </div>
+        </div>
+        <KnowledgePanel onNavigate={onNavigate} />
+      </section>
+    </GoogleResultsShell>
+  );
+}
+
+function ExperiencePage({ onNavigate }) {
+  const results = EXPERIENCE.map((item) => ({
+    title: `${item.role} - ${item.company}`,
+    url: `${item.id ?? slugify(item.company)}.experience.sahir.dev`,
+    source: item.timeframe,
+    description: item.summary,
+    tags: item.tags,
+    image: item.logo,
+    action: item.id && EXPERIENCE_DETAILS[item.id] ? item.id : undefined,
+  }));
+
+  return (
+    <GoogleResultsShell query="experience">
+      <section className="grid gap-8 lg:grid-cols-[minmax(0,780px)_340px]">
+        <div>
+          <AiOverview
+            title="AI Overview"
+            body="Sahir's experience signal is practical and current: full stack work at RBC, RedBrick/Paved production engineering, MotherTongue MVP work, and contract full-stack dashboard work."
+          />
+          <div className="mt-8 space-y-8">
+            {results.map((result) => (
+              <SearchResult key={result.title} result={result} onNavigate={onNavigate} />
+            ))}
+          </div>
+        </div>
+        <SideCard title="Experience highlights">
+          <Metric label="Priority roles" value="3" />
+          <Metric label="Product domains" value="Ad-tech, AI, finance" />
+          <Metric label="Working style" value="Practical, team-first" />
+        </SideCard>
+      </section>
+    </GoogleResultsShell>
+  );
+}
+
+function ProjectsPage() {
+  const results = PROJECTS.map((project) => ({
+    title: project.title,
+    url: project.repo || `projects.sahir.dev/${slugify(project.title)}`,
+    source: `${project.type} - ${project.eyebrow}`,
+    description: `${project.description} ${project.signal}`,
+    tags: project.stack,
+    image: project.img,
+    href: project.repo,
+  }));
+
+  return (
+    <GoogleResultsShell query="projects">
+      <section className="grid gap-8 lg:grid-cols-[minmax(0,780px)_340px]">
+        <div>
+          <AiOverview
+            title="AI Overview"
+            body="Sahir's project history shows range: realtime mobile apps, AI music workflows, financial web features, Android maps, Rails planning tools, ML analysis, and early game builds."
+          />
+          <div className="mt-8 space-y-8">
+            {results.map((result) => (
+              <SearchResult key={result.title} result={result} />
+            ))}
+          </div>
+        </div>
+        <SideCard title="Project filters">
+          <div className="flex flex-wrap gap-2">
+            {["Full-stack", "Mobile", "AI", "Data", "Games", "Backend"].map((item) => (
+              <Chip key={item} tone="blue">
+                {item}
+              </Chip>
+            ))}
+          </div>
+          <div className="mt-5 overflow-hidden rounded-2xl border border-neutral-200">
+            {PROJECTS.slice(0, 4).map((project) => (
+              <div key={project.title} className="flex items-center gap-3 border-b border-neutral-100 p-3 last:border-b-0">
+                <img src={project.img} alt="" className="size-11 rounded-lg object-cover" />
+                <span className="text-sm font-medium">{project.title}</span>
+              </div>
+            ))}
+          </div>
+        </SideCard>
+      </section>
+    </GoogleResultsShell>
+  );
+}
+
+function GoogleResultsShell({ query, children }) {
+  return (
+    <section className="mx-auto w-full max-w-7xl px-5 pb-14 pt-0">
+      <div className="sticky top-0 z-20 border-b border-neutral-200 bg-white/95 py-4 backdrop-blur">
+        <div className="flex items-center gap-5">
+          <SahirMiniLogo />
+          <div className="flex h-12 min-w-0 max-w-3xl flex-1 items-center gap-3 rounded-full border border-neutral-200 bg-white px-5 shadow-sm">
+            <span className="min-w-0 flex-1 truncate text-base">{query}</span>
+            <X size={18} className="text-neutral-500" />
+            <span className="h-6 w-px bg-neutral-200" />
+            <Mic size={18} className="text-neutral-600" />
+            <Search size={19} className="text-blue-600" />
+          </div>
+        </div>
+        <div className="mt-3 flex gap-5 pl-0 text-sm text-neutral-600 sm:pl-24">
+          {["All", "Experience", "Projects", "Skills", "Contact"].map((tab, index) => (
+            <span key={tab} className={classNames(index === 0 && "border-b-2 border-blue-600 pb-2 text-blue-600")}>
+              {tab}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div className="pt-8">{children}</div>
+    </section>
+  );
+}
+
+function SahirMiniLogo() {
+  return (
+    <div className="hidden text-3xl font-semibold tracking-tight sm:block">
+      <span className="text-blue-500">S</span>
+      <span className="text-red-500">a</span>
+      <span className="text-yellow-500">h</span>
+      <span className="text-blue-500">i</span>
+      <span className="text-emerald-500">r</span>
+    </div>
+  );
+}
+
+function AiOverview({ title, body }) {
+  return (
+    <article className="rounded-[1.75rem] border border-blue-100 bg-blue-50/70 p-5 shadow-sm">
+      <div className="flex items-start gap-4">
+        <span className="grid size-10 shrink-0 place-items-center rounded-full bg-blue-600 text-white">
+          <Sparkles size={19} />
+        </span>
+        <div>
+          <p className="font-semibold text-blue-950">{title}</p>
+          <p className="mt-3 leading-7 text-neutral-700">{body}</p>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function SearchResult({ result, onNavigate }) {
+  const content = (
+    <>
+      <div className="flex items-start gap-4">
+        {result.image && (
+          <img src={result.image} alt="" className="mt-1 size-12 shrink-0 rounded-xl border border-neutral-200 object-cover" />
+        )}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-sm text-neutral-700">{result.url}</p>
+              <h2 className="mt-1 text-xl font-normal leading-7 text-[#1a0dab]">{result.title}</h2>
+            </div>
+            <MoreVertical size={18} className="shrink-0 text-neutral-500" />
+          </div>
+          <p className="mt-2 text-sm text-neutral-500">{result.source}</p>
+          <p className="mt-2 leading-7 text-neutral-700">{result.description}</p>
+          {result.tags && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {result.tags.slice(0, 8).map((tag) => (
+                <Chip key={tag}>{tag}</Chip>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+
+  if (result.href) {
+    return (
+      <a href={result.href} target="_blank" rel="noreferrer" className="block rounded-2xl p-2 transition hover:bg-neutral-50">
+        {content}
+      </a>
+    );
+  }
+
+  if (result.action && onNavigate) {
+    return (
+      <a
+        href={routeForPage(result.action)}
+        onClick={(event) => {
+          event.preventDefault();
+          onNavigate(result.action);
+        }}
+        className="block w-full rounded-2xl p-2 text-left transition hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return <article className="rounded-2xl p-2">{content}</article>;
+}
+
+function KnowledgePanel({ onNavigate }) {
+  return (
+    <aside className="rounded-[1.75rem] border border-neutral-200 bg-white p-5 shadow-sm">
+      <div className="flex items-center gap-4">
+        <img src={PROFILE_IMG} alt="Sahir Sood" className="size-20 rounded-full object-cover shadow-sm" />
+        <div>
+          <h2 className="text-2xl font-semibold">Sahir Sood</h2>
+          <p className="text-neutral-600">Software Developer</p>
+        </div>
+      </div>
+      <p className="mt-5 leading-7 text-neutral-700">
+        SFU CS + Finance student in Vancouver building practical software across web, mobile, AI, backend, and data.
+      </p>
+      <div className="mt-5 grid grid-cols-2 gap-3">
+        <button type="button" onClick={() => onNavigate("resume")} className="rounded-2xl bg-neutral-100 p-3 text-left text-sm font-medium hover:bg-blue-50">
+          Resume
+        </button>
+        <button type="button" onClick={() => onNavigate("contact")} className="rounded-2xl bg-neutral-100 p-3 text-left text-sm font-medium hover:bg-blue-50">
+          Contact
+        </button>
+        <button type="button" onClick={() => onNavigate("map")} className="rounded-2xl bg-neutral-100 p-3 text-left text-sm font-medium hover:bg-blue-50">
+          Map
+        </button>
+        <button type="button" onClick={() => onNavigate("snake")} className="rounded-2xl bg-neutral-100 p-3 text-left text-sm font-medium hover:bg-blue-50">
+          Snake
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+function SideCard({ title, children }) {
+  return (
+    <aside className="h-fit rounded-[1.75rem] border border-neutral-200 bg-white p-5 shadow-sm">
+      <h2 className="text-xl font-semibold">{title}</h2>
+      <div className="mt-5">{children}</div>
+    </aside>
+  );
+}
+
+function Metric({ label, value }) {
+  return (
+    <div className="border-b border-neutral-100 py-3 last:border-b-0">
+      <p className="text-sm text-neutral-500">{label}</p>
+      <p className="mt-1 font-medium text-neutral-900">{value}</p>
+    </div>
+  );
+}
+
+function InfoCard({ title, body }) {
+  return (
+    <div className="h-full rounded-2xl bg-neutral-50 p-4">
+      <h3 className="font-medium">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-neutral-600">{body}</p>
+    </div>
+  );
+}
+
+function ProfilePage({ onNavigate }) {
+  return (
+    <PageShell eyebrow="Account" title="Sahir Sood" description="Software developer, SFU CS + Finance student, study-abroad explorer, and practical full-stack builder.">
+      <section className="grid items-stretch gap-6 lg:grid-cols-[320px_1fr]">
+        <div className="h-full rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <img src={PROFILE_IMG} alt="Sahir Sood" className="mx-auto size-44 rounded-full object-cover shadow-lg" />
+          <div className="mt-6 text-center">
+            <h2 className="text-2xl font-semibold">Sahir Sood</h2>
+            <p className="mt-2 text-neutral-600">Software Developer</p>
+            <p className="mt-1 text-sm text-neutral-500">Vancouver, BC</p>
+          </div>
+          <div className="mt-6 grid gap-2">
+            {HOT_LINKS.map((link) => {
+              const Icon = link.icon;
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target={link.href.startsWith("mailto:") ? undefined : "_blank"}
+                  rel="noreferrer"
+                  className="flex items-center gap-3 rounded-2xl border border-neutral-200 px-4 py-3 text-sm transition hover:bg-neutral-50"
+                >
+                  <Icon size={18} />
+                  <span className="min-w-0 truncate">{link.detail}</span>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="space-y-5">
+          <div className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
+            <h3 className="text-xl font-semibold">About me</h3>
+            <div className="mt-4 space-y-4 leading-7 text-neutral-700">
+              <p>
+                An Intro to CS elective shifted my path from curiosity into a serious love for solving problems. That led
+                me into SFU's CS and Finance path.
+              </p>
+              <p>
+                I like backend systems, data-driven development, and projects where teamwork and adaptability matter as
+                much as technical execution.
+              </p>
+              <p>
+                Outside code, I keep balance through basketball, snowboarding, travel, study abroad memories, and getting outdoors.
+              </p>
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {[
+              ["Current", "RBC"],
+              ["Education", "SFU CS + Finance"],
+              ["Study abroad", "Leeds, United Kingdom"],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">{label}</p>
+                <p className="mt-3 font-medium text-neutral-900">{value}</p>
+              </div>
+            ))}
+          </div>
+          <div className="grid items-stretch gap-5 xl:grid-cols-[1fr_0.9fr]">
+            <MiniMapCard onNavigate={onNavigate} />
+            <ExtraCurricularCard />
+          </div>
+        </div>
+      </section>
+    </PageShell>
+  );
+}
+
+function MiniMapCard({ onNavigate }) {
+  const featured = [
+    { name: "Vancouver", lat: 49.2827, lng: -123.1207 },
+    { name: "Leeds", lat: 53.8008, lng: -1.5491 },
+    { name: "Paris", lat: 48.8566, lng: 2.3522 },
+    { name: "New Delhi", lat: 28.6139, lng: 77.209 },
+    { name: "Hong Kong", lat: 22.3193, lng: 114.1694 },
+  ];
+  const zoom = 1;
+  const [previewRef, previewSize] = useElementSize();
+  const size = { width: previewSize.width || 520, height: previewSize.height || 288 };
+  const centerPx = projectLatLng(25, 0, zoom);
+  const worldSize = TILE_SIZE * 2 ** zoom;
+  const viewportLeft = centerPx.x - size.width / 2;
+  const viewportTop = centerPx.y - size.height / 2;
+  const tileCount = 2 ** zoom;
+  const tiles = [];
+
+  for (let x = Math.floor(viewportLeft / TILE_SIZE); x <= Math.floor((viewportLeft + size.width) / TILE_SIZE); x += 1) {
+    for (let y = Math.floor(viewportTop / TILE_SIZE); y <= Math.floor((viewportTop + size.height) / TILE_SIZE); y += 1) {
+      if (y >= 0 && y < tileCount) {
+        const wrappedX = wrapValue(x, tileCount);
+        tiles.push({
+          key: `preview-${zoom}-${x}-${y}`,
+          url: `https://tile.openstreetmap.org/${zoom}/${wrappedX}/${y}.png`,
+          left: x * TILE_SIZE - viewportLeft,
+          top: y * TILE_SIZE - viewportTop,
+        });
+      }
+    }
+  }
+
+  return (
+    <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">
+      <div ref={previewRef} className="relative h-72 overflow-hidden bg-[#cfe8f7]">
+        {tiles.map((tile) => (
+          <img
+            key={tile.key}
+            src={tile.url}
+            alt=""
+            draggable="false"
+            className="absolute max-w-none select-none"
+            style={{ left: tile.left, top: tile.top, width: TILE_SIZE, height: TILE_SIZE }}
+          />
+        ))}
+        <div className="pointer-events-none absolute inset-0 bg-white/10" />
+        {featured.map((place) => {
+          const projected = projectLatLng(place.lat, place.lng, zoom);
+          const left = nearestWrappedLeft(projected.x, viewportLeft, size.width, worldSize);
+          const top = projected.y - viewportTop;
+          const visible = left > -64 && left < size.width + 64 && top > -40 && top < size.height + 40;
+          if (!visible) return null;
+
+          return (
+            <span
+              key={place.name}
+              className="absolute z-10 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full bg-white px-2 py-1 text-xs font-medium shadow"
+              style={{ left, top }}
+            >
+              <span className="size-2 rounded-full bg-blue-600" />
+              {place.name}
+            </span>
+          );
+        })}
+        <span className="absolute bottom-3 left-3 z-10 rounded bg-white/90 px-2 py-1 text-[10px] font-semibold text-neutral-700 shadow">
+          OpenStreetMap
+        </span>
+      </div>
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-semibold">Where I have been</h3>
+        <p className="mt-2 text-sm leading-6 text-neutral-600">A quick personal map preview. The full version uses real OpenStreetMap tiles and clickable notes.</p>
+        <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+          <Metric label="Countries/regions" value={TRAVEL_PLACES.length} />
+          <Metric label="Logged places" value={TRAVEL_PLACES.reduce((total, country) => total + country.places.length, 0)} />
+        </div>
+        <button type="button" onClick={() => onNavigate("map")} className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white">
+          Open map
+          <ChevronRight size={16} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ExtraCurricularCard() {
+  const [active, setActive] = useState(EXTRACURRICULARS[0]);
+
+  return (
+    <div className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-xl font-semibold">Extracurriculars</h3>
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        {EXTRACURRICULARS.map((item) => (
+          <button
+            key={item.title}
+            type="button"
+            onClick={() => setActive(item)}
+            className={classNames(
+              "rounded-2xl border p-3 text-left text-sm font-medium transition",
+              active.title === item.title ? item.color : "border-neutral-100 bg-neutral-50 text-neutral-700 hover:bg-blue-50",
+            )}
+          >
+            {item.title}
+          </button>
+        ))}
+      </div>
+      <div className={classNames("mt-4 rounded-2xl border p-4", active.color)}>
+        <p className="font-semibold">{active.title}</p>
+        <p className="mt-2 text-sm leading-6">{active.detail}</p>
+      </div>
+      <div className="mt-4 flex-1 rounded-2xl bg-neutral-50 p-4">
+        <div className="space-y-3">
+          {active.points.map((point) => (
+            <p key={point} className="text-sm leading-6 text-neutral-700">
+              {point}
+            </p>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EducationPage() {
+  return (
+    <PageShell eyebrow="Education" title="Education and study abroad" description="The academic and personal context behind Sahir's software path.">
+      <div className="grid gap-5 lg:grid-cols-2">
+        {EDUCATION.map((item) => (
+          <article key={item.school} className="h-full rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">{item.timeframe}</p>
+            <h2 className="mt-3 text-2xl font-semibold">{item.school}</h2>
+            <p className="mt-1 text-blue-700">{item.program}</p>
+            {item.area && <p className="mt-1 text-sm text-neutral-500">Area of study: {item.area}</p>}
+            <div className="mt-4 space-y-4 leading-7 text-neutral-700">
+              <p>{item.detail}</p>
+              <p>{item.extra}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div className="mt-6 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
+        <h2 className="text-xl font-semibold">Coursework and learning style</h2>
+        <div className="mt-4 grid gap-4 md:grid-cols-3">
+          {EDUCATION_CARDS.map((card) => (
+            <InfoCard key={card.title} title={card.title} body={card.body} />
+          ))}
+        </div>
+      </div>
+      <div className="mt-6 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
+        <h2 className="text-xl font-semibold">University of Leeds exchange</h2>
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          {STUDY_ABROAD_CARDS.map((card) => (
+            <InfoCard key={card.title} title={card.title} body={card.body} />
+          ))}
+        </div>
+      </div>
+    </PageShell>
+  );
+}
+
+function SkillsPage() {
+  return (
+    <PageShell eyebrow="Technical index" title="Skills, grouped like useful bookmarks" description="A scannable view of the tools Sahir can reach for across product, backend, mobile, and data work.">
+      <section className="grid gap-4 lg:grid-cols-4">
+        {SKILL_LANES.map((lane) => (
+          <article key={lane.title} className="h-full rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+            <Chip tone={lane.tone}>{lane.title}</Chip>
+            <h2 className="mt-4 text-lg font-semibold leading-7">{lane.summary}</h2>
+            <p className="mt-3 text-sm leading-6 text-neutral-600">{lane.detail}</p>
+          </article>
+        ))}
+      </section>
+
+      <section className="mt-6 rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 pb-4">
+          <div>
+            <h2 className="text-xl font-semibold">Technical index</h2>
+            <p className="mt-1 text-sm text-neutral-500">Grouped for fast scanning, not just a giant tag pile.</p>
+          </div>
+          <span className="rounded-full bg-neutral-100 px-3 py-1 text-sm text-neutral-600">
+            {Object.values(SKILLS).flat().length} tools
+          </span>
+        </div>
+        <div className="mt-5 grid gap-5 lg:grid-cols-3">
+          {Object.entries(SKILLS).map(([group, skills]) => (
+            <section key={group}>
+              <h3 className="font-semibold">{group}</h3>
+              <div className="mt-3 grid gap-2">
+                {skills.map((skill) => (
+                  <div key={skill} className="flex items-center justify-between rounded-2xl bg-neutral-50 px-3 py-2 text-sm">
+                    <span>{skill}</span>
+                    <span className="text-xs text-neutral-400">{group === "Languages" ? "code" : group === "Frameworks" ? "build" : "ship"}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </section>
+    </PageShell>
+  );
+}
+
+function ResumePage({ onNavigate }) {
+  return (
+    <PageShell eyebrow="Resume" title="Sahir Sood - resume" description="A real resume-style page, formatted for scanning inside the browser theme.">
+      <div className="grid items-stretch gap-6 lg:grid-cols-[1fr_320px]">
+        <section className="h-full rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-wrap items-start justify-between gap-4 border-b border-neutral-200 pb-5">
+            <div>
+              <h2 className="text-3xl font-semibold">Sahir Sood</h2>
+              <p className="mt-2 text-neutral-600">Software Developer - SFU CS + Finance - Vancouver, BC</p>
+              <p className="mt-1 text-sm text-neutral-500">sahirsood@gmail.com - github.com/SahirSood - linkedin.com/in/sahir-sood</p>
+            </div>
+            <a href="mailto:sahirsood@gmail.com?subject=Resume%20PDF%20request" className="rounded-full bg-blue-600 px-5 py-3 font-medium text-white">
+              Request PDF
+            </a>
+          </div>
+          <div className="mt-6 space-y-7">
+            <ResumeBlock title="Summary">
+              Full-stack software developer with practical experience across ad-tech, AI writing tools, financial dashboards, mobile apps, web systems, and data analysis.
+            </ResumeBlock>
+            <ResumeBlock title="Education">
+              Simon Fraser University - Computing Science + Finance. Study abroad experience in Leeds, United Kingdom.
+            </ResumeBlock>
+            <ResumeBlock title="Experience">
+              Current Full Stack Developer at RBC. Software Developer at RedBrick/Paved. Lead Developer for the MotherTongue MVP. Contract Software Developer at Kapali Developments.
+            </ResumeBlock>
+            <ResumeBlock title="Projects">
+              UniVerse, Spotify Playlist Generator, Financial Fast Feed, BeerIQ, TripMate, Sensor Movement Data Analysis, and Apocalypse Rerising.
+            </ResumeBlock>
+            <ResumeBlock title="Skills">
+              Python, JavaScript, TypeScript, Java, Ruby, Kotlin, SQL, React, React Native, Node.js, Rails, Flask, Firebase, AWS, Docker, PostgreSQL, GitHub Actions.
+            </ResumeBlock>
+          </div>
+        </section>
+        <aside className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-neutral-50 p-6">
+          <h3 className="font-semibold">Quick actions</h3>
+          <div className="mt-4 grid gap-3">
+            <button type="button" onClick={() => onNavigate("experience")} className="rounded-2xl bg-white p-4 text-left shadow-sm hover:bg-blue-50">
+              View experience
+            </button>
+            <button type="button" onClick={() => onNavigate("projects")} className="rounded-2xl bg-white p-4 text-left shadow-sm hover:bg-blue-50">
+              View projects
+            </button>
+            <button type="button" onClick={() => onNavigate("contact")} className="rounded-2xl bg-white p-4 text-left shadow-sm hover:bg-blue-50">
+              Contact Sahir
+            </button>
+          </div>
+          <div className="mt-6 flex-1 rounded-2xl bg-white p-4 text-sm leading-6 text-neutral-600 shadow-sm">
+            Best scanned alongside the experience and project pages; those routes include the richer context behind the resume bullets.
+          </div>
+        </aside>
+      </div>
+    </PageShell>
+  );
+}
+
+function ContactPage({ copied, onCopy }) {
+  const mailto = "mailto:sahirsood@gmail.com?subject=Portfolio%20Follow-up&body=Hi%20Sahir%2C%0A%0AI%20found%20your%20portfolio%20and%20wanted%20to%20connect.%0A%0A";
+  const gmailCompose =
+    "https://mail.google.com/mail/?view=cm&fs=1&to=sahirsood@gmail.com&su=Portfolio%20Follow-up&body=Hi%20Sahir%2C%0A%0AI%20found%20your%20portfolio%20and%20wanted%20to%20connect.%0A%0A";
+  const openMail = () => {
+    window.location.href = mailto;
+  };
+
+  return (
+    <PageShell
+      eyebrow="Contact"
+      title="Let's connect"
+      description="I am always interested in meeting people working on thoughtful software, AI products, financial technology, or problems where the technical and business sides genuinely overlap."
+    >
+      <div className="grid items-stretch gap-6 lg:grid-cols-[340px_1fr]">
+        <aside className="h-full rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+          <button type="button" onClick={openMail} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 font-medium text-white">
+            <Send size={17} />
+            Open email app
+          </button>
+          <a
+            href={gmailCompose}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 flex items-center justify-center gap-2 rounded-2xl border border-blue-200 px-4 py-3 font-medium text-blue-700 hover:bg-blue-50"
+          >
+            <Mail size={17} />
+            Open web compose
+          </a>
+          <button
+            type="button"
+            onClick={onCopy}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-neutral-200 px-4 py-3 font-medium text-neutral-800 hover:bg-neutral-50"
+          >
+            {copied ? <CheckCircle2 size={17} className="text-emerald-600" /> : <Copy size={17} />}
+            {copied ? "Email copied" : "Copy email"}
+          </button>
+          <div className="mt-5 space-y-2">
+            {HOT_LINKS.map((link) => {
+              const Icon = link.icon;
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target={link.href.startsWith("mailto:") ? undefined : "_blank"}
+                  rel="noreferrer"
+                  className="flex items-center gap-3 rounded-2xl bg-neutral-50 p-3 text-sm hover:bg-blue-50"
+                >
+                  <Icon size={17} />
+                  <span className="min-w-0 truncate">{link.detail}</span>
+                </a>
+              );
+            })}
+          </div>
+        </aside>
+        <section className="h-full rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold">What I am interested in</h2>
+              <p className="mt-2 text-neutral-600">
+                I like conversations where I can understand the product and users, not only the job title.
+              </p>
+            </div>
+            <span className="rounded-full bg-emerald-50 px-3 py-1 text-sm text-emerald-700">Available for conversations</span>
+          </div>
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            {[
+              ["Best-fit roles", "Backend and full-stack software development, platform and product engineering, internal developer tools, AI-enabled applications, and technology within capital markets or financial services."],
+              ["What to mention", "Tell me what you are building, what problem the team is trying to solve, and where you think my experience might be relevant."],
+              ["Personal blurb", "I enjoy working on products where I can move between the technical details and the larger reason the system exists. I am especially drawn to collaborative teams, meaningful ownership, backend or full-stack problems, and industries where there is a lot to learn beneath the surface."],
+              ["Response note", "Email is usually the easiest way to reach me for opportunities, project conversations, or coffee chats. LinkedIn also works for a quick introduction."],
+            ].map(([title, copy]) => (
+              <div key={title} className="rounded-2xl bg-neutral-50 p-4">
+                <p className="font-medium">{title}</p>
+                <p className="mt-2 leading-6 text-neutral-600">{copy}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </PageShell>
+  );
+}
+
+function MapPage() {
+  const allStops = TRAVEL_PLACES.flatMap((country) =>
+    country.places.map((place) => ({ ...place, country: country.country, code: country.code })),
+  );
+  const [selectedCountry, setSelectedCountry] = useState(TRAVEL_PLACES[0]);
+  const [selected, setSelected] = useState({ ...TRAVEL_PLACES[0].places[0], country: TRAVEL_PLACES[0].country, code: TRAVEL_PLACES[0].code });
+  const [zoom, setZoom] = useState(1);
+  const [mapRef, mapSize] = useElementSize();
+  const [centerPx, setCenterPx] = useState(() => projectLatLng(28, 0, 1));
+  const dragRef = useRef(null);
+  const worldSize = TILE_SIZE * 2 ** zoom;
+  const viewportLeft = centerPx.x - mapSize.width / 2;
+  const viewportTop = centerPx.y - mapSize.height / 2;
+
+  const focusPlace = (place, country = selectedCountry, preferredZoom = Math.min(5, Math.max(zoom + 1, 3))) => {
+    const nextZoom = clamp(preferredZoom, 1, 5);
+    const next = { ...place, country: country.country, code: country.code };
+    setSelected(next);
+    setSelectedCountry(country);
+    setZoom(nextZoom);
+    setCenterPx(projectLatLng(place.lat, place.lng, nextZoom));
+  };
+
+  const focusCountry = (country) => {
+    const firstPlace = country.places[0];
+    const center = getCountryCenter(country);
+    const targetZoom = country.places.length > 4 ? 2 : 4;
+    const nextZoom = clamp(Math.max(zoom + 1, targetZoom), 1, 5);
+    setSelected({ ...firstPlace, country: country.country, code: country.code });
+    setSelectedCountry(country);
+    setZoom(nextZoom);
+    setCenterPx(projectLatLng(center.lat, center.lng, nextZoom));
+  };
+
+  const recenter = (place, country = selectedCountry) => {
+    focusPlace(place, country);
+  };
+
+  const selectCountry = (country) => {
+    focusCountry(country);
+  };
+
+  const changeZoom = (nextZoom) => {
+    const clampedZoom = clamp(nextZoom, 1, 5);
+    const center = unprojectPoint(centerPx.x, centerPx.y, zoom);
+    setZoom(clampedZoom);
+    setCenterPx(projectLatLng(center.lat, center.lng, clampedZoom));
+  };
+
+  const handleMapPointerDown = (event) => {
+    dragRef.current = { x: event.clientX, y: event.clientY, center: centerPx };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleMapPointerMove = (event) => {
+    if (!dragRef.current) return;
+    event.preventDefault();
+    const dx = event.clientX - dragRef.current.x;
+    const dy = event.clientY - dragRef.current.y;
+    setCenterPx({
+      x: dragRef.current.center.x - dx,
+      y: clamp(dragRef.current.center.y - dy, 0, worldSize),
+    });
+  };
+
+  const handleMapPointerUp = () => {
+    dragRef.current = null;
+  };
+
+  const startTileX = Math.floor(viewportLeft / TILE_SIZE);
+  const endTileX = Math.floor((viewportLeft + mapSize.width) / TILE_SIZE);
+  const startTileY = Math.floor(viewportTop / TILE_SIZE);
+  const endTileY = Math.floor((viewportTop + mapSize.height) / TILE_SIZE);
+  const tileCount = 2 ** zoom;
+  const tiles = [];
+  for (let x = startTileX; x <= endTileX; x += 1) {
+    for (let y = startTileY; y <= endTileY; y += 1) {
+      if (y >= 0 && y < tileCount) {
+        const wrappedX = ((x % tileCount) + tileCount) % tileCount;
+        tiles.push({
+          key: `${zoom}-${x}-${y}`,
+          url: `https://tile.openstreetmap.org/${zoom}/${wrappedX}/${y}.png`,
+          left: x * TILE_SIZE - viewportLeft,
+          top: y * TILE_SIZE - viewportTop,
+        });
+      }
+    }
+  }
+
+  return (
+    <PageShell eyebrow="Maps" title="Where I have been" description="A real OpenStreetMap-style travel page with clickable places and personal notes.">
+      <section className="mb-6 grid gap-5 lg:grid-cols-[1fr_1.1fr]">
+        <div className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+          <h2 className="text-xl font-semibold">Why travel matters to me</h2>
+          <div className="mt-4 space-y-4 leading-7 text-neutral-700">
+            {TRAVEL_INTRO.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2">
+          {TRAVEL_HIGHLIGHTS.map((highlight) => (
+            <div key={highlight.title} className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
+              <h3 className="font-semibold">{highlight.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-neutral-600">{highlight.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <section
+          ref={mapRef}
+          className="relative h-[460px] overflow-hidden rounded-3xl border border-neutral-200 bg-[#cfe8f7] shadow-sm touch-none cursor-grab active:cursor-grabbing md:h-[560px]"
+          onPointerDown={handleMapPointerDown}
+          onPointerMove={handleMapPointerMove}
+          onPointerUp={handleMapPointerUp}
+          onPointerCancel={handleMapPointerUp}
+          onLostPointerCapture={handleMapPointerUp}
+        >
+          <div className="absolute bottom-4 right-5 z-20 rounded-full bg-white/85 px-3 py-1 text-xs font-medium text-neutral-600 shadow">
+            places + notes
+          </div>
+          {tiles.map((tile) => (
+            <img
+              key={tile.key}
+              src={tile.url}
+              alt=""
+              draggable="false"
+              onError={(event) => {
+                event.currentTarget.style.opacity = "0";
+              }}
+              className="absolute max-w-none select-none"
+              style={{ left: tile.left, top: tile.top, width: TILE_SIZE, height: TILE_SIZE }}
+            />
+          ))}
+          <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-black/10" />
+          <div className="absolute right-4 top-4 z-20 flex flex-col overflow-hidden rounded-2xl border border-neutral-300 bg-white shadow-lg" onPointerDown={(event) => event.stopPropagation()}>
+            <button type="button" onClick={() => changeZoom(zoom + 1)} className="grid size-10 place-items-center text-xl font-semibold hover:bg-neutral-100">
+              +
+            </button>
+            <button type="button" onClick={() => changeZoom(zoom - 1)} className="grid size-10 place-items-center border-t border-neutral-200 text-xl font-semibold hover:bg-neutral-100">
+              -
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              const canada = TRAVEL_PLACES.find((country) => country.country === "Canada") ?? selectedCountry;
+              const vancouver = canada.places.find((stop) => stop.name === "Vancouver") ?? canada.places[0];
+              recenter(vancouver, canada);
+            }}
+            onPointerDown={(event) => event.stopPropagation()}
+            className="absolute left-4 top-4 z-20 rounded-full bg-white px-4 py-2 text-sm font-medium shadow-lg hover:bg-blue-50"
+          >
+            Vancouver
+          </button>
+          {allStops.map((stop) => {
+            const projected = projectLatLng(stop.lat, stop.lng, zoom);
+            const left = nearestWrappedLeft(projected.x, viewportLeft, mapSize.width, worldSize);
+            const top = projected.y - viewportTop;
+            const visible = left > -80 && left < mapSize.width + 80 && top > -80 && top < mapSize.height + 80;
+            const active = selected.name === stop.name && selected.country === stop.country;
+            const country = TRAVEL_PLACES.find((item) => item.country === stop.country) ?? selectedCountry;
+            if (!visible) return null;
+            return (
+              <button
+                key={`${stop.country}-${stop.name}`}
+                type="button"
+                onPointerDown={(event) => event.stopPropagation()}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  recenter(stop, country);
+                }}
+                className={classNames("group absolute z-10 -translate-x-1/2 -translate-y-full transition", active ? "scale-110" : "hover:scale-110")}
+                style={{ left, top }}
+                aria-label={`Show ${stop.name}`}
+              >
+                <span className={classNames("relative grid size-8 place-items-center rounded-full border-2 shadow-lg", active ? "border-white bg-red-500 text-white" : "border-white bg-blue-600 text-white")}>
+                  <MapPin size={17} fill="currentColor" />
+                </span>
+                <span className={classNames("absolute left-1/2 top-9 -translate-x-1/2 whitespace-nowrap rounded-xl border px-3 py-1.5 text-xs font-medium shadow-lg transition", active ? "border-neutral-900 bg-neutral-950 text-white opacity-100" : "border-white/20 bg-white text-neutral-800 opacity-0 group-hover:opacity-100")}>
+                  {stop.name}
+                </span>
+              </button>
+            );
+          })}
+          <div className="absolute bottom-4 left-4 z-20 rounded bg-white/90 px-2 py-1 text-[10px] font-semibold text-neutral-700 shadow">
+            OpenStreetMap contributors
+          </div>
+          <div className="absolute bottom-4 left-1/2 z-20 max-h-44 w-[min(92%,520px)] -translate-x-1/2 overflow-y-auto rounded-2xl bg-white/95 p-3 shadow-lg">
+            <p className="text-sm font-semibold">{selected.name}</p>
+            <p className="mt-1 text-xs leading-5 text-neutral-600">{selected.note}</p>
+          </div>
+        </section>
+
+        <aside className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">Selected stop</p>
+          <h2 className="mt-2 text-2xl font-semibold">{selected.name}</h2>
+          <p className="mt-1 text-neutral-500">
+            {selected.country} - {selected.code}
+          </p>
+          <p className="mt-4 leading-7 text-neutral-700">{selected.note}</p>
+          {selectedCountry.note && (
+            <div className="mt-4 rounded-2xl bg-blue-50 p-4 text-sm leading-6 text-blue-950">
+              <p className="font-semibold">Country note</p>
+              <p className="mt-2">{selectedCountry.note}</p>
+            </div>
+          )}
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <Metric label="Countries/regions" value={TRAVEL_PLACES.length} />
+            <Metric label="Logged places" value={allStops.length} />
+          </div>
+
+          <div className="mt-5 border-t border-neutral-100 pt-4">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">Countries</p>
+            <div className="flex max-h-36 flex-wrap gap-2 overflow-y-auto pr-1">
+              {TRAVEL_PLACES.map((country) => (
+                <button
+                  key={country.country}
+                  type="button"
+                  onClick={() => selectCountry(country)}
+                  className={classNames(
+                    "rounded-full border px-3 py-1.5 text-xs transition",
+                    selectedCountry.country === country.country
+                      ? "border-blue-200 bg-blue-50 text-blue-700"
+                      : "border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50",
+                  )}
+                >
+                  {country.code} {country.places.length}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-5 border-t border-neutral-100 pt-4">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">
+              {selectedCountry.country} places
+            </p>
+            <div className="grid max-h-56 gap-1 overflow-y-auto pr-1">
+              {selectedCountry.places.map((place) => (
+                <button
+                  key={place.name}
+                  type="button"
+                  onClick={() => recenter(place, selectedCountry)}
+                  className={classNames(
+                    "rounded-xl px-3 py-2 text-left text-sm transition",
+                    selected.name === place.name && selected.country === selectedCountry.country
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-neutral-700 hover:bg-neutral-50",
+                  )}
+                >
+                  {place.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <details className="mt-5 rounded-2xl bg-neutral-50 p-4">
+            <summary className="cursor-pointer text-sm font-medium">Show full country list</summary>
+            <div className="mt-4 max-h-56 space-y-4 overflow-y-auto pr-1">
+            {TRAVEL_PLACES.map((country) => (
+              <div key={country.country}>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">{country.country}</p>
+                <div className="grid gap-1">
+                  {country.places.map((place) => {
+                    return (
+                      <button
+                        key={place.name}
+                        type="button"
+                        onClick={() => recenter(place, country)}
+                        className={classNames(
+                          "rounded-xl px-3 py-2 text-left text-sm transition",
+                          selected.name === place.name && selected.country === country.country
+                            ? "bg-blue-50 text-blue-700"
+                            : "text-neutral-700 hover:bg-neutral-50",
+                        )}
+                      >
+                        {place.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+            </div>
+          </details>
+        </aside>
+      </div>
+    </PageShell>
+  );
+}
+
+function SnakePage() {
+  return (
+    <PageShell eyebrow="Snake" title="Google-style Snake" description="A compact playable easter egg. Use arrow keys or WASD.">
+      <GoogleSnakeGame />
+    </PageShell>
+  );
+}
+
+function GoogleSnakeGame() {
+  const center = Math.floor(SNAKE_CONFIG.size / 2);
+  const [snake, setSnake] = useState([{ x: center, y: center }]);
+  const [food, setFood] = useState({ x: 4, y: 5, token: SNAKE_CONFIG.tokens[0] });
+  const [direction, setDirection] = useState({ x: 1, y: 0 });
+  const directionRef = useRef(direction);
+  const [running, setRunning] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(() => Number(localStorage.getItem("sahirSnakeHighScore") || 0));
+  const level = Math.floor(score / 5) + 1;
+  const speed = Math.max(74, SNAKE_CONFIG.baseSpeed - (level - 1) * 8);
+
+  useEffect(() => {
+    directionRef.current = direction;
+  }, [direction]);
+
+  const placeFood = useCallback((body) => {
+    const emptyCells = [];
+    for (let x = 0; x < SNAKE_CONFIG.size; x += 1) {
+      for (let y = 0; y < SNAKE_CONFIG.size; y += 1) {
+        if (!body.some((part) => part.x === x && part.y === y)) emptyCells.push({ x, y });
+      }
+    }
+    const next = emptyCells[Math.floor(Math.random() * emptyCells.length)] ?? { x: 0, y: 0 };
+    return { ...next, token: SNAKE_CONFIG.tokens[Math.floor(Math.random() * SNAKE_CONFIG.tokens.length)] };
+  }, []);
+
+  const reset = useCallback(() => {
+    setSnake([{ x: center, y: center }]);
+    setFood({ x: 4, y: 5, token: SNAKE_CONFIG.tokens[0] });
+    setDirection({ x: 1, y: 0 });
+    setRunning(false);
+    setGameOver(false);
+    setScore(0);
+  }, [center]);
+
+  const setMove = useCallback(
+    (next) => {
+      if (gameOver) return;
+      setDirection((current) => (current.x + next.x === 0 && current.y + next.y === 0 ? current : next));
+      setRunning(true);
+    },
+    [gameOver],
+  );
+
+  useEffect(() => {
+    const handleKey = (event) => {
+      const keyMap = {
+        ArrowUp: { x: 0, y: -1 },
+        w: { x: 0, y: -1 },
+        W: { x: 0, y: -1 },
+        ArrowDown: { x: 0, y: 1 },
+        s: { x: 0, y: 1 },
+        S: { x: 0, y: 1 },
+        ArrowLeft: { x: -1, y: 0 },
+        a: { x: -1, y: 0 },
+        A: { x: -1, y: 0 },
+        ArrowRight: { x: 1, y: 0 },
+        d: { x: 1, y: 0 },
+        D: { x: 1, y: 0 },
+      };
+      const next = keyMap[event.key];
+      if (!next) return;
+      event.preventDefault();
+      setMove(next);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [setMove]);
+
+  useEffect(() => {
+    if (!running || gameOver) return undefined;
+    const interval = window.setInterval(() => {
+      setSnake((current) => {
+        const head = current[0];
+        const nextHead = {
+          x: (head.x + directionRef.current.x + SNAKE_CONFIG.size) % SNAKE_CONFIG.size,
+          y: (head.y + directionRef.current.y + SNAKE_CONFIG.size) % SNAKE_CONFIG.size,
+        };
+        const ate = nextHead.x === food.x && nextHead.y === food.y;
+        const collisionBody = ate ? current : current.slice(0, -1);
+        const hitSelf = collisionBody.some((part) => part.x === nextHead.x && part.y === nextHead.y);
+
+        if (hitSelf) {
+          setRunning(false);
+          setGameOver(true);
+          return current;
+        }
+
+        const nextSnake = ate ? [nextHead, ...current] : [nextHead, ...current.slice(0, -1)];
+        if (ate) {
+          setScore((value) => {
+            const nextScore = value + 1;
+            if (nextScore > highScore) {
+              setHighScore(nextScore);
+              localStorage.setItem("sahirSnakeHighScore", String(nextScore));
+            }
+            return nextScore;
+          });
+          setFood(placeFood(nextSnake));
+        }
+        return nextSnake;
+      });
+    }, speed);
+    return () => window.clearInterval(interval);
+  }, [food, gameOver, highScore, placeFood, running, speed]);
+
+  return (
+    <div className="grid gap-5 xl:grid-cols-[minmax(0,480px)_260px]">
+      <section className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3 text-neutral-900">
+          <div>
+            <p className="text-sm font-medium text-[#4b7f2d]">Score {score} - Best {highScore} - Level {level}</p>
+            <h2 className="text-xl font-semibold">Snake</h2>
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setRunning((value) => !value)}
+              disabled={gameOver}
+              className="grid size-10 place-items-center rounded-2xl bg-[#e8f5d4] text-[#4b7f2d] shadow-sm disabled:opacity-50"
+            >
+              {running ? <Pause size={20} /> : <Play size={20} />}
+            </button>
+            <button type="button" onClick={reset} className="grid size-10 place-items-center rounded-2xl bg-neutral-100 text-neutral-700 shadow-sm hover:bg-neutral-200">
+              <RotateCcw size={20} />
+            </button>
+          </div>
+        </div>
+        <div className="relative mx-auto aspect-square max-w-[430px] overflow-hidden rounded-[1.35rem] border-[8px] border-[#4f8b30] bg-[#aad751] p-1 shadow-xl">
+          <div className="absolute left-4 top-4 z-10 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#4b7f2d] shadow">
+            fruit: {food.token}
+          </div>
+          <div className="relative grid size-full" style={{ gridTemplateColumns: `repeat(${SNAKE_CONFIG.size}, minmax(0, 1fr))` }}>
+            {Array.from({ length: SNAKE_CONFIG.size * SNAKE_CONFIG.size }).map((_, index) => {
+              const x = index % SNAKE_CONFIG.size;
+              const y = Math.floor(index / SNAKE_CONFIG.size);
+              const snakePart = snake.findIndex((part) => part.x === x && part.y === y);
+              const isHead = snakePart === 0;
+              const isFood = food.x === x && food.y === y;
+              return (
+                <div key={`${x}-${y}`} className={classNames("grid aspect-square place-items-center", (x + y) % 2 === 0 ? "bg-[#aad751]" : "bg-[#a2d149]")}>
+                  {snakePart >= 0 && (
+                    <span
+                      className={classNames(
+                        "grid size-full place-items-center shadow-sm",
+                        isHead ? "rounded-[35%] bg-[#4674e9] text-white" : "rounded-[32%] bg-[#4f7ff0]",
+                      )}
+                    >
+                      {isHead && <span className="size-2 rounded-full bg-white" />}
+                    </span>
+                  )}
+                  {isFood && (
+                    <span className="relative grid h-4/5 w-4/5 place-items-center rounded-full bg-[#e7471d] text-[9px] font-black text-white shadow-md">
+                      <span className="absolute -right-0.5 -top-1 h-2 w-3 rotate-[-25deg] rounded-full bg-[#4b7f2d]" />
+                      <span className="relative">{food.token.slice(0, 2)}</span>
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          {!running && !gameOver && (
+            <div className="absolute inset-x-6 bottom-6 rounded-2xl bg-white/90 p-3 text-center text-sm font-semibold text-[#4b7f2d] shadow">
+              Press play or use WASD / arrow keys.
+            </div>
+          )}
+          {gameOver && (
+            <div className="absolute inset-x-6 bottom-6 rounded-2xl bg-white/90 p-3 text-center text-sm font-semibold text-red-600 shadow">
+              Game over. Reset and beat {highScore}.
+            </div>
+          )}
+        </div>
+      </section>
+      <aside className="h-fit rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+        <p className="flex items-center gap-2 font-semibold">
+          <Trophy size={18} className="text-amber-500" />
+          Controls
+        </p>
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          <span />
+          <button type="button" onClick={() => setMove({ x: 0, y: -1 })} className="rounded-xl bg-neutral-100 py-3 font-semibold hover:bg-blue-50">
+            W
+          </button>
+          <span />
+          <button type="button" onClick={() => setMove({ x: -1, y: 0 })} className="rounded-xl bg-neutral-100 py-3 font-semibold hover:bg-blue-50">
+            A
+          </button>
+          <button type="button" onClick={() => setMove({ x: 0, y: 1 })} className="rounded-xl bg-neutral-100 py-3 font-semibold hover:bg-blue-50">
+            S
+          </button>
+          <button type="button" onClick={() => setMove({ x: 1, y: 0 })} className="rounded-xl bg-neutral-100 py-3 font-semibold hover:bg-blue-50">
+            D
+          </button>
+        </div>
+        <p className="mt-5 leading-7 text-neutral-600">
+          Edges wrap like the familiar browser game. Every five fruits speeds things up. Only hitting yourself ends the run.
+        </p>
+      </aside>
+    </div>
+  );
+}
+
+function SpotlightPage({ kind }) {
+  const detail = EXPERIENCE_DETAILS[kind] ?? EXPERIENCE_DETAILS["redbrick-paved"];
+
+  return (
+    <PageShell
+      eyebrow="Experience detail"
+      title={`${detail.title} at ${detail.company}`}
+      description={detail.overview[0]}
+    >
+      <article className="grid gap-6 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm lg:grid-cols-[180px_1fr]">
+        <div className="grid min-h-36 place-items-center rounded-3xl bg-neutral-50">
+          <img src={detail.logo} alt={`${detail.company} logo`} className="max-h-24 max-w-32 object-contain" />
+        </div>
+        <div>
+          <div className="flex flex-wrap gap-2">
+            <Chip tone="blue">{detail.dates}</Chip>
+            <Chip tone={detail.status === "Current" ? "green" : "neutral"}>{detail.status}</Chip>
+            {detail.team && <Chip>{detail.team}</Chip>}
+            {detail.industry && <Chip>{detail.industry}</Chip>}
+          </div>
+          <h2 className="mt-4 text-3xl font-semibold">{detail.company}</h2>
+          <div className="mt-4 space-y-4 leading-7 text-neutral-700">
+            {detail.overview.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {detail.technologies.map((tag) => (
+              <Chip key={tag}>{tag}</Chip>
+            ))}
+          </div>
+        </div>
+      </article>
+
+      <section className="mt-6 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">Featured work</p>
+        <h3 className="mt-2 text-2xl font-semibold">{detail.featuredTitle}</h3>
+        <p className="mt-4 leading-7 text-neutral-700">{detail.featured}</p>
+      </section>
+
+      <div className="mt-6 grid gap-5 md:grid-cols-2">
+        {detail.sections.map((section) => (
+          <section key={section.title} className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+            <h3 className="font-semibold">{section.title}</h3>
+            <p className="mt-3 text-sm leading-6 text-neutral-600">{section.body}</p>
+          </section>
+        ))}
+      </div>
+
+      <section className="mt-6 rounded-3xl border border-neutral-200 bg-neutral-50 p-5">
+        <h3 className="font-semibold">Personal note</h3>
+        <p className="mt-3 leading-7 text-neutral-700">{detail.personal}</p>
+      </section>
+    </PageShell>
+  );
+}
+
+function PageShell({ eyebrow, title, description, children }) {
+  return (
+    <section className="mx-auto min-h-[calc(100vh-100px)] w-full max-w-6xl px-5 pb-10 pt-6">
+      <div className="mb-5">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">{eyebrow}</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-neutral-950 md:text-4xl">{title}</h1>
+        <p className="mt-3 max-w-3xl leading-7 text-neutral-600">{description}</p>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function ResumeBlock({ title, children }) {
+  return (
+    <section>
+      <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">{title}</h3>
+      <p className="mt-2 leading-7 text-neutral-700">{children}</p>
+    </section>
+  );
+}
+
+function Chip({ children, tone = "neutral" }) {
+  return (
+    <span
+      className={classNames(
+        "inline-flex rounded-full border px-3 py-1 text-sm",
+        tone === "blue" && "border-blue-200 bg-blue-50 text-blue-700",
+        tone === "green" && "border-emerald-200 bg-emerald-50 text-emerald-700",
+        tone === "neutral" && "border-neutral-200 bg-neutral-50 text-neutral-700",
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+function getAnswer(value) {
+  const normalized = String(value || "")
+    .trim()
+    .toLowerCase();
+  if (!normalized) return ANSWERS["why should we interview sahir"];
+  if (ANSWERS[normalized]) return ANSWERS[normalized];
+  if (normalized.includes("contact") || normalized.includes("email")) return ANSWERS["how can i contact sahir"];
+  if (normalized.includes("experience") || normalized.includes("work")) return ANSWERS["what experience does sahir have"];
+  if (normalized.includes("project") || normalized.includes("full-stack")) return ANSWERS["which projects prove full-stack ability"];
+  if (normalized.includes("outside") || normalized.includes("personal") || normalized.includes("travel")) return ANSWERS["what is sahir like outside code"];
+  if (normalized.includes("skill") || normalized.includes("stack")) {
+    return "Sahir's stack includes Python, JavaScript, TypeScript, Java, Ruby, Kotlin, SQL, React, React Native, Node.js, Rails, Flask, Firebase, AWS, Docker, PostgreSQL, and GitHub Actions.";
+  }
+  return "Sahir is a full-stack software developer with practical product experience, strong team signals, and projects that show web, mobile, AI, backend, data, and game-development range.";
+}
+
+function getSearchResults(value) {
+  const normalized = String(value || "").toLowerCase();
+  if (normalized.includes("contact") || normalized.includes("email")) {
+    return [
+      {
+        title: "Contact Sahir Sood",
+        url: "contact.sahir.dev",
+        source: "Best direct path",
+        description: "Email Sahir at sahirsood@gmail.com or open the Contact page for email, GitHub, LinkedIn, and a prefilled message.",
+        tags: ["Email", "GitHub", "LinkedIn"],
+        action: "contact",
+      },
+      ...baseResults(),
+    ];
+  }
+  if (normalized.includes("experience") || normalized.includes("work")) {
+    return [
+      {
+        title: "Experience - Sahir Sood",
+        url: "experience.sahir.dev",
+        source: "Work history",
+        description: "Current RBC full stack developer, RedBrick/Paved software developer, MotherTongue MVP lead developer, and Kapali contract software developer.",
+        tags: ["RBC", "Paved", "MotherTongue", "Kapali"],
+        action: "experience",
+      },
+      ...baseResults(),
+    ];
+  }
+  if (normalized.includes("project") || normalized.includes("engineering")) {
+    return [
+      {
+        title: "Projects - Sahir Sood",
+        url: "projects.sahir.dev",
+        source: "Case studies and repos",
+        description: "UniVerse, Spotify Playlist Generator, Financial Fast Feed, BeerIQ, TripMate, Sensor Movement Data Analysis, and game builds.",
+        tags: ["React", "Node", "Firebase", "Rails", "Python", "Kotlin"],
+        action: "projects",
+      },
+      ...baseResults(),
+    ];
+  }
+  return baseResults();
+}
+
+function baseResults() {
+  return [
+    {
+      title: "Resume - Sahir Sood",
+      url: "resume.sahir.dev",
+      source: "Resume",
+      description: "A recruiter-scannable resume with summary, education, experience, projects, and technical skills.",
+      tags: ["Resume", "Education", "Experience"],
+      action: "resume",
+    },
+    {
+      title: "Projects - Sahir Sood",
+      url: "projects.sahir.dev",
+      source: "Portfolio",
+      description: "Full project list covering mobile apps, AI tools, financial web features, Android maps, data analysis, and games.",
+      tags: ["Projects", "Repos", "Case studies"],
+      action: "projects",
+    },
+    {
+      title: "Map and personal notes",
+      url: "maps.sahir.dev",
+      source: "Personal",
+      description: "OpenStreetMap-style travel map with all logged places and clickable memory notes.",
+      tags: ["Travel", "Study abroad", "Vancouver"],
+      action: "map",
+    },
+    {
+      title: "Google-style Snake",
+      url: "games.sahir.dev/snake",
+      source: "Easter egg",
+      description: "Playable Snake game in the familiar green board style, with portfolio-themed pickups.",
+      tags: ["Game", "Interactive", "Fun"],
+      action: "snake",
+    },
+  ];
+}
+
+function slugify(value) {
+  return String(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+function titleCase(value) {
+  if (value === "rbc") return "RBC";
+  if (value === "redbrick-paved") return "RedBrick / Paved";
+  if (value === "mothertongue") return "MotherTongue";
+  return String(value)
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+export default function App() {
+  const [profile, setProfile] = useState(null);
+
+  if (!profile) return <ProfilePicker onChoose={setProfile} />;
+
+  return <BrowserPortfolio profile={profile} onSwitchProfile={() => setProfile(null)} />;
 }

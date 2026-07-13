@@ -39,14 +39,15 @@ import {
 } from "lucide-react";
 import pavedLogo from "./assets/Paved.png";
 import rbcLogo from "./assets/RBC.jpg";
+import { SITE_CONFIG, pageForPath, routeForPageId, routePathForPage } from "./seo/siteConfig.js";
 
-const PROFILE_IMG = "/img/sahir-headshot.JPEG";
+const PROFILE_IMG = SITE_CONFIG.profileImage;
 const TILE_SIZE = 256;
 
 const HOT_LINKS = [
-  { label: "Email", detail: "sahirsood@gmail.com", href: "mailto:sahirsood@gmail.com", icon: Mail },
-  { label: "GitHub", detail: "github.com/SahirSood", href: "https://github.com/SahirSood", icon: Github },
-  { label: "LinkedIn", detail: "linkedin.com/in/sahir-sood", href: "https://www.linkedin.com/in/sahir-sood/", icon: Linkedin },
+  { label: "Email", detail: SITE_CONFIG.email, href: `mailto:${SITE_CONFIG.email}`, icon: Mail },
+  { label: "GitHub", detail: "github.com/SahirSood", href: SITE_CONFIG.githubUrl, icon: Github },
+  { label: "LinkedIn", detail: "linkedin.com/in/sahir-sood", href: SITE_CONFIG.linkedinUrl, icon: Linkedin },
 ];
 
 const SKILLS = {
@@ -60,6 +61,8 @@ const PROJECTS = [
     title: "UniVerse",
     eyebrow: "Campus app - 2025",
     img: "/img/no-img.jpg",
+    imgWidth: 453,
+    imgHeight: 340,
     description:
       "Real-time campus app for shared rides, errands, and micro-tasks with GPS, GeoJSON room detection, and zone-based communication.",
     stack: ["React Native", "Node.js", "Firebase Auth", "Socket.IO", "TypeScript", "GeoJSON"],
@@ -71,6 +74,8 @@ const PROJECTS = [
     title: "Spotify Playlist Generator",
     eyebrow: "Mar 2025 - Present",
     img: "/img/spotify-project.png",
+    imgWidth: 1024,
+    imgHeight: 768,
     description:
       "A real-time playlist generator that creates personalized Spotify playlists from mood and preferences using an AI-backed workflow.",
     stack: ["Python", "React", "Node.js", "AWS", "OpenAI API", "GitHub Actions"],
@@ -82,6 +87,8 @@ const PROJECTS = [
     title: "BeerIQ",
     eyebrow: "Oct - Dec 2024",
     img: "/img/no-img.jpg",
+    imgWidth: 453,
+    imgHeight: 340,
     description:
       "A social review platform for discovering breweries, rating drinks, and sharing recommendations with friends.",
     stack: ["Kotlin", "Firebase", "Android Studio", "Google Maps API", "Python"],
@@ -93,6 +100,8 @@ const PROJECTS = [
     title: "TripMate",
     eyebrow: "Oct - Dec 2023",
     img: "/img/tripmate-logo.png",
+    imgWidth: 1262,
+    imgHeight: 311,
     description:
       "A travel planning app that helps users organize trips, share itineraries, and discover new destinations.",
     stack: ["Ruby", "Rails", "PostgreSQL", "WebSockets"],
@@ -104,6 +113,8 @@ const PROJECTS = [
     title: "Financial Fast Feed",
     eyebrow: "Jan - Apr 2025",
     img: "/img/fff.jpg",
+    imgWidth: 492,
+    imgHeight: 108,
     description:
       "Login and bookmark flows for a personalized financial news feed so users can save, revisit, and manage articles.",
     stack: ["React", "Postman", "Node.js", "Flask", "RESTful APIs"],
@@ -115,6 +126,8 @@ const PROJECTS = [
     title: "Sensor Movement Data Analysis",
     eyebrow: "Feb - Mar 2025",
     img: "/img/kmeans.png",
+    imgWidth: 744,
+    imgHeight: 524,
     description:
       "ML models using smartphone sensor data to detect and classify human activities with clear analysis and visualization.",
     stack: ["Python", "Pandas", "Matplotlib", "Scikit-learn"],
@@ -126,6 +139,8 @@ const PROJECTS = [
     title: "Apocalypse Rerising",
     eyebrow: "Dec 2022",
     img: "/img/img-zmb.jpg",
+    imgWidth: 225,
+    imgHeight: 225,
     description: "A 2D survival game with wave-based enemies, power-ups, and arcade progression.",
     stack: ["Python", "Pygame"],
     repo: "https://github.com/SahirSood/Apocalypse-Rerising/commits/main/",
@@ -153,6 +168,8 @@ const EXPERIENCE = [
     status: "Current",
     team: "Global Functions Technology under ASEDA",
     logo: rbcLogo,
+    logoWidth: 200,
+    logoHeight: 200,
     summary:
       "I work on Functions Assist, RBC's internal AI platform for building specialized tools for departments across the organization. My work is primarily frontend-focused, with backend debugging and integration work when needed.",
     tags: ["Python", "React", "JavaScript", "AI Platform", "Internal Tools"],
@@ -165,6 +182,8 @@ const EXPERIENCE = [
     timeframe: "Jan 2026 - Apr 2026",
     industry: "Ad-tech",
     logo: pavedLogo,
+    logoWidth: 1000,
+    logoHeight: 1000,
     summary:
       "At RedBrick, I worked on Paved, an ad-tech platform used by publishers and advertisers to manage newsletter advertising. It was my first experience contributing to an established production codebase.",
     tags: ["Ruby", "Python", "JavaScript", "TypeScript", "GitHub Actions", "Ad-Tech", "CI/CD"],
@@ -176,6 +195,8 @@ const EXPERIENCE = [
     role: "Lead Developer",
     timeframe: "May - Aug 2025",
     logo: "/img/mothertongue-logo.jpg",
+    logoWidth: 722,
+    logoHeight: 668,
     summary:
       "MotherTongue is an AI-powered writing coach designed to help people improve how they communicate, not simply correct individual sentences. I helped build the MVP from the ground up.",
     tags: ["React", "JavaScript", "OpenAI API", "JMeter", "Selenium", "Chrome API", "Node.js", "Firestore"],
@@ -186,6 +207,8 @@ const EXPERIENCE = [
     role: "Contract Software Developer",
     timeframe: "Jan - Apr 2025",
     logo: "/img/kapali.png",
+    logoWidth: 704,
+    logoHeight: 553,
     summary:
       "Built a React and Firestore financial dashboard for property and investment tracking, with backend automation for reporting and equity splits.",
     tags: ["Firestore", "React", "JavaScript", "Node.js", "Firebase Functions", "SQL"],
@@ -195,6 +218,8 @@ const EXPERIENCE = [
     role: "Part-time Assistant",
     timeframe: "Jul 2022 - Sep 2024",
     logo: "/img/kapali.png",
+    logoWidth: 704,
+    logoHeight: 553,
     summary:
       "Improved social media engagement, streamlined financial reporting in Excel, and helped redesign brand touchpoints.",
     tags: ["Excel", "Social Media", "Web Design", "Project Management"],
@@ -204,6 +229,8 @@ const EXPERIENCE = [
     role: "Camp Counselor",
     timeframe: "Jun - Aug 2021",
     logo: "/img/pedalheads.jpg",
+    logoWidth: 225,
+    logoHeight: 225,
     summary:
       "Taught children bike riding skills, handled first aid, and kept groups safe and confident through clear communication and creative problem solving.",
     tags: ["Leadership", "First Aid", "Communication", "Problem Solving"],
@@ -308,6 +335,8 @@ const EXPERIENCE_DETAILS = {
     dates: "May 2025 to August 2025",
     status: "MVP build",
     logo: "/img/mothertongue-logo.jpg",
+    logoWidth: 722,
+    logoHeight: 668,
     technologies: ["React", "JavaScript", "Node.js", "OpenAI API", "Chrome APIs", "Firestore", "JMeter", "Selenium"],
     overview: [
       "MotherTongue is an AI-powered writing coach designed to help people improve how they communicate, not simply correct individual sentences. The product analyzes writing for areas such as clarity, grammar, tone, conciseness, and structure, then turns those patterns into personalized feedback and learning.",
@@ -784,26 +813,8 @@ function classNames(...values) {
   return values.filter(Boolean).join(" ");
 }
 
-const ROUTES = {
-  home: "",
-  search: "search",
-  profile: "profile",
-  education: "education",
-  experience: "experience",
-  projects: "projects",
-  skills: "skills",
-  resume: "resume",
-  contact: "contact",
-  map: "map",
-  snake: "snake",
-  rbc: "experience/rbc",
-  "redbrick-paved": "experience/redbrick-paved",
-  paved: "experience/redbrick-paved",
-  mothertongue: "experience/mothertongue",
-};
-
 function routeForPage(page) {
-  return `#/${ROUTES[page] ?? page}`;
+  return routePathForPage(page);
 }
 
 function pageFromHash(hash) {
@@ -815,7 +826,17 @@ function pageFromHash(hash) {
   if (route === "experience/rbc") return "rbc";
   if (route === "experience/redbrick-paved") return "redbrick-paved";
   if (route === "experience/mothertongue") return "mothertongue";
-  return Object.entries(ROUTES).find(([, value]) => value === route)?.[0] ?? route;
+  if (route === "profile" || route === "about") return "profile";
+  return pageForPath(`/${route}`);
+}
+
+function pageFromLocation() {
+  if (window.location.hash.startsWith("#")) return pageFromHash(window.location.hash);
+  return pageForPath(window.location.pathname);
+}
+
+function initialSearchQuery(fallback) {
+  return new URLSearchParams(window.location.search).get("q") ?? fallback ?? "";
 }
 
 function clamp(value, min, max) {
@@ -908,10 +929,31 @@ function ProfilePicker({ onChoose }) {
             <div className="mx-auto grid size-14 place-items-center rounded-full bg-gradient-to-br from-blue-500 via-emerald-500 to-yellow-400 text-xl font-black text-white shadow-lg">
               S
             </div>
-            <h1 className="mt-7 text-3xl font-normal tracking-tight text-neutral-900 md:text-4xl">Who's viewing Sahir?</h1>
-            <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-neutral-600">
-              Pick a browser profile. Recruiter is the fastest path, Builder has technical depth, and Explorer keeps the
-              fun parts.
+            <h1 className="mt-7 text-3xl font-normal tracking-tight text-neutral-900 md:text-4xl">
+              Sahir Sood - Full-Stack Developer
+            </h1>
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-neutral-600">
+              Portfolio of Sahir Sood, an SFU Computing Science and Finance student building practical software across
+              web, mobile, AI, backend systems, data analysis, and finance-focused products.
+            </p>
+            <nav aria-label="Primary portfolio sections" className="mx-auto mt-6 flex max-w-2xl flex-wrap justify-center gap-3">
+              {[
+                ["Experience", routeForPage("experience")],
+                ["Projects", routeForPage("projects")],
+                ["About", routeForPage("profile")],
+                ["Contact", routeForPage("contact")],
+              ].map(([label, href]) => (
+                <a
+                  key={label}
+                  href={href}
+                  className="rounded-full border border-blue-200 px-4 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  {label}
+                </a>
+              ))}
+            </nav>
+            <p className="mt-8 text-sm font-medium text-neutral-500">
+              Or choose a browser profile for a tailored route through the portfolio.
             </p>
 
             <div className="mx-auto mt-12 grid max-w-3xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -930,7 +972,7 @@ function ProfilePicker({ onChoose }) {
                     )}
                   >
                     {profile.avatar === "photo" ? (
-                      <img src={PROFILE_IMG} alt="Sahir Sood" className="size-full object-cover" />
+                      <img src={PROFILE_IMG} alt="Sahir Sood" width={819} height={819} className="size-full object-cover" />
                     ) : (
                       profile.avatar
                     )}
@@ -992,19 +1034,20 @@ function DecorativeShapes() {
 
 function BrowserPortfolio({ profile, onSwitchProfile }) {
   const [page, setPage] = useState(() => {
-    const routed = pageFromHash(window.location.hash);
+    const routed = pageFromLocation();
     return routed === "home" && profile.id === "sahir" ? "profile" : routed;
   });
   const [favoritesOpen, setFavoritesOpen] = useState(false);
-  const [query, setQuery] = useState(profile.startQuery ?? "");
-  const [searchTerm, setSearchTerm] = useState(profile.startQuery ?? "");
+  const [query, setQuery] = useState(() => initialSearchQuery(profile.startQuery));
+  const [searchTerm, setSearchTerm] = useState(() => initialSearchQuery(profile.startQuery));
   const [copied, setCopied] = useState(false);
   const contentRef = useRef(null);
 
   const address = useMemo(() => {
     if (page === "search") return `https://www.google.com/search?q=${encodeURIComponent(searchTerm || query || "Sahir Sood")}`;
-    const path = page === "home" ? "newtab" : page;
-    return `https://sahir.dev/${path}?profile=${profile.id}`;
+    if (page === "not-found") return `${SITE_CONFIG.siteUrl}${window.location.pathname}`;
+    const path = page === "home" ? "/newtab" : routeForPage(page);
+    return `${SITE_CONFIG.siteUrl}${path}?profile=${profile.id}`;
   }, [page, profile.id, query, searchTerm]);
 
   const runSearch = useCallback(
@@ -1040,8 +1083,24 @@ function BrowserPortfolio({ profile, onSwitchProfile }) {
   }, [page, searchTerm]);
 
   useEffect(() => {
+    if (page === "not-found") {
+      document.title = "Page Not Found | Sahir Sood";
+      document
+        .querySelector('meta[name="description"]')
+        ?.setAttribute(
+          "content",
+          "The page you requested could not be found. Return to Sahir Sood's software developer portfolio, experience, projects, resume, or contact page.",
+        );
+      return;
+    }
+    const route = routeForPageId(page);
+    document.title = route.title;
+    document.querySelector('meta[name="description"]')?.setAttribute("content", route.description);
+  }, [page]);
+
+  useEffect(() => {
     const handleRouteChange = () => {
-      setPage(pageFromHash(window.location.hash));
+      setPage(pageFromLocation());
     };
     window.addEventListener("popstate", handleRouteChange);
     window.addEventListener("hashchange", handleRouteChange);
@@ -1093,6 +1152,7 @@ function BrowserPortfolio({ profile, onSwitchProfile }) {
             {page === "rbc" && <SpotlightPage kind="rbc" />}
             {page === "redbrick-paved" && <SpotlightPage kind="redbrick-paved" />}
             {page === "mothertongue" && <SpotlightPage kind="mothertongue" />}
+            {page === "not-found" && <NotFoundPage onNavigate={navigate} />}
           </div>
 
           {favoritesOpen && <FavoritesPanel onNavigate={navigate} onClose={() => setFavoritesOpen(false)} />}
@@ -1104,19 +1164,22 @@ function BrowserPortfolio({ profile, onSwitchProfile }) {
 
 function ChromeFrame({ profile, page, address, onNavigate, onSwitchProfile, onToggleFavorites }) {
   const PageIcon = page === "contact" ? Mail : page === "snake" ? Gamepad2 : page === "map" ? Map : Search;
+  const goBack = () => window.history.back();
+  const goForward = () => window.history.forward();
+  const refreshPage = () => window.location.reload();
 
   return (
     <header className="select-none border-b border-[#d7dce3] bg-[#edf2fa]">
       <div className="flex h-10 items-end gap-1 px-2 pt-2">
-        <button
-          type="button"
+        <div
           className="flex h-8 min-w-0 max-w-[270px] items-center gap-2 rounded-t-xl bg-white px-4 text-sm shadow-sm"
+          aria-current="page"
         >
           <PageIcon size={16} className="shrink-0 text-blue-600" />
           <span className="truncate">{page === "home" ? "New Tab" : titleCase(page)}</span>
-          <X size={14} className="text-neutral-500" />
-        </button>
-        <button type="button" onClick={() => onNavigate("home")} className="grid size-8 place-items-center rounded-full text-neutral-600 hover:bg-black/5">
+          <X size={14} aria-hidden="true" className="text-neutral-500" />
+        </div>
+        <button type="button" onClick={() => onNavigate("home")} className="grid size-8 place-items-center rounded-full text-neutral-600 hover:bg-black/5" aria-label="Open new portfolio tab">
           <Plus size={18} />
         </button>
         <div className="ml-auto flex h-8 items-center gap-4 px-3 text-neutral-700">
@@ -1127,16 +1190,17 @@ function ChromeFrame({ profile, page, address, onNavigate, onSwitchProfile, onTo
       </div>
 
       <div className="flex items-center gap-2 px-3 py-2">
-        <button type="button" onClick={() => onNavigate("home")} className="grid size-8 place-items-center rounded-full text-neutral-500 hover:bg-black/5">
+        <button type="button" onClick={goBack} className="grid size-8 place-items-center rounded-full text-neutral-500 hover:bg-black/5" aria-label="Go back">
           <ArrowLeft size={18} />
         </button>
-        <button type="button" className="grid size-8 place-items-center rounded-full text-neutral-500 hover:bg-black/5">
+        <button type="button" onClick={goForward} className="grid size-8 place-items-center rounded-full text-neutral-500 hover:bg-black/5" aria-label="Go forward">
           <ArrowRight size={18} />
         </button>
         <button
           type="button"
-          onClick={() => onNavigate("home")}
+          onClick={refreshPage}
           className="grid size-8 place-items-center rounded-full text-neutral-600 hover:bg-black/5"
+          aria-label="Refresh current page"
         >
           <RefreshCw size={16} />
         </button>
@@ -1145,19 +1209,22 @@ function ChromeFrame({ profile, page, address, onNavigate, onSwitchProfile, onTo
           <span className="truncate text-sm text-neutral-700">{address}</span>
           <Star size={17} className="ml-auto shrink-0 text-neutral-500" />
         </div>
-        <button type="button" className="hidden rounded-full border border-blue-200 bg-white px-3 py-2 text-sm font-medium text-neutral-700 shadow-sm sm:inline-flex">
+        <button type="button" onClick={() => onNavigate("ask")} className="hidden rounded-full border border-blue-200 bg-white px-3 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-blue-50 sm:inline-flex">
           AI Mode
         </button>
-        <button
-          type="button"
-          onClick={() => onNavigate("profile")}
+        <a
+          href={routeForPage("profile")}
+          onClick={(event) => {
+            event.preventDefault();
+            onNavigate("profile");
+          }}
           className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-neutral-700 shadow-sm hover:bg-blue-50 sm:h-9 sm:w-auto sm:gap-2 sm:px-3 sm:text-sm sm:font-medium"
           aria-label="Open About page"
         >
           <UserRound size={17} />
           <span className="hidden sm:inline">About</span>
-        </button>
-        <button type="button" onClick={onToggleFavorites} className="grid size-9 place-items-center rounded-full hover:bg-black/5">
+        </a>
+        <button type="button" onClick={onToggleFavorites} className="grid size-9 place-items-center rounded-full hover:bg-black/5" aria-label="Open portfolio shortcuts">
           <Grid3X3 size={19} />
         </button>
         <button
@@ -1168,14 +1235,14 @@ function ChromeFrame({ profile, page, address, onNavigate, onSwitchProfile, onTo
           aria-label="Switch profile"
         >
           {profile.avatar === "photo" ? (
-            <img src={PROFILE_IMG} alt="Sahir Sood" className="size-full object-cover" />
+            <img src={PROFILE_IMG} alt="Sahir Sood" width={819} height={819} className="size-full object-cover" />
           ) : (
             <span className={classNames("grid size-full place-items-center text-sm font-semibold text-white", profile.bg)}>
               {profile.avatar}
             </span>
           )}
         </button>
-        <MoreVertical size={19} className="text-neutral-600" />
+        <MoreVertical size={19} aria-hidden="true" className="text-neutral-600" />
       </div>
 
       <nav className="flex h-9 items-center gap-1 overflow-x-auto border-t border-[#d7dce3] bg-white px-3 text-sm">
@@ -1196,15 +1263,18 @@ function ChromeFrame({ profile, page, address, onNavigate, onSwitchProfile, onTo
             );
           }
           return (
-            <button
+            <a
               key={bookmark.label}
-              type="button"
-              onClick={() => onNavigate(bookmark.action)}
+              href={routeForPage(bookmark.action)}
+              onClick={(event) => {
+                event.preventDefault();
+                onNavigate(bookmark.action);
+              }}
               className="inline-flex shrink-0 items-center gap-2 rounded px-2 py-1.5 text-neutral-700 hover:bg-neutral-100"
             >
               <Icon size={16} />
               {bookmark.label}
-            </button>
+            </a>
           );
         })}
         <span className="ml-auto hidden shrink-0 items-center gap-2 border-l border-neutral-200 pl-3 text-neutral-700 lg:inline-flex">
@@ -1219,29 +1289,47 @@ function ChromeFrame({ profile, page, address, onNavigate, onSwitchProfile, onTo
 function HeaderLinks({ profile, onNavigate, onToggleFavorites }) {
   return (
     <div className="flex items-center justify-end gap-5 px-6 py-4 text-sm">
-      <button type="button" onClick={() => onNavigate("contact")} className="text-neutral-700 hover:underline">
+      <a
+        href={routeForPage("contact")}
+        onClick={(event) => {
+          event.preventDefault();
+          onNavigate("contact");
+        }}
+        className="text-neutral-700 hover:underline"
+      >
         Contact
-      </button>
-      <button type="button" onClick={() => onNavigate("projects")} className="text-neutral-700 hover:underline">
+      </a>
+      <a
+        href={routeForPage("projects")}
+        onClick={(event) => {
+          event.preventDefault();
+          onNavigate("projects");
+        }}
+        className="text-neutral-700 hover:underline"
+      >
         Projects
-      </button>
-      <button type="button" onClick={onToggleFavorites} className="grid size-10 place-items-center rounded-full hover:bg-neutral-100">
+      </a>
+      <button type="button" onClick={onToggleFavorites} className="grid size-10 place-items-center rounded-full hover:bg-neutral-100" aria-label="Open portfolio shortcuts">
         <Grid3X3 size={21} />
       </button>
-      <button
-        type="button"
-        onClick={() => onNavigate("profile")}
+      <a
+        href={routeForPage("profile")}
+        onClick={(event) => {
+          event.preventDefault();
+          onNavigate("profile");
+        }}
         className="grid size-10 place-items-center overflow-hidden rounded-full border-2"
         style={{ borderColor: profile.accent }}
+        aria-label="Open About page"
       >
         {profile.avatar === "photo" ? (
-          <img src={PROFILE_IMG} alt="Sahir Sood" className="size-full object-cover" />
+          <img src={PROFILE_IMG} alt="Sahir Sood" width={819} height={819} className="size-full object-cover" />
         ) : (
           <span className={classNames("grid size-full place-items-center text-sm font-semibold text-white", profile.bg)}>
             {profile.avatar}
           </span>
         )}
-      </button>
+      </a>
     </div>
   );
 }
@@ -1250,19 +1338,23 @@ function NewTabPage({ query, setQuery, submitSearch, onNavigate, onSearch }) {
   return (
     <section className="mx-auto flex min-h-[calc(100vh-138px)] w-full max-w-5xl flex-col items-center px-5 pb-12 pt-14">
       <SahirLogo />
+      <p className="mt-4 max-w-2xl text-center text-base leading-7 text-neutral-600">
+        Sahir Sood is a full-stack software developer building practical web, mobile, AI, backend, and finance-focused software.
+      </p>
 
       <form
         onSubmit={submitSearch}
         className="mt-9 flex h-14 w-full max-w-3xl items-center gap-3 rounded-full border border-neutral-200 bg-white px-5 shadow-[0_2px_8px_rgba(60,64,67,0.18)] transition focus-within:border-transparent focus-within:shadow-[0_2px_12px_rgba(60,64,67,0.24)]"
       >
-        <Plus size={22} className="shrink-0 text-neutral-700" />
+        <Plus size={22} aria-hidden="true" className="shrink-0 text-neutral-700" />
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-neutral-400"
           placeholder="Ask Sahir"
+          aria-label="Ask about Sahir's portfolio"
         />
-        <Mic size={20} className="shrink-0 text-neutral-600" />
+        <Mic size={20} aria-hidden="true" className="shrink-0 text-neutral-600" />
         <button type="submit" className="shrink-0 rounded-full bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-200">
           AI Mode
         </button>
@@ -1301,7 +1393,7 @@ function SahirLogo() {
     ["r", "text-emerald-500"],
   ];
   return (
-    <h1 className="text-6xl font-semibold tracking-tight sm:text-8xl" aria-label="Sahir">
+    <h1 className="text-6xl font-semibold tracking-tight sm:text-8xl" aria-label="Sahir Sood - Full-Stack Developer">
       {letters.map(([letter, color]) => (
         <span key={letter} className={color}>
           {letter}
@@ -1314,16 +1406,19 @@ function SahirLogo() {
 function ShortcutButton({ shortcut, onNavigate }) {
   const Icon = shortcut.icon;
   return (
-    <button
-      type="button"
-      onClick={() => onNavigate(shortcut.action)}
+    <a
+      href={routeForPage(shortcut.action)}
+      onClick={(event) => {
+        event.preventDefault();
+        onNavigate(shortcut.action);
+      }}
       className="group flex flex-col items-center gap-2 rounded-2xl p-2 text-center transition hover:bg-neutral-100"
     >
       <span className={classNames("grid size-12 place-items-center rounded-full text-white shadow-sm", shortcut.color)}>
         <Icon size={22} />
       </span>
       <span className="max-w-20 truncate text-xs text-neutral-800">{shortcut.label}</span>
-    </button>
+    </a>
   );
 }
 
@@ -1338,10 +1433,13 @@ function ContinueTabs({ onNavigate }) {
         {RECENT_TABS.map((tab) => {
           const Icon = tab.icon;
           return (
-            <button
+            <a
               key={tab.title}
-              type="button"
-              onClick={() => onNavigate(tab.action)}
+              href={routeForPage(tab.action)}
+              onClick={(event) => {
+                event.preventDefault();
+                onNavigate(tab.action);
+              }}
               className="flex w-full items-center gap-3 rounded-xl p-2 text-left transition hover:bg-neutral-50"
             >
               <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-blue-50 text-blue-600">
@@ -1353,7 +1451,7 @@ function ContinueTabs({ onNavigate }) {
                   {tab.source} - {tab.visited}
                 </span>
               </span>
-            </button>
+            </a>
           );
         })}
       </div>
@@ -1368,10 +1466,10 @@ function FavoritesPanel({ onNavigate, onClose }) {
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-neutral-800">Your favorites</h2>
           <div className="flex items-center gap-2">
-            <button type="button" className="grid size-11 place-items-center rounded-full bg-blue-100 text-neutral-700" aria-label="Customize favorites">
-              <Settings size={19} />
-            </button>
-            <button type="button" onClick={onClose} className="grid size-9 place-items-center rounded-full hover:bg-neutral-100">
+            <span className="grid size-11 place-items-center rounded-full bg-blue-100 text-neutral-700" title="Portfolio shortcuts">
+              <Settings size={19} aria-hidden="true" />
+            </span>
+            <button type="button" onClick={onClose} className="grid size-9 place-items-center rounded-full hover:bg-neutral-100" aria-label="Close portfolio shortcuts">
               <X size={17} />
             </button>
           </div>
@@ -1380,17 +1478,20 @@ function FavoritesPanel({ onNavigate, onClose }) {
           {FAVORITES.map((item) => {
             const Icon = item.icon;
             return (
-              <button
+              <a
                 key={item.label}
-                type="button"
-                onClick={() => onNavigate(item.action)}
+                href={routeForPage(item.action)}
+                onClick={(event) => {
+                  event.preventDefault();
+                  onNavigate(item.action);
+                }}
                 className="group grid justify-items-center gap-2 rounded-2xl p-2 transition hover:bg-blue-50"
               >
                 <span className={classNames("grid size-12 place-items-center rounded-2xl bg-neutral-50", item.color)}>
                   <Icon size={26} />
                 </span>
                 <span className="max-w-24 truncate text-sm text-neutral-800">{item.label}</span>
-              </button>
+              </a>
             );
           })}
         </div>
@@ -1404,7 +1505,7 @@ function SearchResultsPage({ query, onNavigate }) {
   const results = getSearchResults(query);
 
   return (
-    <GoogleResultsShell query={query}>
+    <GoogleResultsShell query={query} heading="Portfolio Search Results">
       <section className="grid gap-8 lg:grid-cols-[minmax(0,760px)_360px]">
         <div>
           <AiOverview title="AI Overview" body={answer} />
@@ -1428,11 +1529,14 @@ function ExperiencePage({ onNavigate }) {
     description: item.summary,
     tags: item.tags,
     image: item.logo,
+    imageAlt: `${item.company} logo`,
+    imageWidth: item.logoWidth,
+    imageHeight: item.logoHeight,
     action: item.id && EXPERIENCE_DETAILS[item.id] ? item.id : undefined,
   }));
 
   return (
-    <GoogleResultsShell query="experience">
+    <GoogleResultsShell query="experience" heading="Software Development Experience">
       <section className="grid gap-8 lg:grid-cols-[minmax(0,780px)_340px]">
         <div>
           <AiOverview
@@ -1463,11 +1567,14 @@ function ProjectsPage() {
     description: `${project.description} ${project.signal}`,
     tags: project.stack,
     image: project.img,
+    imageAlt: `${project.title} project thumbnail`,
+    imageWidth: project.imgWidth,
+    imageHeight: project.imgHeight,
     href: project.repo,
   }));
 
   return (
-    <GoogleResultsShell query="projects">
+    <GoogleResultsShell query="projects" heading="Selected Software and AI Projects">
       <section className="grid gap-8 lg:grid-cols-[minmax(0,780px)_340px]">
         <div>
           <AiOverview
@@ -1491,7 +1598,14 @@ function ProjectsPage() {
           <div className="mt-5 overflow-hidden rounded-2xl border border-neutral-200">
             {PROJECTS.slice(0, 4).map((project) => (
               <div key={project.title} className="flex items-center gap-3 border-b border-neutral-100 p-3 last:border-b-0">
-                <img src={project.img} alt="" className="size-11 rounded-lg object-cover" />
+                <img
+                  src={project.img}
+                  alt={`${project.title} project thumbnail`}
+                  width={project.imgWidth}
+                  height={project.imgHeight}
+                  loading="lazy"
+                  className="size-11 rounded-lg object-cover"
+                />
                 <span className="text-sm font-medium">{project.title}</span>
               </div>
             ))}
@@ -1502,7 +1616,7 @@ function ProjectsPage() {
   );
 }
 
-function GoogleResultsShell({ query, children }) {
+function GoogleResultsShell({ query, heading, children }) {
   return (
     <section className="mx-auto w-full max-w-7xl px-5 pb-14 pt-0">
       <div className="sticky top-0 z-20 border-b border-neutral-200 bg-white/95 py-4 backdrop-blur">
@@ -1524,7 +1638,10 @@ function GoogleResultsShell({ query, children }) {
           ))}
         </div>
       </div>
-      <div className="pt-8">{children}</div>
+      <div className="pt-8">
+        <h1 className="mb-6 text-2xl font-normal tracking-tight text-neutral-900 md:text-3xl">{heading}</h1>
+        {children}
+      </div>
     </section>
   );
 }
@@ -1562,7 +1679,14 @@ function SearchResult({ result, onNavigate }) {
     <>
       <div className="flex items-start gap-4">
         {result.image && (
-          <img src={result.image} alt="" className="mt-1 size-12 shrink-0 rounded-xl border border-neutral-200 object-cover" />
+          <img
+            src={result.image}
+            alt={result.imageAlt ?? ""}
+            width={result.imageWidth}
+            height={result.imageHeight}
+            loading="lazy"
+            className="mt-1 size-12 shrink-0 rounded-xl border border-neutral-200 object-cover"
+          />
         )}
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3">
@@ -1616,7 +1740,7 @@ function KnowledgePanel({ onNavigate }) {
   return (
     <aside className="rounded-[1.75rem] border border-neutral-200 bg-white p-5 shadow-sm">
       <div className="flex items-center gap-4">
-        <img src={PROFILE_IMG} alt="Sahir Sood" className="size-20 rounded-full object-cover shadow-sm" />
+        <img src={PROFILE_IMG} alt="Sahir Sood" width={819} height={819} className="size-20 rounded-full object-cover shadow-sm" />
         <div>
           <h2 className="text-2xl font-semibold">Sahir Sood</h2>
           <p className="text-neutral-600">Software Developer</p>
@@ -1626,18 +1750,46 @@ function KnowledgePanel({ onNavigate }) {
         SFU CS + Finance student in Vancouver building practical software across web, mobile, AI, backend, and data.
       </p>
       <div className="mt-5 grid grid-cols-2 gap-3">
-        <button type="button" onClick={() => onNavigate("resume")} className="rounded-2xl bg-neutral-100 p-3 text-left text-sm font-medium hover:bg-blue-50">
+        <a
+          href={routeForPage("resume")}
+          onClick={(event) => {
+            event.preventDefault();
+            onNavigate("resume");
+          }}
+          className="rounded-2xl bg-neutral-100 p-3 text-left text-sm font-medium hover:bg-blue-50"
+        >
           Resume
-        </button>
-        <button type="button" onClick={() => onNavigate("contact")} className="rounded-2xl bg-neutral-100 p-3 text-left text-sm font-medium hover:bg-blue-50">
+        </a>
+        <a
+          href={routeForPage("contact")}
+          onClick={(event) => {
+            event.preventDefault();
+            onNavigate("contact");
+          }}
+          className="rounded-2xl bg-neutral-100 p-3 text-left text-sm font-medium hover:bg-blue-50"
+        >
           Contact
-        </button>
-        <button type="button" onClick={() => onNavigate("map")} className="rounded-2xl bg-neutral-100 p-3 text-left text-sm font-medium hover:bg-blue-50">
+        </a>
+        <a
+          href={routeForPage("map")}
+          onClick={(event) => {
+            event.preventDefault();
+            onNavigate("map");
+          }}
+          className="rounded-2xl bg-neutral-100 p-3 text-left text-sm font-medium hover:bg-blue-50"
+        >
           Map
-        </button>
-        <button type="button" onClick={() => onNavigate("snake")} className="rounded-2xl bg-neutral-100 p-3 text-left text-sm font-medium hover:bg-blue-50">
+        </a>
+        <a
+          href={routeForPage("snake")}
+          onClick={(event) => {
+            event.preventDefault();
+            onNavigate("snake");
+          }}
+          className="rounded-2xl bg-neutral-100 p-3 text-left text-sm font-medium hover:bg-blue-50"
+        >
           Snake
-        </button>
+        </a>
       </div>
     </aside>
   );
@@ -1675,7 +1827,7 @@ function ProfilePage({ onNavigate }) {
     <PageShell eyebrow="Account" title="Sahir Sood" description="Software developer, SFU CS + Finance student, study-abroad explorer, and practical full-stack builder.">
       <section className="grid items-stretch gap-6 lg:grid-cols-[320px_1fr]">
         <div className="h-full rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
-          <img src={PROFILE_IMG} alt="Sahir Sood" className="mx-auto size-44 rounded-full object-cover shadow-lg" />
+          <img src={PROFILE_IMG} alt="Sahir Sood" width={819} height={819} className="mx-auto size-44 rounded-full object-cover shadow-lg" />
           <div className="mt-6 text-center">
             <h2 className="text-2xl font-semibold">Sahir Sood</h2>
             <p className="mt-2 text-neutral-600">Software Developer</p>
@@ -1814,10 +1966,17 @@ function MiniMapCard({ onNavigate }) {
           <Metric label="Countries/regions" value={TRAVEL_PLACES.length} />
           <Metric label="Logged places" value={TRAVEL_PLACES.reduce((total, country) => total + country.places.length, 0)} />
         </div>
-        <button type="button" onClick={() => onNavigate("map")} className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white">
+        <a
+          href={routeForPage("map")}
+          onClick={(event) => {
+            event.preventDefault();
+            onNavigate("map");
+          }}
+          className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white"
+        >
           Open map
           <ChevronRight size={16} />
-        </button>
+        </a>
       </div>
     </div>
   );
@@ -1902,7 +2061,7 @@ function EducationPage() {
 
 function SkillsPage() {
   return (
-    <PageShell eyebrow="Technical index" title="Skills, grouped like useful bookmarks" description="A scannable view of the tools Sahir can reach for across product, backend, mobile, and data work.">
+    <PageShell eyebrow="Technical index" title="Technical Skills" description="A scannable view of the tools Sahir can reach for across product, backend, mobile, and data work.">
       <section className="grid gap-4 lg:grid-cols-4">
         {SKILL_LANES.map((lane) => (
           <article key={lane.title} className="h-full rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
@@ -1979,15 +2138,36 @@ function ResumePage({ onNavigate }) {
         <aside className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-neutral-50 p-6">
           <h3 className="font-semibold">Quick actions</h3>
           <div className="mt-4 grid gap-3">
-            <button type="button" onClick={() => onNavigate("experience")} className="rounded-2xl bg-white p-4 text-left shadow-sm hover:bg-blue-50">
+            <a
+              href={routeForPage("experience")}
+              onClick={(event) => {
+                event.preventDefault();
+                onNavigate("experience");
+              }}
+              className="rounded-2xl bg-white p-4 text-left shadow-sm hover:bg-blue-50"
+            >
               View experience
-            </button>
-            <button type="button" onClick={() => onNavigate("projects")} className="rounded-2xl bg-white p-4 text-left shadow-sm hover:bg-blue-50">
+            </a>
+            <a
+              href={routeForPage("projects")}
+              onClick={(event) => {
+                event.preventDefault();
+                onNavigate("projects");
+              }}
+              className="rounded-2xl bg-white p-4 text-left shadow-sm hover:bg-blue-50"
+            >
               View projects
-            </button>
-            <button type="button" onClick={() => onNavigate("contact")} className="rounded-2xl bg-white p-4 text-left shadow-sm hover:bg-blue-50">
+            </a>
+            <a
+              href={routeForPage("contact")}
+              onClick={(event) => {
+                event.preventDefault();
+                onNavigate("contact");
+              }}
+              className="rounded-2xl bg-white p-4 text-left shadow-sm hover:bg-blue-50"
+            >
               Contact Sahir
-            </button>
+            </a>
           </div>
           <div className="mt-6 flex-1 rounded-2xl bg-white p-4 text-sm leading-6 text-neutral-600 shadow-sm">
             Best scanned alongside the experience and project pages; those routes include the richer context behind the resume bullets.
@@ -2009,7 +2189,7 @@ function ContactPage({ copied, onCopy }) {
   return (
     <PageShell
       eyebrow="Contact"
-      title="Let's connect"
+      title="Contact Sahir Sood"
       description="I am always interested in meeting people working on thoughtful software, AI products, financial technology, or problems where the technical and business sides genuinely overlap."
     >
       <div className="grid items-stretch gap-6 lg:grid-cols-[340px_1fr]">
@@ -2382,6 +2562,42 @@ function SnakePage() {
   );
 }
 
+function NotFoundPage({ onNavigate }) {
+  const links = [
+    ["Home", "home"],
+    ["Experience", "experience"],
+    ["Projects", "projects"],
+    ["Contact", "contact"],
+  ];
+
+  return (
+    <PageShell
+      eyebrow="404"
+      title="Page Not Found"
+      description="This URL does not match a public portfolio route. Try one of Sahir Sood's main software developer portfolio pages."
+    >
+      <section className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
+        <h2 className="text-xl font-semibold">Try a Portfolio Section</h2>
+        <div className="mt-4 flex flex-wrap gap-3">
+          {links.map(([label, pageId]) => (
+            <a
+              key={pageId}
+              href={routeForPage(pageId)}
+              onClick={(event) => {
+                event.preventDefault();
+                onNavigate(pageId);
+              }}
+              className="rounded-full border border-blue-200 px-4 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-50"
+            >
+              {label}
+            </a>
+          ))}
+        </div>
+      </section>
+    </PageShell>
+  );
+}
+
 function GoogleSnakeGame() {
   const center = Math.floor(SNAKE_CONFIG.size / 2);
   const [snake, setSnake] = useState([{ x: center, y: center }]);
@@ -2597,7 +2813,14 @@ function SpotlightPage({ kind }) {
     >
       <article className="grid gap-6 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm lg:grid-cols-[180px_1fr]">
         <div className="grid min-h-36 place-items-center rounded-3xl bg-neutral-50">
-          <img src={detail.logo} alt={`${detail.company} logo`} className="max-h-24 max-w-32 object-contain" />
+          <img
+            src={detail.logo}
+            alt={`${detail.company} logo`}
+            width={detail.logoWidth}
+            height={detail.logoHeight}
+            loading="lazy"
+            className="max-h-24 max-w-32 object-contain"
+          />
         </div>
         <div>
           <div className="flex flex-wrap gap-2">
@@ -2795,7 +3018,10 @@ function titleCase(value) {
 }
 
 export default function App() {
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState(() => {
+    if (pageFromLocation() === "home") return null;
+    return PROFILES[0];
+  });
 
   if (!profile) return <ProfilePicker onChoose={setProfile} />;
 

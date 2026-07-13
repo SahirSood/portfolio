@@ -1,0 +1,15 @@
+{
+  "name": "Sahir Sood Portfolio",
+  "short_name": "Sahir Sood",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4285f4",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

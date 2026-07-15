@@ -10,12 +10,12 @@ Central SEO data lives in `src/seo/siteConfig.js`.
 
 Set these environment variables in production:
 
-- `VITE_SITE_URL`: canonical production origin, for example `https://sahir.dev`. The code currently falls back to `https://sahir.dev` because that domain was already used in the app's browser-address UI, but this still needs confirmation before launch.
+- `VITE_SITE_URL`: canonical production origin. The current production build uses `https://sahirsood.netlify.app`; update this before deployment if the site moves to a custom domain.
 - `VITE_GOOGLE_SITE_VERIFICATION`: optional Google Search Console verification token.
 - `VITE_BING_SITE_VERIFICATION`: optional Bing Webmaster Tools verification token. This renders as `msvalidate.01`.
 
 Do not add verification tokens unless they come from the actual webmaster tools account.
-The current Google Search Console token is stored in `.env.production`; the SEO prerender and check scripts load Vite env files so the generated homepage contains the verification meta tag before deployment.
+The current Google Search Console token and Netlify production origin are stored in `.env.production`; the SEO prerender and check scripts load Vite env files so the generated homepage, sitemap, robots file, and canonical URLs match the deployed site.
 
 ## Metadata Architecture
 
@@ -99,7 +99,7 @@ If deploying somewhere other than Netlify, configure equivalent behavior:
 
 ## Search Console Setup
 
-1. Deploy the production build with `VITE_SITE_URL` set to the final canonical domain.
+1. Deploy the production build with `VITE_SITE_URL` set to the final canonical domain, currently `https://sahirsood.netlify.app`.
 2. Add the domain property in Google Search Console.
 3. If using meta-tag verification, set `VITE_GOOGLE_SITE_VERIFICATION` and redeploy.
 4. Submit `${VITE_SITE_URL}/sitemap.xml`.

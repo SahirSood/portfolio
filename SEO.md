@@ -15,6 +15,7 @@ Set these environment variables in production:
 - `VITE_BING_SITE_VERIFICATION`: optional Bing Webmaster Tools verification token. This renders as `msvalidate.01`.
 
 Do not add verification tokens unless they come from the actual webmaster tools account.
+The current Google Search Console token is stored in `.env.production`; the SEO prerender and check scripts load Vite env files so the generated homepage contains the verification meta tag before deployment.
 
 ## Metadata Architecture
 

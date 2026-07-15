@@ -1,9 +1,13 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadEnv } from "vite";
 import { SEO_ROUTES, SITE_CONFIG, absoluteUrl, normalizeSiteUrl } from "../src/seo/siteConfig.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const projectRoot = path.resolve(__dirname, "..");
+const loadedEnv = loadEnv(process.env.NODE_ENV || "production", projectRoot, "");
+Object.assign(process.env, loadedEnv);
 const distDir = path.resolve(__dirname, "..", "dist");
 const templatePath = path.join(distDir, "index.html");
 

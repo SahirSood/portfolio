@@ -42,6 +42,7 @@ import rbcLogo from "./assets/RBC.jpg";
 import { SITE_CONFIG, pageForPath, routeForPageId, routePathForPage } from "./seo/siteConfig.js";
 
 const PROFILE_IMG = SITE_CONFIG.profileImage;
+const PROFILE_IMG_ALT = SITE_CONFIG.profileImageAlt;
 const TILE_SIZE = 256;
 
 const HOT_LINKS = [
@@ -1048,7 +1049,7 @@ function ProfilePicker({ onChoose }) {
                     )}
                   >
                     {profile.avatar === "photo" ? (
-                      <img src={PROFILE_IMG} alt="Sahir Sood" width={819} height={819} className="size-full object-cover" />
+                      <img src={PROFILE_IMG} alt={PROFILE_IMG_ALT} width={1200} height={1200} className="size-full object-cover" />
                     ) : (
                       profile.avatar
                     )}
@@ -1312,7 +1313,7 @@ function ChromeFrame({ profile, page, address, onNavigate, onSwitchProfile, onTo
           aria-label="Switch profile"
         >
           {profile.avatar === "photo" ? (
-            <img src={PROFILE_IMG} alt="Sahir Sood" width={819} height={819} className="size-full object-cover" />
+            <img src={PROFILE_IMG} alt={PROFILE_IMG_ALT} width={1200} height={1200} className="size-full object-cover" />
           ) : (
             <span className={classNames("grid size-full place-items-center text-sm font-semibold text-white", profile.bg)}>
               {profile.avatar}
@@ -1400,7 +1401,7 @@ function HeaderLinks({ profile, onNavigate, onToggleFavorites }) {
         aria-label="Open About page"
       >
         {profile.avatar === "photo" ? (
-          <img src={PROFILE_IMG} alt="Sahir Sood" width={819} height={819} className="size-full object-cover" />
+          <img src={PROFILE_IMG} alt={PROFILE_IMG_ALT} width={1200} height={1200} className="size-full object-cover" />
         ) : (
           <span className={classNames("grid size-full place-items-center text-sm font-semibold text-white", profile.bg)}>
             {profile.avatar}
@@ -1877,7 +1878,7 @@ function KnowledgePanel({ onNavigate }) {
   return (
     <aside className="rounded-[1.75rem] border border-neutral-200 bg-white p-5 shadow-sm">
       <div className="flex items-center gap-4">
-        <img src={PROFILE_IMG} alt="Sahir Sood" width={819} height={819} className="size-20 rounded-full object-cover shadow-sm" />
+        <img src={PROFILE_IMG} alt={PROFILE_IMG_ALT} width={1200} height={1200} className="size-20 rounded-full object-cover shadow-sm" />
         <div>
           <h2 className="text-2xl font-semibold">Sahir Sood</h2>
           <p className="text-neutral-600">Software Developer</p>
@@ -1970,7 +1971,7 @@ function ProfilePage({ onNavigate }) {
     <PageShell eyebrow="Account" title="Sahir Sood" description="Software developer, SFU CS + Finance student, study-abroad explorer, and practical full-stack builder.">
       <section className="grid items-stretch gap-6 lg:grid-cols-[320px_1fr]">
         <div className="h-full rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
-          <img src={PROFILE_IMG} alt="Sahir Sood" width={819} height={819} className="mx-auto size-44 rounded-full object-cover shadow-lg" />
+          <img src={PROFILE_IMG} alt={PROFILE_IMG_ALT} width={1200} height={1200} className="mx-auto size-44 rounded-full object-cover shadow-lg" />
           <div className="mt-6 text-center">
             <h2 className="text-2xl font-semibold">Sahir Sood</h2>
             <p className="mt-2 text-neutral-600">Software Developer</p>

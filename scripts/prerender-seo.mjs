@@ -73,7 +73,11 @@ function canonicalUrl(route) {
 }
 
 function imageUrl(route) {
-  return absoluteUrl(route.image || SITE_CONFIG.profileImage, siteUrl);
+  return absoluteUrl(route.image || SITE_CONFIG.socialImage || SITE_CONFIG.profileImage, siteUrl);
+}
+
+function personImageUrl() {
+  return absoluteUrl(SITE_CONFIG.profileImage, siteUrl);
 }
 
 function verificationTags() {
@@ -103,7 +107,7 @@ function profileJsonLd(route) {
       "@id": `${rootUrl}#person`,
       name: SITE_CONFIG.displayName,
       url: rootUrl,
-      image: imageUrl(route),
+      image: personImageUrl(),
       jobTitle: SITE_CONFIG.jobTitle,
       description: SITE_CONFIG.description,
       email: `mailto:${SITE_CONFIG.email}`,
@@ -155,7 +159,8 @@ function headForRoute(route) {
     `<meta name="robots" content="${escapeAttr(robots)}" />`,
     `<meta name="theme-color" content="${escapeAttr(SITE_CONFIG.themeColor)}" />`,
     `<link rel="canonical" href="${escapeAttr(canonical)}" />`,
-    `<link rel="icon" href="/favicon.svg" type="image/svg+xml" />`,
+    `<link rel="icon" href="${escapeAttr(SITE_CONFIG.icon48)}" sizes="48x48" type="image/png" />`,
+    `<link rel="apple-touch-icon" href="${escapeAttr(SITE_CONFIG.icon192)}" />`,
     `<link rel="manifest" href="/site.webmanifest" />`,
     `<meta property="og:type" content="${escapeAttr(ogType)}" />`,
     `<meta property="og:title" content="${escapeAttr(route.title)}" />`,
@@ -163,10 +168,13 @@ function headForRoute(route) {
     `<meta property="og:url" content="${escapeAttr(canonical)}" />`,
     `<meta property="og:image" content="${escapeAttr(image)}" />`,
     `<meta property="og:image:alt" content="${escapeAttr(SITE_CONFIG.profileImageAlt)}" />`,
+    `<meta property="og:image:width" content="${escapeAttr(SITE_CONFIG.socialImageWidth || 1200)}" />`,
+    `<meta property="og:image:height" content="${escapeAttr(SITE_CONFIG.socialImageHeight || 630)}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${escapeAttr(route.title)}" />`,
     `<meta name="twitter:description" content="${escapeAttr(route.description)}" />`,
     `<meta name="twitter:image" content="${escapeAttr(image)}" />`,
+    `<meta name="twitter:image:alt" content="${escapeAttr(SITE_CONFIG.profileImageAlt)}" />`,
     ...verificationTags(),
     jsonLdScript(ld),
     staticFallbackStyle(),
@@ -247,7 +255,7 @@ function bodyForRoute(route) {
   const links = route.links?.length ? `<nav aria-label="Related portfolio links">${route.links.map(linkForRoute).join("\n          ")}</nav>` : "";
   const portrait =
     route.id === "home" || route.id === "profile"
-      ? `<img src="${escapeAttr(SITE_CONFIG.profileImage)}" alt="${escapeAttr(SITE_CONFIG.profileImageAlt)}" width="819" height="819" loading="eager" />`
+      ? `<img src="${escapeAttr(SITE_CONFIG.profileImage)}" alt="${escapeAttr(SITE_CONFIG.profileImageAlt)}" width="1200" height="1200" loading="eager" />`
       : "";
   return `<main>
         <p>${escapeHtml(route.eyebrow || "Portfolio")}</p>

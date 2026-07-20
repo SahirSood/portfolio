@@ -2057,7 +2057,7 @@ function PersonalImageGallery({ compact = false }) {
               width={image.width}
               height={image.height}
               loading="lazy"
-              className="h-40 w-full object-cover sm:h-36 lg:h-40"
+              className="aspect-[3/4] w-full object-cover"
             />
             <figcaption className="p-3">
               <p className="text-sm font-semibold text-neutral-900">{image.title}</p>

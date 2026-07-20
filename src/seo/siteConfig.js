@@ -65,7 +65,7 @@ export const PERSONAL_IMAGES = [
     title: "Sahara Desert",
     caption: "One of the most memorable landscapes from exchange travel.",
     width: 1200,
-    height: 900,
+    height: 1600,
   },
   {
     id: "nice-france",
@@ -74,7 +74,7 @@ export const PERSONAL_IMAGES = [
     title: "Nice, France",
     caption: "A bright coastal stop during travel after studying abroad.",
     width: 1200,
-    height: 900,
+    height: 1600,
   },
 ];
 

@@ -89,3 +89,4 @@ Avoid generic filler. It is better to have a shorter truthful section than a pad
 - Do not describe an image as Sahir unless it actually depicts Sahir.
 - The profile image source is `SITE_CONFIG.profileImage`; keep its descriptive, Sahir-specific filename and alt text aligned with visible usage and JSON-LD.
 - The social preview image should remain 1200 by 630 PNG or JPG and be referenced through `SITE_CONFIG.socialImage`.
+- Secondary personal photos belong in `PERSONAL_IMAGES` with descriptive filenames, truthful alt text, visible captions, and static prerendered output when they are meant to help image search.

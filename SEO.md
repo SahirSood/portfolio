@@ -63,6 +63,8 @@ The profile page entity uses: `${VITE_SITE_URL}/#profile-page`.
 
 Only facts already visible in the portfolio are included: Sahir Sood's name, software developer role, public GitHub and LinkedIn URLs, email, SFU and University of Leeds education references, RBC current work reference, technical topics, and the professional headshot in `public/img/sahir-sood-professional-headshot.jpg`.
 
+Secondary personal image data lives in `PERSONAL_IMAGES` inside `src/seo/siteConfig.js`. Those images are visible in the React app and in static prerendered HTML for the homepage, about page, and map page.
+
 Other pages use conservative `WebPage` JSON-LD that points back to the same Person entity.
 
 ## Sitemap and Robots
@@ -147,5 +149,6 @@ No analytics provider was added. If analytics is added later, prefer privacy-con
 - Do not add schema for facts, awards, roles, ratings, reviews, or metrics unless they are true and visible.
 - Add project detail pages only when there is enough real case-study content: problem, role, technologies, decisions, challenges, outcome, screenshots, and links.
 - Keep the portrait in `public/img/sahir-sood-professional-headshot.jpg`, the 1200 by 630 social preview in `public/img/sahir-sood-professional-headshot-social.jpg`, and the site icons in `public/img/sahir-sood-headshot-icon-*.png`.
+- Keep secondary personal photos in `PERSONAL_IMAGES` with descriptive filenames, truthful alt text, and visible captions.
 - Update `lastmod` dates only when content materially changes.
 - Re-run `npm run build` and `npm run seo:check` before deploying.

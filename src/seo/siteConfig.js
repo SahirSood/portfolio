@@ -48,6 +48,36 @@ export const SITE_CONFIG = {
   worksFor: ["RBC"],
 };
 
+export const PERSONAL_IMAGES = [
+  {
+    id: "panorama-ridge",
+    src: "/img/sahir-sood-panorama-ridge-hike.jpg",
+    alt: "Sahir Sood hiking at Panorama Ridge in British Columbia",
+    title: "Panorama Ridge",
+    caption: "A favourite outdoor memory from British Columbia.",
+    width: 1200,
+    height: 1600,
+  },
+  {
+    id: "sahara-desert",
+    src: "/img/sahir-sood-sahara-desert-travel.jpg",
+    alt: "Sahara Desert travel photo from Sahir Sood's study abroad travels",
+    title: "Sahara Desert",
+    caption: "One of the most memorable landscapes from exchange travel.",
+    width: 1200,
+    height: 900,
+  },
+  {
+    id: "nice-france",
+    src: "/img/sahir-sood-nice-france-travel.jpg",
+    alt: "Nice France coastline travel photo from Sahir Sood's study abroad travels",
+    title: "Nice, France",
+    caption: "A bright coastal stop during travel after studying abroad.",
+    width: 1200,
+    height: 900,
+  },
+];
+
 export const ROUTE_PATHS = {
   home: "/",
   search: "/search",

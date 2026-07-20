@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadEnv } from "vite";
-import { SEO_ROUTES, SITE_CONFIG, absoluteUrl, normalizeSiteUrl } from "../src/seo/siteConfig.js";
+import { PERSONAL_IMAGES, SEO_ROUTES, SITE_CONFIG, absoluteUrl, normalizeSiteUrl } from "../src/seo/siteConfig.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, "..");
@@ -228,6 +228,21 @@ function staticFallbackStyle() {
         object-fit: cover;
         margin-bottom: 20px;
       }
+      #seo-static-content figure {
+        margin: 24px 0 0;
+      }
+      #seo-static-content figure img {
+        width: min(100%, 360px);
+        height: auto;
+        border-radius: 16px;
+        margin: 0 0 8px;
+      }
+      #seo-static-content figcaption {
+        max-width: 360px;
+        color: #3f4752;
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
     </style>`;
 }
 
@@ -251,6 +266,23 @@ function sectionMarkup(section) {
       </section>`;
 }
 
+function personalImageMarkup(route) {
+  if (!["home", "profile", "map"].includes(route.id)) return "";
+
+  const figures = PERSONAL_IMAGES.map(
+    (image) => `<figure>
+          <img src="${escapeAttr(image.src)}" alt="${escapeAttr(image.alt)}" width="${escapeAttr(image.width)}" height="${escapeAttr(image.height)}" loading="lazy" />
+          <figcaption>${escapeHtml(image.title)} - ${escapeHtml(image.caption)}</figcaption>
+        </figure>`,
+  ).join("\n");
+
+  return `      <section>
+        <h2>Sahir Sood travel and outdoor photos</h2>
+        <p>These personal images add context from Panorama Ridge, the Sahara Desert, and Nice, France while the professional headshot remains the primary profile image.</p>
+${figures}
+      </section>`;
+}
+
 function bodyForRoute(route) {
   const links = route.links?.length ? `<nav aria-label="Related portfolio links">${route.links.map(linkForRoute).join("\n          ")}</nav>` : "";
   const portrait =
@@ -263,6 +295,7 @@ function bodyForRoute(route) {
         <h1>${escapeHtml(route.h1)}</h1>
         <p>${escapeHtml(route.description)}</p>
         ${links}
+${personalImageMarkup(route)}
 ${route.sections.map(sectionMarkup).join("\n")}
       </main>`;
 }

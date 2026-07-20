@@ -39,7 +39,7 @@ import {
 } from "lucide-react";
 import pavedLogo from "./assets/Paved.png";
 import rbcLogo from "./assets/RBC.jpg";
-import { SITE_CONFIG, pageForPath, routeForPageId, routePathForPage } from "./seo/siteConfig.js";
+import { PERSONAL_IMAGES, SITE_CONFIG, pageForPath, routeForPageId, routePathForPage } from "./seo/siteConfig.js";
 
 const PROFILE_IMG = SITE_CONFIG.profileImage;
 const PROFILE_IMG_ALT = SITE_CONFIG.profileImageAlt;
@@ -2013,6 +2013,7 @@ function ProfilePage({ onNavigate }) {
               </p>
             </div>
           </div>
+          <PersonalImageGallery compact />
           <div className="grid gap-4 md:grid-cols-3">
             {[
               ["Current", "RBC"],
@@ -2032,6 +2033,40 @@ function ProfilePage({ onNavigate }) {
         </div>
       </section>
     </PageShell>
+  );
+}
+
+function PersonalImageGallery({ compact = false }) {
+  return (
+    <section className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h3 className="text-xl font-semibold">Personal notes</h3>
+          <p className="mt-2 text-sm leading-6 text-neutral-600">
+            A few places that make the portfolio feel more like me beyond the resume.
+          </p>
+        </div>
+        {!compact && <span className="rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700">Travel + outdoors</span>}
+      </div>
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        {PERSONAL_IMAGES.map((image) => (
+          <figure key={image.id} className="overflow-hidden rounded-2xl border border-neutral-100 bg-neutral-50">
+            <img
+              src={image.src}
+              alt={image.alt}
+              width={image.width}
+              height={image.height}
+              loading="lazy"
+              className="h-40 w-full object-cover sm:h-36 lg:h-40"
+            />
+            <figcaption className="p-3">
+              <p className="text-sm font-semibold text-neutral-900">{image.title}</p>
+              <p className="mt-1 text-xs leading-5 text-neutral-600">{image.caption}</p>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -2525,6 +2560,9 @@ function MapPage() {
           ))}
         </div>
       </section>
+      <div className="mb-6">
+        <PersonalImageGallery />
+      </div>
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
         <section
           ref={mapRef}

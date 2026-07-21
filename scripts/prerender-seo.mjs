@@ -83,9 +83,12 @@ function personImageUrl() {
 function verificationTags() {
   const tags = [];
   if (process.env.VITE_GOOGLE_SITE_VERIFICATION) {
-    tags.push(
-      `<meta name="google-site-verification" content="${escapeAttr(process.env.VITE_GOOGLE_SITE_VERIFICATION)}" />`,
-    );
+    const googleTokens = process.env.VITE_GOOGLE_SITE_VERIFICATION.split(",")
+      .map((token) => token.trim())
+      .filter(Boolean);
+    for (const token of googleTokens) {
+      tags.push(`<meta name="google-site-verification" content="${escapeAttr(token)}" />`);
+    }
   }
   if (process.env.VITE_BING_SITE_VERIFICATION) {
     tags.push(`<meta name="msvalidate.01" content="${escapeAttr(process.env.VITE_BING_SITE_VERIFICATION)}" />`);

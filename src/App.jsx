@@ -2542,28 +2542,7 @@ function MapPage() {
 
   return (
     <PageShell eyebrow="Maps" title="Where I have been" description="A real OpenStreetMap-style travel page with clickable places and personal notes.">
-      <section className="mb-6 grid gap-5 lg:grid-cols-[1fr_1.1fr]">
-        <div className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-semibold">Why travel matters to me</h2>
-          <p className="mt-4 text-sm leading-6 text-neutral-700 sm:text-base sm:leading-7">{TRAVEL_INTRO[0]}</p>
-          <details className="mt-4 rounded-2xl bg-neutral-50 p-4 text-sm leading-6 text-neutral-700">
-            <summary className="cursor-pointer font-medium text-neutral-900">Study abroad context</summary>
-            <p className="mt-3">{TRAVEL_INTRO[1]}</p>
-          </details>
-        </div>
-        <div className="grid gap-3 md:grid-cols-2">
-          {TRAVEL_HIGHLIGHTS.map((highlight) => (
-            <div key={highlight.title} className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
-              <h3 className="font-semibold">{highlight.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-neutral-600">{highlight.body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-      <div className="mb-6">
-        <PersonalImageGallery />
-      </div>
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
         <section
           ref={mapRef}
           className="relative h-[360px] overflow-hidden rounded-3xl border border-neutral-200 bg-[#cfe8f7] shadow-sm touch-none cursor-grab active:cursor-grabbing sm:h-[460px] md:h-[560px]"
@@ -2650,18 +2629,12 @@ function MapPage() {
         </section>
 
         <aside className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">Selected stop</p>
-          <h2 className="mt-2 text-2xl font-semibold">{selected.name}</h2>
-          <p className="mt-1 text-neutral-500">
-            {selected.country} - {selected.code}
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">Explore places</p>
+          <h2 className="mt-2 text-2xl font-semibold">Pick a stop</h2>
+          <p className="mt-2 text-sm leading-6 text-neutral-600">
+            Choose a country, then tap a city or memory to move the map and read the note.
           </p>
-          <p className="mt-4 leading-7 text-neutral-700">{selected.note}</p>
-          {selectedCountry.note && (
-            <div className="mt-4 rounded-2xl bg-blue-50 p-4 text-sm leading-6 text-blue-950">
-              <p className="font-semibold">Country note</p>
-              <p className="mt-2">{selectedCountry.note}</p>
-            </div>
-          )}
+
           <div className="mt-5 grid grid-cols-2 gap-3">
             <Metric label="Countries/regions" value={TRAVEL_PLACES.length} />
             <Metric label="Logged places" value={allStops.length} />
@@ -2711,36 +2684,75 @@ function MapPage() {
             </div>
           </div>
 
+          <div className="mt-5 rounded-2xl bg-neutral-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">Selected stop</p>
+            <h3 className="mt-2 text-xl font-semibold">{selected.name}</h3>
+            <p className="mt-1 text-sm text-neutral-500">
+              {selected.country} - {selected.code}
+            </p>
+            <p className="mt-3 text-sm leading-6 text-neutral-700">{selected.note}</p>
+          </div>
+
+          {selectedCountry.note && (
+            <div className="mt-4 rounded-2xl bg-blue-50 p-4 text-sm leading-6 text-blue-950">
+              <p className="font-semibold">Country note</p>
+              <p className="mt-2">{selectedCountry.note}</p>
+            </div>
+          )}
+
           <details className="mt-5 rounded-2xl bg-neutral-50 p-4">
             <summary className="cursor-pointer text-sm font-medium">Show full country list</summary>
             <div className="mt-4 max-h-56 space-y-4 overflow-y-auto pr-1">
-            {TRAVEL_PLACES.map((country) => (
-              <div key={country.country}>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">{country.country}</p>
-                <div className="grid gap-1">
-                  {country.places.map((place) => {
-                    return (
-                      <button
-                        key={place.name}
-                        type="button"
-                        onClick={() => recenter(place, country)}
-                        className={classNames(
-                          "rounded-xl px-3 py-2 text-left text-sm transition",
-                          selected.name === place.name && selected.country === country.country
-                            ? "bg-blue-50 text-blue-700"
-                            : "text-neutral-700 hover:bg-neutral-50",
-                        )}
-                      >
-                        {place.name}
-                      </button>
-                    );
-                  })}
+              {TRAVEL_PLACES.map((country) => (
+                <div key={country.country}>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">{country.country}</p>
+                  <div className="grid gap-1">
+                    {country.places.map((place) => {
+                      return (
+                        <button
+                          key={place.name}
+                          type="button"
+                          onClick={() => recenter(place, country)}
+                          className={classNames(
+                            "rounded-xl px-3 py-2 text-left text-sm transition",
+                            selected.name === place.name && selected.country === country.country
+                              ? "bg-blue-50 text-blue-700"
+                              : "text-neutral-700 hover:bg-neutral-50",
+                          )}
+                        >
+                          {place.name}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
             </div>
           </details>
         </aside>
+      </div>
+
+      <section className="mt-6 grid gap-5 lg:grid-cols-[1fr_1.1fr]">
+        <div className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+          <h2 className="text-xl font-semibold">Why travel matters to me</h2>
+          <p className="mt-4 text-sm leading-6 text-neutral-700 sm:text-base sm:leading-7">{TRAVEL_INTRO[0]}</p>
+          <details className="mt-4 rounded-2xl bg-neutral-50 p-4 text-sm leading-6 text-neutral-700">
+            <summary className="cursor-pointer font-medium text-neutral-900">Study abroad context</summary>
+            <p className="mt-3">{TRAVEL_INTRO[1]}</p>
+          </details>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2">
+          {TRAVEL_HIGHLIGHTS.map((highlight) => (
+            <div key={highlight.title} className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
+              <h3 className="font-semibold">{highlight.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-neutral-600">{highlight.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="mt-6">
+        <PersonalImageGallery />
       </div>
     </PageShell>
   );

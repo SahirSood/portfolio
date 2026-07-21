@@ -254,19 +254,31 @@ function staticFallbackStyle() {
         margin-bottom: 20px;
       }
       #seo-static-content figure {
-        margin: 24px 0 0;
+        margin: 0;
       }
       #seo-static-content figure img {
-        width: min(100%, 360px);
+        width: 100%;
+        aspect-ratio: 3 / 4;
         height: auto;
-        border-radius: 16px;
+        border-radius: 12px;
+        object-fit: cover;
         margin: 0 0 8px;
       }
       #seo-static-content figcaption {
-        max-width: 360px;
         color: #3f4752;
         font-size: 0.95rem;
         line-height: 1.6;
+      }
+      #seo-static-content .personal-image-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 24px;
+      }
+      @media (min-width: 900px) {
+        #seo-static-content .personal-image-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
       }
     </style>`;
 }
@@ -302,9 +314,11 @@ function personalImageMarkup(route) {
   ).join("\n");
 
   return `      <section>
-        <h2>Sahir Sood travel and outdoor photos</h2>
-        <p>These personal images add context from Panorama Ridge, the Sahara Desert, and Nice, France while the professional headshot remains the primary profile image.</p>
+        <h2>Sahir Sood travel, snowboarding, and outdoor photos</h2>
+        <p>These personal images add context from Panorama Ridge, Whistler, the Sahara Desert, and Nice, France while the professional headshot remains the primary profile image.</p>
+        <div class="personal-image-grid">
 ${figures}
+        </div>
       </section>`;
 }
 

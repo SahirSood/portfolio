@@ -66,7 +66,7 @@ The profile page entity uses: `${VITE_SITE_URL}/#profile-page`.
 
 Only facts already visible in the portfolio are included: Sahir Sood's name, software developer role, public GitHub and LinkedIn URLs, email, SFU and University of Leeds education references, RBC current work reference, technical topics, and the professional headshot in `public/img/sahir-sood-professional-headshot.jpg`.
 
-Secondary personal image data lives in `PERSONAL_IMAGES` inside `src/seo/siteConfig.js`. Those images are visible in the React app and in static prerendered HTML for the homepage, about page, and map page.
+Secondary personal image data lives in `PERSONAL_IMAGES` inside `src/seo/siteConfig.js`. Those images are visible in the React app and in static prerendered HTML for the homepage, about page, and map page. The current set includes Panorama Ridge, the Sahara Desert, Whistler snowboarding, and Nice, France.
 
 Other pages use conservative `WebPage` JSON-LD that points back to the same Person entity.
 

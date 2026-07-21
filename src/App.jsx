@@ -2043,12 +2043,12 @@ function PersonalImageGallery({ compact = false }) {
         <div>
           <h3 className="text-xl font-semibold">Personal notes</h3>
           <p className="mt-2 text-sm leading-6 text-neutral-600">
-            A few places that make the portfolio feel more like me beyond the resume.
+            A few places and outside-code moments that make the portfolio feel more like me beyond the resume.
           </p>
         </div>
         {!compact && <span className="rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700">Travel + outdoors</span>}
       </div>
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {PERSONAL_IMAGES.map((image) => (
           <figure key={image.id} className="overflow-hidden rounded-2xl border border-neutral-100 bg-neutral-50">
             <img

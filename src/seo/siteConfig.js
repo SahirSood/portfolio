@@ -71,6 +71,15 @@ export const PERSONAL_IMAGES = [
     height: 1600,
   },
   {
+    id: "whistler-snowboarding",
+    src: "/img/sahir-sood-whistler-snowboarding-snow-day.jpg",
+    alt: "Sahir Sood holding a snowboard at Whistler on a snowy mountain day",
+    title: "Whistler Snow Day",
+    caption: "A Whistler snow day with a few 180 attempts, soft landings, and the occasional safe wipeout.",
+    width: 959,
+    height: 1280,
+  },
+  {
     id: "nice-france",
     src: "/img/sahir-sood-nice-france-travel.jpg",
     alt: "Nice France coastline travel photo from Sahir Sood's study abroad travels",
@@ -116,7 +125,7 @@ export const SEO_ROUTES = [
     eyebrow: "Portfolio",
     priority: "1.0",
     changefreq: "monthly",
-    lastmod: "2026-07-13",
+    lastmod: "2026-07-21",
     sections: [
       {
         heading: "About Sahir Sood",
@@ -163,7 +172,7 @@ export const SEO_ROUTES = [
     eyebrow: "About",
     priority: "0.9",
     changefreq: "monthly",
-    lastmod: "2026-07-13",
+    lastmod: "2026-07-21",
     sections: [
       {
         heading: "Profile",
@@ -521,7 +530,7 @@ export const SEO_ROUTES = [
     eyebrow: "Map",
     priority: "0.4",
     changefreq: "yearly",
-    lastmod: "2026-07-13",
+    lastmod: "2026-07-21",
     sections: [
       {
         heading: "Why Travel Matters",

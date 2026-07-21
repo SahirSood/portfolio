@@ -1,21 +1,21 @@
 const env = import.meta.env ?? {};
 
 export function normalizeSiteUrl(value) {
-  return String(value || "https://sahir.dev").replace(/\/+$/, "");
+  return String(value || "https://sahirsood.com").replace(/\/+$/, "");
 }
 
 export const SITE_CONFIG = {
   name: "Sahir Sood",
   displayName: "Sahir Sood",
   siteName: "Sahir Sood",
-  siteAlternateNames: ["Sahir Sood Portfolio", "sahirsood.netlify.app"],
+  siteAlternateNames: ["Sahir Sood Portfolio", "sahirsood.com"],
   shortName: "Sahir",
   headline: "Full-Stack Developer & Software Engineer",
   jobTitle: "Full Stack Developer",
   location: "Vancouver, BC",
   email: "sahirsood@gmail.com",
   siteUrl: normalizeSiteUrl(env.VITE_SITE_URL),
-  inferredSiteUrl: "https://sahir.dev",
+  inferredSiteUrl: "https://sahirsood.com",
   description:
     "Portfolio of Sahir Sood, a full-stack software developer building AI, web, mobile, systems, and finance-focused projects with React, Python, JavaScript, and C++.",
   profileImage: "/img/sahir-sood-professional-headshot.jpg",

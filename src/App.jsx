@@ -825,28 +825,28 @@ const FAVORITES = [
 const RECENT_TABS = [
   {
     title: "RBC full stack developer",
-    source: "experience.sahir.dev",
+    source: "experience.sahirsood.com",
     visited: "primary hiring signal",
     action: "rbc",
     icon: BriefcaseBusiness,
   },
   {
     title: "MotherTongue Chrome extension and AI writing feedback",
-    source: "projects.sahir.dev",
+    source: "projects.sahirsood.com",
     visited: "MVP build",
     action: "mothertongue",
     icon: Sparkles,
   },
   {
     title: "Where Sahir has been",
-    source: "maps.sahir.dev",
+    source: "maps.sahirsood.com",
     visited: "travel notes",
     action: "map",
     icon: Map,
   },
   {
     title: "Google-style Snake",
-    source: "games.sahir.dev",
+    source: "games.sahirsood.com",
     visited: "playable easter egg",
     action: "snake",
     icon: Gamepad2,
@@ -1603,7 +1603,7 @@ function SearchResultsPage({ query, onNavigate }) {
 function ExperiencePage({ onNavigate }) {
   const results = EXPERIENCE.map((item) => ({
     title: `${item.role} - ${item.company}`,
-    url: `${item.id ?? slugify(item.company)}.experience.sahir.dev`,
+    url: `${item.id ?? slugify(item.company)}.experience.sahirsood.com`,
     source: item.timeframe,
     description: item.summary,
     tags: item.tags,
@@ -1641,7 +1641,7 @@ function ExperiencePage({ onNavigate }) {
 function ProjectsPage({ onNavigate }) {
   const results = PROJECTS.map((project) => ({
     title: project.title,
-    url: project.repo || `projects.sahir.dev${project.action ? routeForPage(project.action) : `/${slugify(project.title)}`}`,
+    url: project.repo || `projects.sahirsood.com${project.action ? routeForPage(project.action) : `/${slugify(project.title)}`}`,
     source: `${project.type} - ${project.eyebrow}`,
     description: `${project.description} ${project.signal}`,
     tags: project.stack,
@@ -3266,7 +3266,7 @@ function getSearchResults(value) {
     return [
       {
         title: "Contact Sahir Sood",
-        url: "contact.sahir.dev",
+        url: "contact.sahirsood.com",
         source: "Best direct path",
         description: "Email Sahir at sahirsood@gmail.com or open the Contact page for email, GitHub, LinkedIn, and a prefilled message.",
         tags: ["Email", "GitHub", "LinkedIn"],
@@ -3279,7 +3279,7 @@ function getSearchResults(value) {
     return [
       {
         title: "Experience - Sahir Sood",
-        url: "experience.sahir.dev",
+        url: "experience.sahirsood.com",
         source: "Work history",
         description: "Current RBC full stack developer, RedBrick/Paved software developer, MotherTongue MVP lead developer, and Kapali contract software developer.",
         tags: ["RBC", "Paved", "MotherTongue", "Kapali"],
@@ -3292,7 +3292,7 @@ function getSearchResults(value) {
     return [
       {
         title: "Projects - Sahir Sood",
-        url: "projects.sahir.dev",
+        url: "projects.sahirsood.com",
         source: "Case studies and repos",
         description: "AI Trading Arena, UniVerse, Spotify Playlist Generator, Financial Fast Feed, BeerIQ, TripMate, Sensor Movement Data Analysis, and game builds.",
         tags: ["C++", "FastAPI", "React", "AI", "Finance", "Python"],
@@ -3308,7 +3308,7 @@ function baseResults() {
   return [
     {
       title: "Resume - Sahir Sood",
-      url: "resume.sahir.dev",
+      url: "resume.sahirsood.com",
       source: "Resume",
       description: "A recruiter-scannable resume with summary, education, experience, projects, and technical skills.",
       tags: ["Resume", "Education", "Experience"],
@@ -3316,7 +3316,7 @@ function baseResults() {
     },
     {
       title: "Projects - Sahir Sood",
-      url: "projects.sahir.dev",
+      url: "projects.sahirsood.com",
       source: "Portfolio",
       description: "Full project list covering AI trading agents, market simulation, mobile apps, AI tools, financial web features, Android maps, data analysis, and games.",
       tags: ["Projects", "Repos", "Case studies"],
@@ -3324,7 +3324,7 @@ function baseResults() {
     },
     {
       title: "Map and personal notes",
-      url: "maps.sahir.dev",
+      url: "maps.sahirsood.com",
       source: "Personal",
       description: "OpenStreetMap-style travel map with all logged places and clickable memory notes.",
       tags: ["Travel", "Study abroad", "Vancouver"],
@@ -3332,7 +3332,7 @@ function baseResults() {
     },
     {
       title: "Google-style Snake",
-      url: "games.sahir.dev/snake",
+      url: "games.sahirsood.com/snake",
       source: "Easter egg",
       description: "Playable Snake game in the familiar green board style, with portfolio-themed pickups.",
       tags: ["Game", "Interactive", "Fun"],

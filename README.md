@@ -1,8 +1,8 @@
 # Sahir Sood Portfolio
-https://sahirsood.netlify.app/
-sahirsood.netlify.app/
-https://sahirsood.netlify.app/about
-https://sahirsood.netlify.app/experience
+https://sahirsood.com/
+sahirsood.com/
+https://sahirsood.com/about
+https://sahirsood.com/experience
 
 React/Vite portfolio for Sahir Sood with a browser/search-inspired UI, build-time SEO prerendering, clean public routes, structured data, sitemap, robots file, and Netlify-style routing rules.
 

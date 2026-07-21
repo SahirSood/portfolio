@@ -1,7 +1,10 @@
 {
   "name": "Sahir Sood",
-  "short_name": "Sahir Sood",
+  "short_name": "Sahir",
+  "description": "Sahir Sood's full-stack software developer portfolio.",
+  "id": "https://sahirsood.com/",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4285f4",

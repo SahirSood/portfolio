@@ -7,6 +7,8 @@ export function normalizeSiteUrl(value) {
 export const SITE_CONFIG = {
   name: "Sahir Sood",
   displayName: "Sahir Sood",
+  siteName: "Sahir Sood",
+  siteAlternateNames: ["Sahir Sood Portfolio", "sahirsood.netlify.app"],
   shortName: "Sahir",
   headline: "Full-Stack Developer & Software Engineer",
   jobTitle: "Full Stack Developer",
@@ -21,6 +23,7 @@ export const SITE_CONFIG = {
   socialImage: "/img/sahir-sood-professional-headshot-social.jpg",
   socialImageWidth: 1200,
   socialImageHeight: 630,
+  iconIco: "/favicon.ico",
   icon48: "/img/sahir-sood-headshot-icon-48.png",
   icon192: "/img/sahir-sood-headshot-icon-192.png",
   icon512: "/img/sahir-sood-headshot-icon-512.png",

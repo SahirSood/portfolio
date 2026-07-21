@@ -53,9 +53,12 @@ The React app also updates `document.title` and the meta description during clie
 
 The homepage includes JSON-LD using:
 
+- `WebSite`
 - `ProfilePage`
 - `mainEntity`
 - `Person`
+
+The `WebSite` entity sets the preferred Google site name to `Sahir Sood` with `Sahir Sood Portfolio` and `sahirsood.netlify.app` as alternatives.
 
 The `Person` entity uses a stable ID: `${VITE_SITE_URL}/#person`.
 
@@ -148,7 +151,7 @@ No analytics provider was added. If analytics is added later, prefer privacy-con
 - When adding or featuring projects, update both the visible `PROJECTS` data in `src/App.jsx` and the relevant project/home route copy in `src/seo/siteConfig.js`.
 - Do not add schema for facts, awards, roles, ratings, reviews, or metrics unless they are true and visible.
 - Add project detail pages only when there is enough real case-study content: problem, role, technologies, decisions, challenges, outcome, screenshots, and links.
-- Keep the portrait in `public/img/sahir-sood-professional-headshot.jpg`, the 1200 by 630 social preview in `public/img/sahir-sood-professional-headshot-social.jpg`, and the site icons in `public/img/sahir-sood-headshot-icon-*.png`.
+- Keep the portrait in `public/img/sahir-sood-professional-headshot.jpg`, the 1200 by 630 social preview in `public/img/sahir-sood-professional-headshot-social.jpg`, the root favicon in `public/favicon.ico`, and the site icons in `public/img/sahir-sood-headshot-icon-*.png`.
 - Keep secondary personal photos in `PERSONAL_IMAGES` with descriptive filenames, truthful alt text, and visible captions.
 - Update `lastmod` dates only when content materially changes.
 - Re-run `npm run build` and `npm run seo:check` before deploying.

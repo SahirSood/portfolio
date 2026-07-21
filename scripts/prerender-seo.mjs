@@ -95,33 +95,50 @@ function verificationTags() {
 
 function profileJsonLd(route) {
   const rootUrl = absoluteUrl("/", siteUrl);
-  return {
-    "@context": "https://schema.org",
+  const website = {
+    "@type": "WebSite",
+    "@id": `${rootUrl}#website`,
+    name: SITE_CONFIG.siteName,
+    alternateName: SITE_CONFIG.siteAlternateNames,
+    url: rootUrl,
+  };
+  const person = {
+    "@type": "Person",
+    "@id": `${rootUrl}#person`,
+    name: SITE_CONFIG.displayName,
+    url: rootUrl,
+    image: personImageUrl(),
+    jobTitle: SITE_CONFIG.jobTitle,
+    description: SITE_CONFIG.description,
+    email: `mailto:${SITE_CONFIG.email}`,
+    sameAs: [SITE_CONFIG.githubUrl, SITE_CONFIG.linkedinUrl],
+    alumniOf: SITE_CONFIG.alumniOf.map((name) => ({
+      "@type": "CollegeOrUniversity",
+      name,
+    })),
+    worksFor: SITE_CONFIG.worksFor.map((name) => ({
+      "@type": "Organization",
+      name,
+    })),
+    knowsAbout: SITE_CONFIG.knowsAbout,
+  };
+  const profilePage = {
     "@type": "ProfilePage",
     "@id": `${rootUrl}#profile-page`,
     url: canonicalUrl(route),
     name: route.title,
     description: route.description,
-    mainEntity: {
-      "@type": "Person",
-      "@id": `${rootUrl}#person`,
-      name: SITE_CONFIG.displayName,
-      url: rootUrl,
-      image: personImageUrl(),
-      jobTitle: SITE_CONFIG.jobTitle,
-      description: SITE_CONFIG.description,
-      email: `mailto:${SITE_CONFIG.email}`,
-      sameAs: [SITE_CONFIG.githubUrl, SITE_CONFIG.linkedinUrl],
-      alumniOf: SITE_CONFIG.alumniOf.map((name) => ({
-        "@type": "CollegeOrUniversity",
-        name,
-      })),
-      worksFor: SITE_CONFIG.worksFor.map((name) => ({
-        "@type": "Organization",
-        name,
-      })),
-      knowsAbout: SITE_CONFIG.knowsAbout,
+    isPartOf: {
+      "@id": `${rootUrl}#website`,
     },
+    mainEntity: {
+      "@id": `${rootUrl}#person`,
+    },
+  };
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [website, profilePage, person],
   };
 }
 
@@ -137,7 +154,8 @@ function webPageJsonLd(route) {
     isPartOf: {
       "@type": "WebSite",
       "@id": `${rootUrl}#website`,
-      name: "Sahir Sood Portfolio",
+      name: SITE_CONFIG.siteName,
+      alternateName: SITE_CONFIG.siteAlternateNames,
       url: rootUrl,
     },
     about: {
@@ -158,11 +176,15 @@ function headForRoute(route) {
     `<meta name="description" content="${escapeAttr(route.description)}" />`,
     `<meta name="robots" content="${escapeAttr(robots)}" />`,
     `<meta name="theme-color" content="${escapeAttr(SITE_CONFIG.themeColor)}" />`,
+    `<meta name="application-name" content="${escapeAttr(SITE_CONFIG.siteName)}" />`,
+    `<meta name="apple-mobile-web-app-title" content="${escapeAttr(SITE_CONFIG.siteName)}" />`,
     `<link rel="canonical" href="${escapeAttr(canonical)}" />`,
+    `<link rel="icon" href="${escapeAttr(SITE_CONFIG.iconIco)}" sizes="48x48" type="image/x-icon" />`,
     `<link rel="icon" href="${escapeAttr(SITE_CONFIG.icon48)}" sizes="48x48" type="image/png" />`,
     `<link rel="apple-touch-icon" href="${escapeAttr(SITE_CONFIG.icon192)}" />`,
     `<link rel="manifest" href="/site.webmanifest" />`,
     `<meta property="og:type" content="${escapeAttr(ogType)}" />`,
+    `<meta property="og:site_name" content="${escapeAttr(SITE_CONFIG.siteName)}" />`,
     `<meta property="og:title" content="${escapeAttr(route.title)}" />`,
     `<meta property="og:description" content="${escapeAttr(route.description)}" />`,
     `<meta property="og:url" content="${escapeAttr(canonical)}" />`,

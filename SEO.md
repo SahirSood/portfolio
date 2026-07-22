@@ -89,6 +89,7 @@ The app now supports real paths instead of hash-only routes. Internal navigation
 
 `public/_redirects` is set up for Netlify-style hosting:
 
+- `sahirsood.netlify.app` redirects permanently to `https://sahirsood.com`
 - `/profile` redirects to `/about`
 - `/newtab` redirects to `/`
 - `/experience/paved` redirects to `/experience/redbrick-paved`

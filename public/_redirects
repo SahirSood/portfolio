@@ -1,3 +1,5 @@
+http://sahirsood.netlify.app/* https://sahirsood.com/:splat 301!
+https://sahirsood.netlify.app/* https://sahirsood.com/:splat 301!
 /about.html /about 301!
 /education.html /education 301!
 /experience.html /experience 301!

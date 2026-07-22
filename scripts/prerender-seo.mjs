@@ -80,6 +80,18 @@ function personImageUrl() {
   return absoluteUrl(SITE_CONFIG.profileImage, siteUrl);
 }
 
+function imageSitemapEntriesForRoute(route) {
+  const images = [];
+  if (["home", "profile"].includes(route.id)) {
+    images.push(SITE_CONFIG.profileImage);
+  }
+  if (["home", "profile", "map"].includes(route.id)) {
+    images.push(...PERSONAL_IMAGES.map((image) => image.src));
+  }
+
+  return [...new Set(images)].map((src) => absoluteUrl(src, siteUrl));
+}
+
 function verificationTags() {
   const tags = [];
   if (process.env.VITE_GOOGLE_SITE_VERIFICATION) {
@@ -376,17 +388,26 @@ Sitemap: ${absoluteUrl("/sitemap.xml", siteUrl)}
 async function writeSitemap() {
   const urls = SEO_ROUTES.filter((route) => route.sitemap !== false && !(route.robots || "").includes("noindex"))
     .map((route) => {
+      const imageEntries = imageSitemapEntriesForRoute(route)
+        .map(
+          (src) => `
+    <image:image>
+      <image:loc>${escapeXml(src)}</image:loc>
+    </image:image>`,
+        )
+        .join("");
       const lastmod = route.lastmod ? `\n    <lastmod>${escapeXml(route.lastmod)}</lastmod>` : "";
       const changefreq = route.changefreq ? `\n    <changefreq>${escapeXml(route.changefreq)}</changefreq>` : "";
       const priority = route.priority ? `\n    <priority>${escapeXml(route.priority)}</priority>` : "";
       return `  <url>
-    <loc>${escapeXml(canonicalUrl(route))}</loc>${lastmod}${changefreq}${priority}
+    <loc>${escapeXml(canonicalUrl(route))}</loc>${imageEntries}${lastmod}${changefreq}${priority}
   </url>`;
     })
     .join("\n");
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${urls}
 </urlset>
 `;

@@ -67,6 +67,8 @@ Homepage JSON-LD uses `ProfilePage` with a `Person` main entity. Other pages use
 
 Do not manually edit generated `dist/robots.txt` or `dist/sitemap.xml`. Edit source data or scripts instead.
 
+The generated sitemap uses Google's image sitemap namespace for the profile image and visible personal gallery images on the home, about, and map pages. Keep this discovery signal aligned with images that are actually rendered in the static HTML.
+
 ## Content Quality
 
 Write naturally for people first. Good content should answer:

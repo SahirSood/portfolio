@@ -80,6 +80,7 @@ Other pages use conservative `WebPage` JSON-LD that points back to the same Pers
 `robots.txt` allows crawling and points to the absolute sitemap URL.
 
 `sitemap.xml` includes only canonical indexable routes. It excludes `/search`, `/snake`, and `/404.html`.
+It also uses Google's image sitemap namespace to list the profile image and visible personal gallery images on the home, about, and map pages. Only `<image:loc>` is emitted because Google deprecated the older image sitemap title and caption tags.
 
 `lastmod` values are manually maintained in `src/seo/siteConfig.js`. Update them only when the corresponding content actually changes.
 

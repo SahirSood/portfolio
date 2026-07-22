@@ -2,7 +2,7 @@ import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadEnv } from "vite";
-import { SEO_ROUTES, SITE_CONFIG, absoluteUrl, normalizeSiteUrl } from "../src/seo/siteConfig.js";
+import { PERSONAL_IMAGES, SEO_ROUTES, SITE_CONFIG, absoluteUrl, normalizeSiteUrl } from "../src/seo/siteConfig.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, "..");
@@ -28,6 +28,18 @@ function canonicalUrl(route) {
 
 function countMatches(value, pattern) {
   return value.match(pattern)?.length ?? 0;
+}
+
+function imageSitemapEntriesForRoute(route) {
+  const images = [];
+  if (["home", "profile"].includes(route.id)) {
+    images.push(SITE_CONFIG.profileImage);
+  }
+  if (["home", "profile", "map"].includes(route.id)) {
+    images.push(...PERSONAL_IMAGES.map((image) => image.src));
+  }
+
+  return [...new Set(images)].map((src) => absoluteUrl(src, siteUrl));
 }
 
 function decodeHtml(value) {
@@ -139,11 +151,22 @@ if (await exists(robotsPath)) {
 
 if (await exists(sitemapPath)) {
   const sitemap = await readFile(sitemapPath, "utf8");
+  if (!sitemap.includes('xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"')) {
+    fail("sitemap.xml is missing the Google image sitemap namespace");
+  }
   for (const route of SEO_ROUTES) {
     const shouldInclude = route.sitemap !== false && !(route.robots || "").includes("noindex");
     const included = sitemap.includes(`<loc>${canonicalUrl(route)}</loc>`);
     if (shouldInclude && !included) fail(`sitemap.xml is missing ${route.path}`);
     if (!shouldInclude && included) fail(`sitemap.xml includes non-indexable route ${route.path}`);
+
+    if (shouldInclude) {
+      for (const imageUrl of imageSitemapEntriesForRoute(route)) {
+        if (!sitemap.includes(`<image:loc>${imageUrl}</image:loc>`)) {
+          fail(`sitemap.xml is missing image entry ${imageUrl} for ${route.path}`);
+        }
+      }
+    }
   }
 }
 

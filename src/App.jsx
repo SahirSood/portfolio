@@ -2015,13 +2015,11 @@ function ProfilePage({ onNavigate }) {
               </p>
               <p>
                 I like backend systems, data-driven development, and projects where teamwork and adaptability matter as
-                much as technical execution. Right now, I am especially interested in the overlap between AI, financial
-                systems, and practical tools people can actually use.
+                much as technical execution.
               </p>
               <p>
-                I am currently working at RBC on internal AI tools, previously contributed to production software at
-                RedBrick/Paved, and built the MotherTongue MVP as lead developer. My main personal project is AI Trading
-                Arena, a market simulation platform with model-backed trading agents and a custom order book.
+                Professionally, I have been moving toward AI, finance, and product-minded engineering: current internal
+                AI work at RBC, past production software at RedBrick/Paved, and personal projects like AI Trading Arena.
               </p>
               <p>
                 Outside code, I keep balance through basketball, snowboarding, travel, study abroad memories, and getting outdoors.

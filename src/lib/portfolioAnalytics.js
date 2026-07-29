@@ -86,7 +86,12 @@ function recordPortfolioEvent(eventType, overrides = {}) {
 
 function attributionFromPath(pathname) {
   const normalized = String(pathname || "").replace(/\/+$/, "");
-  if (normalized === "/about/linkedin" || normalized === "/linkedin" || normalized === "/linkedin-portfolio.html") {
+  if (
+    normalized === "/about/linkedin" ||
+    normalized === "/linkedin" ||
+    normalized === "/linkedin-portfolio" ||
+    normalized === "/linkedin-portfolio.html"
+  ) {
     return {
       utm_source: "linkedin",
       utm_medium: "profile",

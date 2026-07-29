@@ -114,6 +114,7 @@ const ROUTE_ALIASES = {
   "/newtab": "home",
   "/about/linkedin": "profile",
   "/linkedin": "profile",
+  "/linkedin-portfolio": "profile",
   "/experience/paved": "redbrick-paved",
 };
 
@@ -214,6 +215,32 @@ export const SEO_ROUTES = [
       },
     ],
     links: [
+      { label: "View Sahir's experience", href: ROUTE_PATHS.experience },
+      { label: "View Sahir's projects", href: ROUTE_PATHS.projects },
+      { label: "Contact Sahir", href: ROUTE_PATHS.contact },
+    ],
+  },
+  {
+    id: "linkedin-portfolio",
+    path: "/linkedin-portfolio",
+    title: "Sahir Sood Portfolio | LinkedIn Profile Link",
+    description:
+      "LinkedIn profile link for Sahir Sood's software developer portfolio, with separate portfolio analytics attribution.",
+    h1: "Sahir Sood Portfolio",
+    eyebrow: "LinkedIn",
+    robots: "noindex,follow",
+    sitemap: false,
+    lastmod: "2026-07-29",
+    sections: [
+      {
+        heading: "Portfolio",
+        paragraphs: [
+          "This LinkedIn-attributed portfolio route opens Sahir Sood's software developer profile while keeping LinkedIn profile traffic measurable in the portfolio analytics instance.",
+        ],
+      },
+    ],
+    links: [
+      { label: "About Sahir", href: ROUTE_PATHS.profile },
       { label: "View Sahir's experience", href: ROUTE_PATHS.experience },
       { label: "View Sahir's projects", href: ROUTE_PATHS.projects },
       { label: "Contact Sahir", href: ROUTE_PATHS.contact },

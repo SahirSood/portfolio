@@ -112,6 +112,8 @@ export const ROUTE_PATHS = {
 const ROUTE_ALIASES = {
   "/profile": "profile",
   "/newtab": "home",
+  "/about/linkedin": "profile",
+  "/linkedin": "profile",
   "/experience/paved": "redbrick-paved",
 };
 

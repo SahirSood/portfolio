@@ -39,6 +39,7 @@ async function recordEvent(request, context) {
   }
 
   const timestamp = new Date();
+  const attribution = attributionFromPayload(payload);
   const event = {
     id: randomUUID(),
     timestamp: timestamp.toISOString(),
@@ -48,10 +49,10 @@ async function recordEvent(request, context) {
     title: clean(payload.title, 256),
     referrer: clean(payload.referrer, 4096),
     referrer_domain: domain(payload.referrer),
-    source: sourceFor(payload),
-    utm_source: clean(payload.utm_source, 128),
-    utm_medium: clean(payload.utm_medium, 128),
-    utm_campaign: clean(payload.utm_campaign, 128),
+    source: attribution.source,
+    utm_source: attribution.utm_source,
+    utm_medium: attribution.utm_medium,
+    utm_campaign: attribution.utm_campaign,
     target_url: clean(payload.target_url, 4096),
     target_domain: domain(payload.target_url),
     session_id: clean(payload.session_id, 128),
@@ -170,8 +171,29 @@ function cleanEventType(value) {
   return ALLOWED_EVENT_TYPES.has(eventType) ? eventType : "pageview";
 }
 
-function sourceFor(payload) {
-  return clean(payload.utm_source, 128) || domain(payload.referrer) || "direct";
+function attributionFromPayload(payload) {
+  const pathAttribution = attributionFromPath(payload.path);
+  const utmSource = clean(payload.utm_source, 128) || pathAttribution.utm_source;
+  const utmMedium = clean(payload.utm_medium, 128) || pathAttribution.utm_medium;
+  const utmCampaign = clean(payload.utm_campaign, 128) || pathAttribution.utm_campaign;
+  return {
+    source: utmSource || domain(payload.referrer) || "direct",
+    utm_source: utmSource,
+    utm_medium: utmMedium,
+    utm_campaign: utmCampaign,
+  };
+}
+
+function attributionFromPath(pathname) {
+  const path = String(pathname || "").split("?")[0].replace(/\/+$/, "");
+  if (path === "/about/linkedin" || path === "/linkedin") {
+    return {
+      utm_source: "linkedin",
+      utm_medium: "profile",
+      utm_campaign: "portfolio_profile",
+    };
+  }
+  return {};
 }
 
 function clientIp(request) {

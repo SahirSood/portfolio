@@ -14,7 +14,7 @@ The portfolio has its own Netlify Function and Netlify Blobs store, separate fro
 - Private summaries are available at `/portfolio-analytics/summary?days=30`.
 - Set `PORTFOLIO_ANALYTICS_KEY` in Netlify and pass it as the `X-Portfolio-Analytics-Key` header when reading summaries.
 - Optional: set `PORTFOLIO_ANALYTICS_SALT` in Netlify so visitor hashes are stable but not derived from the access key.
-- LinkedIn profile/featured links should use `https://sahirsood.com/about?utm_source=linkedin&utm_medium=profile&utm_campaign=portfolio_profile`.
+- LinkedIn profile/featured links should use `https://sahirsood.com/about/linkedin`; the app maps that path to the About page and records it as `utm_source=linkedin`, `utm_medium=profile`, and `utm_campaign=portfolio_profile`.
 
 Example summary request:
 

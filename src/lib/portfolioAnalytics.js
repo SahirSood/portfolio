@@ -52,15 +52,16 @@ function recordPortfolioEvent(eventType, overrides = {}) {
   }
 
   const params = new URLSearchParams(window.location.search);
+  const pathAttribution = attributionFromPath(window.location.pathname);
   const payload = {
     event_type: eventType,
     path: overrides.path || `${window.location.pathname}${window.location.search}` || "/",
     url: window.location.href,
     title: document.title,
     referrer: document.referrer || null,
-    utm_source: params.get("utm_source"),
-    utm_medium: params.get("utm_medium"),
-    utm_campaign: params.get("utm_campaign"),
+    utm_source: params.get("utm_source") || pathAttribution.utm_source,
+    utm_medium: params.get("utm_medium") || pathAttribution.utm_medium,
+    utm_campaign: params.get("utm_campaign") || pathAttribution.utm_campaign,
     target_url: overrides.target_url || null,
     session_id: getSessionId(),
     metadata: {
@@ -81,6 +82,18 @@ function recordPortfolioEvent(eventType, overrides = {}) {
     body,
     keepalive: true,
   }).catch(() => {});
+}
+
+function attributionFromPath(pathname) {
+  const normalized = String(pathname || "").replace(/\/+$/, "");
+  if (normalized === "/about/linkedin" || normalized === "/linkedin") {
+    return {
+      utm_source: "linkedin",
+      utm_medium: "profile",
+      utm_campaign: "portfolio_profile",
+    };
+  }
+  return {};
 }
 
 function getSessionId() {

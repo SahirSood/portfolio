@@ -16,5 +16,7 @@ https://sahirsood.netlify.app/* https://sahirsood.com/:splat 301!
 /snake.html /snake 301!
 /profile /about 301
 /newtab / 301
+/about/linkedin /about 200
+/linkedin /about 200
 /experience/paved /experience/redbrick-paved 301
 /* /404.html 404

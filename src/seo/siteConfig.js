@@ -195,6 +195,31 @@ export const SEO_ROUTES = [
     ],
   },
   {
+    id: "profile-linkedin",
+    path: "/about/linkedin",
+    title: "About Sahir Sood | Software Developer in Vancouver",
+    description:
+      "LinkedIn profile link for Sahir Sood's portfolio, routed to his software developer About page with portfolio analytics attribution.",
+    h1: "About Sahir Sood",
+    eyebrow: "About",
+    robots: "noindex,follow",
+    sitemap: false,
+    lastmod: "2026-07-29",
+    sections: [
+      {
+        heading: "Profile",
+        paragraphs: [
+          "Sahir Sood is a software developer studying Computing Science and Finance at Simon Fraser University. This LinkedIn-attributed route opens the same About page experience while keeping profile traffic measurable.",
+        ],
+      },
+    ],
+    links: [
+      { label: "View Sahir's experience", href: ROUTE_PATHS.experience },
+      { label: "View Sahir's projects", href: ROUTE_PATHS.projects },
+      { label: "Contact Sahir", href: ROUTE_PATHS.contact },
+    ],
+  },
+  {
     id: "experience",
     path: ROUTE_PATHS.experience,
     title: "Software Development Experience | Sahir Sood",

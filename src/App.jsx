@@ -2021,9 +2021,6 @@ function ProfilePage({ onNavigate }) {
                 Professionally, I have been moving toward AI, finance, and product-minded engineering: current internal
                 AI work at RBC, past production software at RedBrick/Paved, and personal projects like AI Trading Arena.
               </p>
-              <p>
-                Outside code, I keep balance through basketball, snowboarding, travel, study abroad memories, and getting outdoors.
-              </p>
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
               {[

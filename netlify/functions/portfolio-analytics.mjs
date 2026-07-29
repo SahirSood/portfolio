@@ -186,7 +186,7 @@ function attributionFromPayload(payload) {
 
 function attributionFromPath(pathname) {
   const path = String(pathname || "").split("?")[0].replace(/\/+$/, "");
-  if (path === "/about/linkedin" || path === "/linkedin") {
+  if (path === "/about/linkedin" || path === "/linkedin" || path === "/linkedin-portfolio.html") {
     return {
       utm_source: "linkedin",
       utm_medium: "profile",

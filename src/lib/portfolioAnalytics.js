@@ -90,7 +90,8 @@ function attributionFromPath(pathname) {
     normalized === "/about/linkedin" ||
     normalized === "/linkedin" ||
     normalized === "/linkedin-portfolio" ||
-    normalized === "/linkedin-portfolio.html"
+    normalized === "/linkedin-portfolio.html" ||
+    normalized === "/featured-portfolio"
   ) {
     return {
       utm_source: "linkedin",

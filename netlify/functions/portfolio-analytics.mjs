@@ -190,7 +190,8 @@ function attributionFromPath(pathname) {
     path === "/about/linkedin" ||
     path === "/linkedin" ||
     path === "/linkedin-portfolio" ||
-    path === "/linkedin-portfolio.html"
+    path === "/linkedin-portfolio.html" ||
+    path === "/featured-portfolio"
   ) {
     return {
       utm_source: "linkedin",

@@ -6,6 +6,22 @@ https://sahirsood.com/experience
 
 React/Vite portfolio for Sahir Sood with a browser/search-inspired UI, build-time SEO prerendering, clean public routes, structured data, sitemap, robots file, and Netlify-style routing rules.
 
+## Portfolio analytics
+
+The portfolio has its own Netlify Function and Netlify Blobs store, separate from the AI Trading Arena analytics API.
+
+- Browser events post to `/portfolio-analytics/event`.
+- Private summaries are available at `/portfolio-analytics/summary?days=30`.
+- Set `PORTFOLIO_ANALYTICS_KEY` in Netlify and pass it as the `X-Portfolio-Analytics-Key` header when reading summaries.
+- Optional: set `PORTFOLIO_ANALYTICS_SALT` in Netlify so visitor hashes are stable but not derived from the access key.
+- LinkedIn profile/featured links should use `https://sahirsood.com/about?utm_source=linkedin&utm_medium=profile&utm_campaign=portfolio_profile`.
+
+Example summary request:
+
+```powershell
+Invoke-RestMethod "https://sahirsood.com/portfolio-analytics/summary?days=30" -Headers @{ "X-Portfolio-Analytics-Key" = $env:PORTFOLIO_ANALYTICS_KEY }
+```
+
 ## Start Here
 
 Future agents and contributors should read:

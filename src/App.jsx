@@ -39,6 +39,7 @@ import {
 } from "lucide-react";
 import pavedLogo from "./assets/Paved.png";
 import rbcLogo from "./assets/RBC.jpg";
+import { trackPortfolioPageView } from "./lib/portfolioAnalytics.js";
 import { PERSONAL_IMAGES, SITE_CONFIG, pageForPath, routeForPageId, routePathForPage } from "./seo/siteConfig.js";
 
 const PROFILE_IMG = SITE_CONFIG.profileImage;
@@ -983,6 +984,10 @@ function useElementSize() {
 }
 
 function ProfilePicker({ onChoose }) {
+  useEffect(() => {
+    trackPortfolioPageView(`${window.location.pathname}${window.location.search}`);
+  }, []);
+
   return (
     <main className="min-h-screen bg-white text-neutral-900">
       <div className="flex min-h-screen flex-col overflow-hidden border border-neutral-300 bg-white shadow-2xl">
@@ -1126,6 +1131,10 @@ function BrowserPortfolio({ profile, onSwitchProfile }) {
     const path = page === "home" ? "/newtab" : routeForPage(page);
     return `${SITE_CONFIG.siteUrl}${path}?profile=${profile.id}`;
   }, [page, profile.id, query, searchTerm]);
+
+  useEffect(() => {
+    trackPortfolioPageView(`${window.location.pathname}${window.location.search}`);
+  }, [page, searchTerm]);
 
   const runSearch = useCallback(
     (value) => {

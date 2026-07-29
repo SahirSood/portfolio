@@ -1,0 +1,290 @@
+import { createHash, randomUUID } from "node:crypto";
+import { getStore } from "@netlify/blobs";
+
+const STORE_NAME = "portfolio-analytics";
+const ALLOWED_EVENT_TYPES = new Set(["pageview", "outbound_click"]);
+const MAX_RECENT_EVENTS = 100;
+
+export default async function portfolioAnalytics(request, context) {
+  const url = new URL(request.url);
+  const route = url.pathname.replace(/^\/portfolio-analytics\/?/, "") || "event";
+
+  if (request.method === "OPTIONS") {
+    return jsonResponse({ ok: true });
+  }
+
+  if (request.method === "POST" && route === "event") {
+    return recordEvent(request, context);
+  }
+
+  if (request.method === "GET" && route === "summary") {
+    return getSummary(request);
+  }
+
+  return jsonResponse({ error: "Portfolio analytics route not found" }, 404);
+}
+
+export const config = {
+  path: "/portfolio-analytics/*",
+  method: ["GET", "POST", "OPTIONS"],
+};
+
+async function recordEvent(request, context) {
+  let payload;
+  try {
+    payload = await request.json();
+  } catch {
+    return jsonResponse({ error: "Invalid analytics payload" }, 400);
+  }
+
+  const timestamp = new Date();
+  const event = {
+    id: randomUUID(),
+    timestamp: timestamp.toISOString(),
+    event_type: cleanEventType(payload.event_type),
+    path: clean(payload.path, 512) || "/",
+    url: clean(payload.url, 4096),
+    title: clean(payload.title, 256),
+    referrer: clean(payload.referrer, 4096),
+    referrer_domain: domain(payload.referrer),
+    source: sourceFor(payload),
+    utm_source: clean(payload.utm_source, 128),
+    utm_medium: clean(payload.utm_medium, 128),
+    utm_campaign: clean(payload.utm_campaign, 128),
+    target_url: clean(payload.target_url, 4096),
+    target_domain: domain(payload.target_url),
+    session_id: clean(payload.session_id, 128),
+    visitor_hash: hashVisitor(clientIp(request)),
+    user_agent: clean(request.headers.get("user-agent"), 512),
+    geo: normalizeGeo(context?.geo),
+    metadata: jsonSafe(payload.metadata || {}),
+  };
+
+  const store = getStore(STORE_NAME);
+  const key = eventKey(timestamp, event.id);
+  await store.setJSON(key, event, {
+    metadata: {
+      event_type: event.event_type,
+      source: event.source,
+      path: event.path,
+      country: event.geo.country_code || event.geo.country || "",
+    },
+    onlyIfNew: true,
+  });
+
+  return jsonResponse({ ok: true, event_id: event.id });
+}
+
+async function getSummary(request) {
+  const auth = request.headers.get("x-portfolio-analytics-key") || "";
+  const expected = process.env.PORTFOLIO_ANALYTICS_KEY || "";
+  if (!expected || auth !== expected) {
+    return jsonResponse({ error: "Portfolio analytics key required" }, 401);
+  }
+
+  const url = new URL(request.url);
+  const days = clampInteger(url.searchParams.get("days"), 1, 365, 30);
+  const limit = clampInteger(url.searchParams.get("limit"), 1, MAX_RECENT_EVENTS, 20);
+  const since = Date.now() - days * 24 * 60 * 60 * 1000;
+  const events = (await readEvents(days)).filter((event) => Date.parse(event.timestamp) >= since);
+
+  return jsonResponse({
+    site: "portfolio",
+    window_days: days,
+    total_events: events.length,
+    pageviews: countWhere(events, (event) => event.event_type === "pageview"),
+    outbound_clicks: countWhere(events, (event) => event.event_type === "outbound_click"),
+    unique_sessions: uniqueCount(events, "session_id"),
+    unique_visitors: uniqueCount(events, "visitor_hash"),
+    by_day: topPairs(events, (event) => event.timestamp.slice(0, 10), days, "date"),
+    top_sources: topPairs(
+      events.filter((event) => event.event_type === "pageview"),
+      (event) => event.source,
+      limit,
+      "source",
+    ),
+    top_paths: topPairs(
+      events.filter((event) => event.event_type === "pageview"),
+      (event) => event.path,
+      limit,
+      "path",
+    ),
+    top_countries: topPairs(
+      events.filter((event) => event.event_type === "pageview"),
+      (event) => event.geo?.country_code,
+      limit,
+      "country_code",
+    ),
+    top_cities: topGeo(events, limit),
+    top_outbound_targets: topPairs(
+      events.filter((event) => event.event_type === "outbound_click"),
+      (event) => event.target_domain,
+      limit,
+      "target_domain",
+    ),
+    recent_events: events
+      .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
+      .slice(0, limit),
+  });
+}
+
+async function readEvents(days) {
+  const store = getStore(STORE_NAME);
+  const events = [];
+  const prefixes = datePrefixes(days);
+
+  for (const prefix of prefixes) {
+    const { blobs } = await store.list({ prefix });
+    for (const blob of blobs) {
+      const entry = await store.get(blob.key, { type: "json", consistency: "strong" });
+      if (entry) {
+        events.push(entry);
+      }
+    }
+  }
+
+  return events;
+}
+
+function datePrefixes(days) {
+  const prefixes = [];
+  const seen = new Set();
+  for (let offset = 0; offset < days; offset += 1) {
+    const date = new Date(Date.now() - offset * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const prefix = `events/${date}/`;
+    if (!seen.has(prefix)) {
+      seen.add(prefix);
+      prefixes.push(prefix);
+    }
+  }
+  return prefixes;
+}
+
+function eventKey(timestamp, id) {
+  return `events/${timestamp.toISOString().slice(0, 10)}/${timestamp.toISOString()}-${id}.json`;
+}
+
+function cleanEventType(value) {
+  const eventType = clean(value, 32) || "pageview";
+  return ALLOWED_EVENT_TYPES.has(eventType) ? eventType : "pageview";
+}
+
+function sourceFor(payload) {
+  return clean(payload.utm_source, 128) || domain(payload.referrer) || "direct";
+}
+
+function clientIp(request) {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) return forwarded.split(",", 1)[0].trim();
+  return request.headers.get("x-nf-client-connection-ip") || request.headers.get("client-ip") || "";
+}
+
+function hashVisitor(ipAddress) {
+  if (!ipAddress) return null;
+  const salt = process.env.PORTFOLIO_ANALYTICS_SALT || process.env.PORTFOLIO_ANALYTICS_KEY || "portfolio";
+  return createHash("sha256").update(`${salt}:${ipAddress}`).digest("hex");
+}
+
+function normalizeGeo(geo = {}) {
+  const country = objectOrEmpty(geo.country);
+  const subdivision = objectOrEmpty(geo.subdivision);
+  const city = objectOrEmpty(geo.city);
+  return {
+    country: clean(country.name || geo.country, 128),
+    country_code: clean(country.code || geo.countryCode, 8),
+    region: clean(subdivision.name || subdivision.code || geo.region, 128),
+    city: clean(city.name || geo.city, 128),
+    timezone: clean(geo.timezone, 64),
+    latitude: numberOrNull(geo.latitude),
+    longitude: numberOrNull(geo.longitude),
+    source: Object.keys(geo || {}).length ? "netlify" : null,
+  };
+}
+
+function objectOrEmpty(value) {
+  return value && typeof value === "object" ? value : {};
+}
+
+function domain(value) {
+  if (!value) return null;
+  try {
+    return clean(new URL(value).hostname.toLowerCase(), 255);
+  } catch {
+    return null;
+  }
+}
+
+function topPairs(events, keyFn, limit, keyName) {
+  const counts = new Map();
+  for (const event of events) {
+    const key = keyFn(event) || "unknown";
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([key, count]) => ({ [keyName]: key, count }));
+}
+
+function topGeo(events, limit) {
+  const counts = new Map();
+  for (const event of events.filter((item) => item.event_type === "pageview")) {
+    const geo = event.geo || {};
+    if (!geo.city) continue;
+    const key = [geo.city, geo.region || "", geo.country_code || ""].join("|");
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([key, count]) => {
+      const [city, region, country_code] = key.split("|");
+      return { city, region: region || null, country_code: country_code || null, count };
+    });
+}
+
+function uniqueCount(events, key) {
+  return new Set(events.map((event) => event[key]).filter(Boolean)).size;
+}
+
+function countWhere(events, predicate) {
+  return events.filter(predicate).length;
+}
+
+function clampInteger(value, min, max, fallback) {
+  const parsed = Number.parseInt(value, 10);
+  if (Number.isNaN(parsed)) return fallback;
+  return Math.max(min, Math.min(max, parsed));
+}
+
+function clean(value, maxLength) {
+  if (value === null || value === undefined) return null;
+  const text = String(value).trim();
+  return text ? text.slice(0, maxLength) : null;
+}
+
+function numberOrNull(value) {
+  const number = Number.parseFloat(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function jsonSafe(value) {
+  if (Array.isArray(value)) return value.map(jsonSafe);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [String(key), jsonSafe(item)]));
+  }
+  if (["string", "number", "boolean"].includes(typeof value) || value === null) return value;
+  return String(value);
+}
+
+function jsonResponse(payload, status = 200) {
+  return Response.json(payload, {
+    status,
+    headers: {
+      "Access-Control-Allow-Headers": "content-type,x-portfolio-analytics-key",
+      "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+      "Access-Control-Allow-Origin": "*",
+      "Cache-Control": "no-store",
+    },
+  });
+}

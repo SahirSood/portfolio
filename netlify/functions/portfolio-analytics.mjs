@@ -6,18 +6,19 @@ const ALLOWED_EVENT_TYPES = new Set(["pageview", "outbound_click"]);
 const MAX_RECENT_EVENTS = 100;
 
 export default async function portfolioAnalytics(request, context) {
-  const url = new URL(request.url);
+  const url = new URL(requestUrl(request));
   const route = url.pathname.replace(/^\/portfolio-analytics\/?/, "") || "event";
+  const method = requestMethod(request);
 
-  if (request.method === "OPTIONS") {
+  if (method === "OPTIONS") {
     return jsonResponse({ ok: true });
   }
 
-  if (request.method === "POST" && route === "event") {
+  if (method === "POST" && route === "event") {
     return recordEvent(request, context);
   }
 
-  if (request.method === "GET" && route === "summary") {
+  if (method === "GET" && route === "summary") {
     return getSummary(request);
   }
 
@@ -32,7 +33,7 @@ export const config = {
 async function recordEvent(request, context) {
   let payload;
   try {
-    payload = await request.json();
+    payload = await readJsonBody(request);
   } catch {
     return jsonResponse({ error: "Invalid analytics payload" }, 400);
   }
@@ -55,7 +56,7 @@ async function recordEvent(request, context) {
     target_domain: domain(payload.target_url),
     session_id: clean(payload.session_id, 128),
     visitor_hash: hashVisitor(clientIp(request)),
-    user_agent: clean(request.headers.get("user-agent"), 512),
+    user_agent: clean(header(request, "user-agent"), 512),
     geo: normalizeGeo(context?.geo),
     metadata: jsonSafe(payload.metadata || {}),
   };
@@ -76,7 +77,7 @@ async function recordEvent(request, context) {
 }
 
 async function getSummary(request) {
-  const auth = request.headers.get("x-portfolio-analytics-key") || "";
+  const auth = header(request, "x-portfolio-analytics-key") || "";
   const expected = process.env.PORTFOLIO_ANALYTICS_KEY || "";
   if (!expected || auth !== expected) {
     return jsonResponse({ error: "Portfolio analytics key required" }, 401);
@@ -174,9 +175,45 @@ function sourceFor(payload) {
 }
 
 function clientIp(request) {
-  const forwarded = request.headers.get("x-forwarded-for");
+  const forwarded = header(request, "x-forwarded-for");
   if (forwarded) return forwarded.split(",", 1)[0].trim();
-  return request.headers.get("x-nf-client-connection-ip") || request.headers.get("client-ip") || "";
+  return header(request, "x-nf-client-connection-ip") || header(request, "client-ip") || "";
+}
+
+async function readJsonBody(request) {
+  if (typeof request.json === "function") {
+    return request.json();
+  }
+  if (typeof request.text === "function") {
+    return JSON.parse(await request.text());
+  }
+  if (typeof request.body === "string") {
+    const body = request.isBase64Encoded
+      ? Buffer.from(request.body, "base64").toString("utf8")
+      : request.body;
+    return JSON.parse(body);
+  }
+  throw new Error("Unsupported request body");
+}
+
+function requestMethod(request) {
+  return String(request.method || request.httpMethod || "GET").toUpperCase();
+}
+
+function requestUrl(request) {
+  if (request.url) return request.url;
+  const rawPath = request.rawUrl || request.path || "/portfolio-analytics/event";
+  return rawPath.startsWith("http") ? rawPath : `https://sahirsood.com${rawPath}`;
+}
+
+function header(request, name) {
+  if (typeof request.headers?.get === "function") {
+    return request.headers.get(name);
+  }
+  const headers = request.headers || {};
+  const target = name.toLowerCase();
+  const found = Object.keys(headers).find((key) => key.toLowerCase() === target);
+  return found ? headers[found] : null;
 }
 
 function hashVisitor(ipAddress) {

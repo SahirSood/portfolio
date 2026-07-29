@@ -611,7 +611,7 @@ export const SEO_ROUTES = [
     eyebrow: "Map",
     priority: "0.4",
     changefreq: "yearly",
-    lastmod: "2026-07-21",
+    lastmod: "2026-07-29",
     sections: [
       {
         heading: "Why Travel Matters",

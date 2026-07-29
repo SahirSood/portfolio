@@ -2015,11 +2015,37 @@ function ProfilePage({ onNavigate }) {
               </p>
               <p>
                 I like backend systems, data-driven development, and projects where teamwork and adaptability matter as
-                much as technical execution.
+                much as technical execution. Right now, I am especially interested in the overlap between AI, financial
+                systems, and practical tools people can actually use.
+              </p>
+              <p>
+                I am currently working at RBC on internal AI tools, previously contributed to production software at
+                RedBrick/Paved, and built the MotherTongue MVP as lead developer. My main personal project is AI Trading
+                Arena, a market simulation platform with model-backed trading agents and a custom order book.
               </p>
               <p>
                 Outside code, I keep balance through basketball, snowboarding, travel, study abroad memories, and getting outdoors.
               </p>
+            </div>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {[
+                { label: "Experience", action: "experience", icon: BriefcaseBusiness },
+                { label: "Projects", action: "projects", icon: FolderKanban },
+                { label: "AI Trading Arena", action: "ai-trading-arena", icon: Trophy },
+              ].map((link) => {
+                const LinkIcon = link.icon;
+                return (
+                  <button
+                    key={link.label}
+                    type="button"
+                    onClick={() => onNavigate(link.action)}
+                    className="inline-flex items-center gap-2 rounded-full border border-neutral-200 px-3.5 py-2 text-sm font-medium text-neutral-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+                  >
+                    <LinkIcon size={16} />
+                    {link.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
           <PersonalImageGallery compact />

@@ -62,7 +62,7 @@ async function readPortfolioSummary(days, limit) {
 }
 
 async function readMarketSummary(days, limit) {
-  const apiKey = process.env.MARKET_SIM_API_KEY || process.env.ARENA_API_KEY || "";
+  const apiKey = process.env.ARENA_API_KEY || process.env.MARKET_SIM_API_KEY || "";
   const baseUrl = String(process.env.MARKET_SIM_API_URL || DEFAULT_MARKET_API_URL).replace(/\/+$/, "");
   if (!apiKey) {
     return {

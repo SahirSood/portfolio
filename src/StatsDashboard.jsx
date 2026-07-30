@@ -279,8 +279,11 @@ function Panel({ title, icon, className = "", children }) {
 
 function SurfaceRow({ surface, max }) {
   const pct = max ? Math.max(4, Math.round((surface.count / max) * 100)) : 0;
+  const countries = safeArray(surface.top_countries)
+    .filter((item) => item.country_code)
+    .slice(0, 4);
   return (
-    <div>
+    <div className="rounded-md border border-neutral-100 bg-neutral-50/60 p-3">
       <div className="flex items-center justify-between gap-3 text-sm">
         <span className="font-medium text-neutral-800">{surface.label}</span>
         <span className="font-mono text-neutral-600">{formatNumber(surface.count)}</span>
@@ -291,6 +294,24 @@ function SurfaceRow({ surface, max }) {
       <div className="mt-1 flex justify-between text-xs text-neutral-500">
         <span>{surface.metric_name}</span>
         <span>{formatNumber(surface.unique_visitors)} visitors</span>
+      </div>
+      <div className="mt-3">
+        <p className="text-[11px] font-semibold uppercase text-neutral-400">Countries</p>
+        {countries.length ? (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {countries.map((country) => (
+              <span
+                key={`${surface.id}-${country.country_code}`}
+                className="inline-flex items-center gap-1 rounded-md border border-neutral-200 bg-white px-2 py-1 text-xs text-neutral-700"
+              >
+                <span className="font-semibold">{country.country_code}</span>
+                <span className="font-mono text-neutral-500">{formatNumber(country.count)}</span>
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-2 text-xs text-neutral-500">No country data yet.</p>
+        )}
       </div>
     </div>
   );

@@ -22,6 +22,7 @@ export default function StatsDashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [expandedVisitId, setExpandedVisitId] = useState("");
 
   useEffect(() => {
     document.title = "Private Stats | Sahir Sood";
@@ -222,6 +223,22 @@ export default function StatsDashboard() {
           </Panel>
         </section>
 
+        <Panel title="Visits" icon={Eye} className="mt-4">
+          <div className="divide-y divide-neutral-100">
+            {safeArray(stats?.visits).slice(0, 18).map((visit) => (
+              <VisitRow
+                key={visit.id}
+                visit={visit}
+                expanded={expandedVisitId === visit.id}
+                onToggle={() => setExpandedVisitId(expandedVisitId === visit.id ? "" : visit.id)}
+              />
+            ))}
+            {safeArray(stats?.visits).length === 0 ? (
+              <p className="py-8 text-center text-sm text-neutral-500">No visits in this range.</p>
+            ) : null}
+          </div>
+        </Panel>
+
         <Panel title="Recent activity" icon={Eye} className="mt-4">
           <div className="divide-y divide-neutral-100">
             {safeArray(stats?.recent_events).slice(0, 16).map((event) => (
@@ -234,6 +251,58 @@ export default function StatsDashboard() {
         </Panel>
       </section>
     </main>
+  );
+}
+
+function VisitRow({ visit, expanded, onToggle }) {
+  const location = [visit.geo?.city, visit.geo?.region, visit.geo?.country_code].filter(Boolean).join(", ");
+  return (
+    <article className="py-3">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="grid w-full gap-2 text-left text-sm sm:grid-cols-[150px_1fr_auto] sm:items-center"
+      >
+        <time className="text-xs text-neutral-500">{formatDateTime(visit.started_at)}</time>
+        <div className="min-w-0">
+          <p className="truncate font-medium text-neutral-800">
+            {titleCase(visit.site)} visit from {visit.source || "direct"}
+          </p>
+          <p className="truncate text-xs text-neutral-500">
+            {[visit.entry_path, location || "Unknown location"].filter(Boolean).join(" / ")}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-1.5 sm:justify-end">
+          <CountChip label="actions" value={visit.action_count} />
+          <CountChip label="routes" value={visit.route_count} />
+          <CountChip label="clicks" value={visit.outbound_count} />
+        </div>
+      </button>
+
+      {expanded ? (
+        <div className="mt-3 rounded-md border border-neutral-200 bg-neutral-50 p-3">
+          <div className="space-y-2">
+            {safeArray(visit.events).map((event) => (
+              <div key={event.id} className="grid gap-1 text-xs sm:grid-cols-[120px_110px_1fr]">
+                <time className="text-neutral-500">{formatDateTime(event.timestamp)}</time>
+                <span className="font-semibold text-neutral-700">{eventLabel(event.event_type)}</span>
+                <span className="min-w-0 truncate text-neutral-600">
+                  {[event.path, event.target_domain].filter(Boolean).join(" / ")}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
+function CountChip({ label, value }) {
+  return (
+    <span className="rounded-md border border-neutral-200 bg-white px-2 py-1 text-xs text-neutral-600">
+      <span className="font-mono text-neutral-800">{formatNumber(value)}</span> {label}
+    </span>
   );
 }
 
@@ -363,7 +432,7 @@ function RecentEvent({ event }) {
       <time className="text-xs text-neutral-500">{formatDateTime(event.timestamp)}</time>
       <div className="min-w-0">
         <p className="truncate font-medium text-neutral-800">
-          {titleCase(event.site)} {event.event_type === "outbound_click" ? "click" : "view"}
+          {titleCase(event.site)} {eventLabel(event.event_type)}
         </p>
         <p className="truncate text-xs text-neutral-500">
           {[event.source, event.path, event.target_domain].filter(Boolean).join(" / ")}
@@ -501,6 +570,13 @@ function titleCase(value) {
   return String(value || "")
     .replace(/[-_]+/g, " ")
     .replace(/\b\w/g, (match) => match.toUpperCase());
+}
+
+function eventLabel(value) {
+  if (value === "pageview") return "Visit start";
+  if (value === "route_view") return "Route";
+  if (value === "outbound_click") return "Click";
+  return titleCase(value);
 }
 
 function classNames(...values) {

@@ -3,6 +3,8 @@ const ANALYTICS_ENDPOINT =
 const ANALYTICS_ENABLED =
   (import.meta.env.VITE_PORTFOLIO_ANALYTICS_ENABLED || "true").toLowerCase() !== "false";
 const SESSION_KEY = "portfolioAnalyticsSessionId";
+const VISIT_STARTED_KEY = "portfolioAnalyticsVisitStarted";
+const LAST_PATH_KEY = "portfolioAnalyticsLastPath";
 
 let initialized = false;
 let outboundListenerAttached = false;
@@ -21,7 +23,27 @@ export function initPortfolioAnalytics() {
 }
 
 export function trackPortfolioPageView(path) {
-  recordPortfolioEvent("pageview", { path });
+  const normalizedPath = path || `${window.location.pathname}${window.location.search}` || "/";
+  const visitStarted = getSessionFlag(VISIT_STARTED_KEY);
+  const lastPath = getSessionValue(LAST_PATH_KEY);
+  if (visitStarted && lastPath === normalizedPath) {
+    return;
+  }
+
+  setSessionValue(LAST_PATH_KEY, normalizedPath);
+  if (!visitStarted) {
+    setSessionValue(VISIT_STARTED_KEY, "true");
+    recordPortfolioEvent("pageview", {
+      path: normalizedPath,
+      metadata: { action: "visit_start" },
+    });
+    return;
+  }
+
+  recordPortfolioEvent("route_view", {
+    path: normalizedPath,
+    metadata: { action: "route_view" },
+  });
 }
 
 function attachOutboundClickTracking() {
@@ -73,6 +95,7 @@ function recordPortfolioEvent(eventType, overrides = {}) {
     metadata: {
       site: "portfolio",
       profile: params.get("profile"),
+      ...(overrides.metadata || {}),
     },
   };
   const body = JSON.stringify(payload);
@@ -121,6 +144,27 @@ function getSessionId() {
   } catch {
     return null;
   }
+}
+
+function getSessionFlag(key) {
+  return getSessionValue(key) === "true";
+}
+
+function getSessionValue(key) {
+  try {
+    return window.sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function setSessionValue(key, value) {
+  try {
+    window.sessionStorage.setItem(key, value);
+  } catch {
+    return false;
+  }
+  return true;
 }
 
 function isPrivateStatsPath(pathname) {

@@ -2,7 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { getStore } from "@netlify/blobs";
 
 const STORE_NAME = "portfolio-analytics";
-const ALLOWED_EVENT_TYPES = new Set(["pageview", "outbound_click"]);
+const ALLOWED_EVENT_TYPES = new Set(["pageview", "route_view", "outbound_click"]);
 const MAX_RECENT_EVENTS = 100;
 
 export default async function portfolioAnalytics(request, context) {
@@ -88,42 +88,48 @@ async function getSummary(request) {
   const days = clampInteger(url.searchParams.get("days"), 1, 365, 30);
   const limit = clampInteger(url.searchParams.get("limit"), 1, MAX_RECENT_EVENTS, 20);
   const since = Date.now() - days * 24 * 60 * 60 * 1000;
-  const events = (await readEvents(days)).filter((event) => Date.parse(event.timestamp) >= since);
+  const events = normalizeDuplicatePageviews(
+    (await readEvents(days)).filter((event) => Date.parse(event.timestamp) >= since),
+  );
+  const visitEvents = events.filter((event) => event.event_type === "pageview");
+  const routeEvents = events.filter((event) => isRouteEvent(event));
 
   return jsonResponse({
     site: "portfolio",
     window_days: days,
     total_events: events.length,
-    pageviews: countWhere(events, (event) => event.event_type === "pageview"),
+    pageviews: visitEvents.length,
+    route_views: countWhere(events, (event) => event.event_type === "route_view"),
     outbound_clicks: countWhere(events, (event) => event.event_type === "outbound_click"),
     unique_sessions: uniqueCount(events, "session_id"),
     unique_visitors: uniqueCount(events, "visitor_hash"),
-    by_day: topPairs(events, (event) => event.timestamp.slice(0, 10), days, "date"),
+    by_day: topPairs(visitEvents, (event) => event.timestamp.slice(0, 10), days, "date"),
     top_sources: topPairs(
-      events.filter((event) => event.event_type === "pageview"),
+      visitEvents,
       (event) => event.source,
       limit,
       "source",
     ),
     top_paths: topPairs(
-      events.filter((event) => event.event_type === "pageview"),
+      routeEvents,
       (event) => event.path,
       limit,
       "path",
     ),
     top_countries: topPairs(
-      events.filter((event) => event.event_type === "pageview"),
+      visitEvents,
       (event) => event.geo?.country_code,
       limit,
       "country_code",
     ),
-    top_cities: topGeo(events, limit),
+    top_cities: topGeo(visitEvents, limit),
     top_outbound_targets: topPairs(
       events.filter((event) => event.event_type === "outbound_click"),
       (event) => event.target_domain,
       limit,
       "target_domain",
     ),
+    visits: visitSummaries(events, limit),
     recent_events: events
       .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
       .slice(0, limit),
@@ -293,7 +299,7 @@ function topPairs(events, keyFn, limit, keyName) {
 
 function topGeo(events, limit) {
   const counts = new Map();
-  for (const event of events.filter((item) => item.event_type === "pageview")) {
+  for (const event of events) {
     const geo = event.geo || {};
     if (!geo.city) continue;
     const key = [geo.city, geo.region || "", geo.country_code || ""].join("|");
@@ -306,6 +312,95 @@ function topGeo(events, limit) {
       const [city, region, country_code] = key.split("|");
       return { city, region: region || null, country_code: country_code || null, count };
     });
+}
+
+function normalizeDuplicatePageviews(events) {
+  const seen = new Set();
+  return [...events]
+    .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp))
+    .map((event) => {
+      if (event.event_type !== "pageview") return event;
+      const key = visitKey(event);
+      if (!key) return event;
+      if (!seen.has(key)) {
+        seen.add(key);
+        return event;
+      }
+      return {
+        ...event,
+        event_type: "route_view",
+        metadata: {
+          ...(event.metadata || {}),
+          normalized_from: "pageview",
+        },
+      };
+    });
+}
+
+function visitSummaries(events, limit) {
+  const visits = groupedVisits(events);
+  return visits
+    .sort((a, b) => Date.parse(b.started_at) - Date.parse(a.started_at))
+    .slice(0, limit)
+    .map((visit) => ({
+      id: visit.id,
+      site: "portfolio",
+      started_at: visit.started_at,
+      last_seen_at: visit.last_seen_at,
+      source: visit.source,
+      entry_path: visit.entry_path,
+      action_count: visit.events.length,
+      route_count: visit.events.filter(isRouteEvent).length,
+      outbound_count: visit.events.filter((event) => event.event_type === "outbound_click").length,
+      geo: visit.geo,
+      events: visit.events.map((event) => ({
+        id: event.id,
+        timestamp: event.timestamp,
+        event_type: event.event_type,
+        path: event.path,
+        source: event.source,
+        target_domain: event.target_domain,
+        target_url: event.target_url,
+      })),
+    }));
+}
+
+function groupedVisits(events) {
+  const visits = new Map();
+  for (const event of [...events].sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp))) {
+    const key = visitKey(event) || `event:${event.id}`;
+    if (!visits.has(key)) {
+      visits.set(key, {
+        id: key,
+        started_at: event.timestamp,
+        last_seen_at: event.timestamp,
+        source: event.source || "direct",
+        entry_path: event.path || "/",
+        geo: event.geo || {},
+        events: [],
+      });
+    }
+    const visit = visits.get(key);
+    visit.last_seen_at = event.timestamp;
+    if (event.event_type === "pageview") {
+      visit.started_at = event.timestamp;
+      visit.source = event.source || visit.source;
+      visit.entry_path = event.path || visit.entry_path;
+      visit.geo = event.geo || visit.geo;
+    }
+    visit.events.push(event);
+  }
+  return [...visits.values()];
+}
+
+function visitKey(event) {
+  if (event.session_id) return `session:${event.session_id}`;
+  if (event.visitor_hash) return `visitor:${event.visitor_hash}:${String(event.timestamp || "").slice(0, 10)}`;
+  return null;
+}
+
+function isRouteEvent(event) {
+  return event.event_type === "pageview" || event.event_type === "route_view";
 }
 
 function uniqueCount(events, key) {

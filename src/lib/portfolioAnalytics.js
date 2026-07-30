@@ -11,6 +11,9 @@ export function initPortfolioAnalytics() {
   if (typeof window === "undefined" || initialized) {
     return false;
   }
+  if (isPrivateStatsPath(window.location.pathname)) {
+    return false;
+  }
 
   attachOutboundClickTracking();
   initialized = true;
@@ -48,6 +51,9 @@ function attachOutboundClickTracking() {
 
 function recordPortfolioEvent(eventType, overrides = {}) {
   if (!ANALYTICS_ENABLED || typeof window === "undefined") {
+    return;
+  }
+  if (isPrivateStatsPath(window.location.pathname)) {
     return;
   }
 
@@ -115,4 +121,8 @@ function getSessionId() {
   } catch {
     return null;
   }
+}
+
+function isPrivateStatsPath(pathname) {
+  return String(pathname || "").replace(/\/+$/, "") === "/stats";
 }

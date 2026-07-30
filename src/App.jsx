@@ -41,6 +41,7 @@ import pavedLogo from "./assets/Paved.png";
 import rbcLogo from "./assets/RBC.jpg";
 import { trackPortfolioPageView } from "./lib/portfolioAnalytics.js";
 import { PERSONAL_IMAGES, SITE_CONFIG, pageForPath, routeForPageId, routePathForPage } from "./seo/siteConfig.js";
+import StatsDashboard from "./StatsDashboard.jsx";
 
 const PROFILE_IMG = SITE_CONFIG.profileImage;
 const PROFILE_IMG_ALT = SITE_CONFIG.profileImageAlt;
@@ -3406,10 +3407,14 @@ function titleCase(value) {
 }
 
 export default function App() {
+  const isStatsRoute = window.location.pathname.replace(/\/+$/, "") === "/stats";
   const [profile, setProfile] = useState(() => {
+    if (isStatsRoute) return PROFILES[0];
     if (pageFromLocation() === "home") return null;
     return PROFILES[0];
   });
+
+  if (isStatsRoute) return <StatsDashboard />;
 
   if (!profile) return <ProfilePicker onChoose={setProfile} />;
 

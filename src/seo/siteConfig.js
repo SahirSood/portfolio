@@ -103,6 +103,7 @@ export const ROUTE_PATHS = {
   contact: "/contact",
   map: "/map",
   snake: "/snake",
+  stats: "/stats",
   rbc: "/experience/rbc",
   "redbrick-paved": "/experience/redbrick-paved",
   paved: "/experience/redbrick-paved",
@@ -272,6 +273,24 @@ export const SEO_ROUTES = [
       { label: "View Sahir's projects", href: ROUTE_PATHS.projects },
       { label: "Contact Sahir", href: ROUTE_PATHS.contact },
     ],
+  },
+  {
+    id: "stats",
+    path: ROUTE_PATHS.stats,
+    title: "Private Stats | Sahir Sood",
+    description: "Private analytics dashboard for Sahir Sood.",
+    h1: "Private Stats",
+    eyebrow: "Private",
+    robots: "noindex,nofollow",
+    sitemap: false,
+    lastmod: "2026-07-29",
+    sections: [
+      {
+        heading: "Private Analytics",
+        paragraphs: ["This route is reserved for private portfolio analytics access."],
+      },
+    ],
+    links: [],
   },
   {
     id: "experience",

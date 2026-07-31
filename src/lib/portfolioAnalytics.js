@@ -5,6 +5,7 @@ const ANALYTICS_ENABLED =
 const SESSION_KEY = "portfolioAnalyticsSessionId";
 const VISIT_STARTED_KEY = "portfolioAnalyticsVisitStarted";
 const LAST_PATH_KEY = "portfolioAnalyticsLastPath";
+const OWNER_OPT_OUT_KEY = "sahirAnalyticsOwnerOptOut";
 
 let initialized = false;
 let outboundListenerAttached = false;
@@ -13,7 +14,11 @@ export function initPortfolioAnalytics() {
   if (typeof window === "undefined" || initialized) {
     return false;
   }
+  applyOwnerOptOutParam();
   if (isPrivateStatsPath(window.location.pathname)) {
+    return false;
+  }
+  if (isOwnerOptedOut()) {
     return false;
   }
 
@@ -76,6 +81,9 @@ function recordPortfolioEvent(eventType, overrides = {}) {
     return;
   }
   if (isPrivateStatsPath(window.location.pathname)) {
+    return;
+  }
+  if (isOwnerOptedOut()) {
     return;
   }
 
@@ -165,6 +173,27 @@ function setSessionValue(key, value) {
     return false;
   }
   return true;
+}
+
+function applyOwnerOptOutParam() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("analytics") !== "off") {
+    return;
+  }
+  try {
+    window.localStorage.setItem(OWNER_OPT_OUT_KEY, "true");
+  } catch {
+    return false;
+  }
+  return true;
+}
+
+function isOwnerOptedOut() {
+  try {
+    return window.localStorage.getItem(OWNER_OPT_OUT_KEY) === "true";
+  } catch {
+    return false;
+  }
 }
 
 function isPrivateStatsPath(pathname) {

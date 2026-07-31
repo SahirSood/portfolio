@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 const STORAGE_KEY = "sahirStatsDashboardKey";
+const OWNER_OPT_OUT_KEY = "sahirAnalyticsOwnerOptOut";
 const RANGE_OPTIONS = [1, 7, 30, 90];
 
 export default function StatsDashboard() {
@@ -50,6 +51,7 @@ export default function StatsDashboard() {
         }
         throw new Error(payload?.error || `Stats request failed with ${response.status}`);
       }
+      writeOwnerOptOut();
       setStats(payload);
     } catch (fetchError) {
       setError(fetchError instanceof Error ? fetchError.message : "Stats request failed");
@@ -160,6 +162,7 @@ export default function StatsDashboard() {
         </header>
 
         {error ? <Banner tone="error" message={error} /> : null}
+        <Banner tone="info" message="This browser is excluded from portfolio analytics." />
         {sourceWarnings.map((warning) => (
           <Banner key={warning} tone="warn" message={warning} />
         ))}
@@ -479,14 +482,15 @@ function IconButton({ label, onClick, disabled, children }) {
 }
 
 function Banner({ tone, message }) {
+  const toneClass =
+    tone === "error"
+      ? "border-red-200 bg-red-50 text-red-700"
+      : tone === "info"
+        ? "border-blue-200 bg-blue-50 text-blue-800"
+        : "border-amber-200 bg-amber-50 text-amber-800";
   return (
     <div
-      className={classNames(
-        "mt-4 rounded-md border px-4 py-3 text-sm",
-        tone === "error"
-          ? "border-red-200 bg-red-50 text-red-700"
-          : "border-amber-200 bg-amber-50 text-amber-800",
-      )}
+      className={classNames("mt-4 rounded-md border px-4 py-3 text-sm", toneClass)}
     >
       {message}
     </div>
@@ -521,6 +525,15 @@ function readStoredKey() {
 function writeStoredKey(value) {
   try {
     window.localStorage.setItem(STORAGE_KEY, value);
+  } catch {
+    return false;
+  }
+  return true;
+}
+
+function writeOwnerOptOut() {
+  try {
+    window.localStorage.setItem(OWNER_OPT_OUT_KEY, "true");
   } catch {
     return false;
   }

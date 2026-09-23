@@ -19,6 +19,7 @@ The experience is intentionally playful, but the underlying content is professio
 
 - `src/App.jsx`: primary React UI, content arrays, route rendering, browser-themed pages, games/map interactions.
 - `src/seo/siteConfig.js`: canonical site config, SEO route definitions, route paths, metadata content, sitemap fields.
+- `public/sahir-sood-resume.pdf`: user-supplied résumé PDF, linked through `SITE_CONFIG.resumePdf` from the React About and résumé pages and their static HTML. Replace this file when Sahir supplies an updated PDF; keep the stable public URL.
 - `scripts/prerender-seo.mjs`: post-build static HTML generator for routes, metadata, JSON-LD, `robots.txt`, `sitemap.xml`, and `404.html`.
 - `scripts/check-seo.mjs`: generated-output validation for metadata, JSON-LD, sitemap, robots, canonicals, and required homepage content.
 - `index.html`: Vite shell plus static SEO fallback markers used by the prerender script.

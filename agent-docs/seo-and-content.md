@@ -4,9 +4,13 @@
 
 Use `src/seo/siteConfig.js` for shared metadata, canonical routes, sitemap fields, and structured-data content. Keep it aligned with visible React content in `src/App.jsx`.
 
+Travel stops and their personal notes live in `TRAVEL_PLACES` in `src/App.jsx`; the About page's travel summary lives in `EXTRACURRICULARS`. Keep corresponding About and Map route summaries in `src/seo/siteConfig.js` aligned when adding meaningful trip memories, and update those routes' `lastmod` dates. Montreal, Quebec City, and Toronto notes were added from Sahir's own account; no trip dates or employer attribution were supplied.
+
 If a claim appears in metadata or JSON-LD, it should also be visible or clearly supported by visible page content.
 
 ## Factual Boundaries
+
+The RBC people-search proof of concept is planned work intended to find people by skills. Keep it distinct from shipped ARC Lineage work; do not claim implementation details or results until Sahir supplies them. The résumé project summary includes AI Trading Arena, and both visible and static skills lists include its C++ and FastAPI technologies.
 
 Do not invent:
 

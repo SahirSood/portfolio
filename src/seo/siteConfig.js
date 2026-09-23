@@ -14,6 +14,7 @@ export const SITE_CONFIG = {
   jobTitle: "Full Stack Developer",
   location: "Vancouver, BC",
   email: "sahirsood@gmail.com",
+  resumePdf: "/sahir-sood-resume.pdf",
   siteUrl: normalizeSiteUrl(env.VITE_SITE_URL),
   inferredSiteUrl: "https://sahirsood.com",
   description:
@@ -177,7 +178,7 @@ export const SEO_ROUTES = [
     eyebrow: "About",
     priority: "0.9",
     changefreq: "monthly",
-    lastmod: "2026-07-21",
+    lastmod: "2026-09-23",
     sections: [
       {
         heading: "Profile",
@@ -187,11 +188,18 @@ export const SEO_ROUTES = [
         ],
       },
       {
+        heading: "Travel",
+        paragraphs: [
+          "In Canada, Quebec City's architecture reminded Sahir of Europe, Montreal stood out for its food and coffee, and two weeks on his own in Toronto gave him the chance to explore while working with his team in person.",
+        ],
+      },
+      {
         heading: "Public Profiles",
         list: ["GitHub: github.com/SahirSood", "LinkedIn: linkedin.com/in/sahir-sood", "Email: sahirsood@gmail.com"],
       },
     ],
     links: [
+      { label: "View résumé PDF", href: SITE_CONFIG.resumePdf, external: true },
       { label: "View Sahir's experience", href: ROUTE_PATHS.experience },
       { label: "View Sahir's projects", href: ROUTE_PATHS.projects },
       { label: "Contact Sahir", href: ROUTE_PATHS.contact },
@@ -302,12 +310,12 @@ export const SEO_ROUTES = [
     eyebrow: "Experience",
     priority: "0.9",
     changefreq: "monthly",
-    lastmod: "2026-07-13",
+    lastmod: "2026-09-23",
     sections: [
       {
         heading: "Experience Highlights",
         list: [
-          "RBC - Full Stack Developer on Functions Assist, an internal AI platform for building specialized tools across the organization.",
+          "RBC - Full Stack Developer on Functions Assist, an internal AI platform for building specialized tools across the organization. Also planning a people-search proof of concept to help users find people by their skills.",
           "RedBrick/Paved - Software Developer contributing production code, validation, tests, caching, and product improvements for a newsletter advertising platform.",
           "MotherTongue - Lead Developer for an AI-powered writing coach MVP with backend services, AI integration, Chrome extension support, and Firestore.",
           "Kapali Developments - Contract Software Developer building a React and Firestore financial dashboard with automation for reporting and equity splits.",
@@ -331,13 +339,19 @@ export const SEO_ROUTES = [
     eyebrow: "Experience Detail",
     priority: "0.8",
     changefreq: "monthly",
-    lastmod: "2026-07-13",
+    lastmod: "2026-09-23",
     sections: [
       {
         heading: "Functions Assist and ARC Lineage",
         paragraphs: [
           "At RBC, Sahir Sood works on Functions Assist, an internal AI platform for building specialized tools for departments across the organization. His work is primarily frontend-focused, with backend debugging and integration work when needed.",
           "For ARC Lineage, he built the full user interface for a lineage and document-exploration experience. Users can visually explore documents, understand source context, view relationships and authorship, and narrow large result sets through search and filtering.",
+        ],
+      },
+      {
+        heading: "People Search - Planned Proof of Concept",
+        paragraphs: [
+          "Sahir is planning a people-search proof of concept that would let users search for people by their skills. The goal is to make it easier to find someone with the expertise they need. This work is in the planning stage.",
         ],
       },
       {
@@ -502,20 +516,20 @@ export const SEO_ROUTES = [
     path: ROUTE_PATHS.skills,
     title: "Technical Skills | Sahir Sood",
     description:
-      "Sahir Sood's technical skills include Python, JavaScript, TypeScript, Java, Ruby, Kotlin, SQL, React, React Native, Node.js, Rails, Flask, Firebase, AWS, Docker, and PostgreSQL.",
+      "Sahir Sood's technical skills include Python, C++, JavaScript, TypeScript, Java, Ruby, Kotlin, SQL, React, React Native, Node.js, FastAPI, Rails, Flask, Firebase, AWS, Docker, and PostgreSQL.",
     h1: "Technical Skills",
     eyebrow: "Skills",
     priority: "0.7",
     changefreq: "monthly",
-    lastmod: "2026-07-13",
+    lastmod: "2026-09-23",
     sections: [
       {
         heading: "Languages",
-        list: ["Python", "JavaScript", "TypeScript", "Java", "Ruby", "Kotlin", "SQL", "HTML/CSS"],
+        list: ["Python", "C++", "JavaScript", "TypeScript", "Java", "Ruby", "Kotlin", "SQL", "HTML/CSS"],
       },
       {
         heading: "Frameworks and Platforms",
-        list: ["React", "React Native", "Node.js", "Rails", "Flask", "Firebase", "Android", "Angular"],
+        list: ["React", "React Native", "Node.js", "FastAPI", "Rails", "Flask", "Firebase", "Android", "Angular"],
       },
       {
         heading: "Tools",
@@ -567,7 +581,7 @@ export const SEO_ROUTES = [
     eyebrow: "Resume",
     priority: "0.8",
     changefreq: "monthly",
-    lastmod: "2026-07-13",
+    lastmod: "2026-09-23",
     sections: [
       {
         heading: "Summary",
@@ -580,12 +594,13 @@ export const SEO_ROUTES = [
         list: [
           "Education: Simon Fraser University - Computing Science and Finance.",
           "Experience: RBC, RedBrick/Paved, MotherTongue, and Kapali Developments.",
-          "Projects: UniVerse, Spotify Playlist Generator, Financial Fast Feed, BeerIQ, TripMate, Sensor Movement Data Analysis, and Apocalypse Rerising.",
-          "Skills: Python, JavaScript, TypeScript, Java, Ruby, Kotlin, SQL, React, React Native, Node.js, Rails, Flask, Firebase, AWS, Docker, PostgreSQL, and GitHub Actions.",
+          "Projects: AI Trading Arena, UniVerse, Spotify Playlist Generator, Financial Fast Feed, BeerIQ, TripMate, Sensor Movement Data Analysis, and Apocalypse Rerising.",
+          "Skills: Python, C++, JavaScript, TypeScript, Java, Ruby, Kotlin, SQL, React, React Native, Node.js, FastAPI, Rails, Flask, Firebase, AWS, Docker, PostgreSQL, and GitHub Actions.",
         ],
       },
     ],
     links: [
+      { label: "View résumé PDF", href: SITE_CONFIG.resumePdf, external: true },
       { label: "Contact Sahir", href: ROUTE_PATHS.contact },
       { label: "View experience", href: ROUTE_PATHS.experience },
       { label: "View projects", href: ROUTE_PATHS.projects },
@@ -630,12 +645,20 @@ export const SEO_ROUTES = [
     eyebrow: "Map",
     priority: "0.4",
     changefreq: "yearly",
-    lastmod: "2026-07-29",
+    lastmod: "2026-09-23",
     sections: [
       {
         heading: "Why Travel Matters",
         paragraphs: [
           "Travel and study abroad shaped how Sahir Sood sees people, communication, independence, and unfamiliar environments. The map page is personal context, not a replacement for the software portfolio.",
+        ],
+      },
+      {
+        heading: "Montreal, Quebec City, and Toronto",
+        paragraphs: [
+          "Montreal stood out for its food and coffee. Sahir loved discovering little hole-in-the-wall spots with some of the best food and coffee he has ever had.",
+          "Quebec City reminded him of Europe, with beautiful architecture and a sense of history that made roaming around the city a highlight.",
+          "He spent two weeks on his own in Toronto, exploring the city and working with his team. Combining travel with the chance to work directly with teammates and communicate in person made it an unreal experience.",
         ],
       },
     ],

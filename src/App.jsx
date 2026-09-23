@@ -54,8 +54,8 @@ const HOT_LINKS = [
 ];
 
 const SKILLS = {
-  Languages: ["Python", "JavaScript", "TypeScript", "Java", "Ruby", "Kotlin", "SQL", "HTML/CSS"],
-  Frameworks: ["React", "React Native", "Node.js", "Rails", "Flask", "Firebase", "Android", "Angular"],
+  Languages: ["Python", "C++", "JavaScript", "TypeScript", "Java", "Ruby", "Kotlin", "SQL", "HTML/CSS"],
+  Frameworks: ["React", "React Native", "Node.js", "FastAPI", "Rails", "Flask", "Firebase", "Android", "Angular"],
   Tools: ["AWS", "Docker", "PostgreSQL", "Git", "GitHub", "Postman", "Kubernetes", "Jira"],
 };
 
@@ -248,7 +248,7 @@ const EXPERIENCE = [
     logoWidth: 200,
     logoHeight: 200,
     summary:
-      "I work on Functions Assist, RBC's internal AI platform for building specialized tools for departments across the organization. My work is primarily frontend-focused, with backend debugging and integration work when needed.",
+      "I work on Functions Assist, RBC's internal AI platform for building specialized tools for departments across the organization. My work is primarily frontend-focused, with backend debugging and integration work when needed. I am also planning a people-search proof of concept to help users find people by their skills.",
     tags: ["Python", "React", "JavaScript", "AI Platform", "Internal Tools"],
     priority: true,
   },
@@ -332,6 +332,10 @@ const EXPERIENCE_DETAILS = {
     featured:
       "I built the full user interface for a lineage and document-exploration experience. Users can visually explore documents, understand where information came from, view relationships and authorship, and narrow large result sets through search and filtering. I also helped with backend debugging and integration issues when needed.",
     sections: [
+      {
+        title: "People search - planned proof of concept",
+        body: "I am planning a people-search proof of concept that would let users search for people by their skills. The goal is to make it easier to find someone with the expertise they need. This work is in the planning stage.",
+      },
       {
         title: "Problem",
         body: "Internal policies and documents can be difficult to navigate when information is spread across large collections and connected through relationships that are not immediately visible. The goal was to make this information easier to search, understand, and trace back to its source.",
@@ -554,6 +558,7 @@ const EXTRACURRICULARS = [
     points: [
       "Studying abroad gave me the opportunity to travel extensively, but the most meaningful part was learning to adapt to people and environments that worked differently from what I knew.",
       "Prague, Morocco and the Sahara, Italy, and a spontaneous football game in Florence are some of the memories that shaped how I think about travel.",
+      "In Canada, Quebec City's architecture reminded me of Europe, Montreal stood out for its food and coffee, and two weeks on my own in Toronto gave me the chance to explore while working with my team in person.",
       "Travel has made me more independent, more curious, and much better at communicating across different personalities and cultures.",
     ],
     color: "bg-emerald-50 text-emerald-700 border-emerald-100",
@@ -656,6 +661,9 @@ const TRAVEL_PLACES = [
       { name: "Banff", lat: 51.1784, lng: -115.5708, note: "One of the most striking mountain environments I have visited, surrounded by scenery that rarely looks real in photographs." },
       { name: "Jasper", lat: 52.8737, lng: -118.0814, note: "A quieter and more spread-out Rocky Mountain experience, with the landscape being the main reason to be there." },
       { name: "Saskatoon", lat: 52.1579, lng: -106.6702, note: "A chance to experience the Canadian Prairies and a city with a very different scale and landscape from Vancouver." },
+      { name: "Montreal", lat: 45.5019, lng: -73.5674, note: "My favourite part of Montreal was the food and coffee. It felt like I could walk into any little hole-in-the-wall spot and find some of the best food or coffee I have ever had." },
+      { name: "Quebec City", lat: 46.8139, lng: -71.208, note: "Quebec City reminded me of Europe. The beautiful architecture and sense of history made it a great place to simply roam around and explore." },
+      { name: "Toronto", lat: 43.6532, lng: -79.3832, note: "I spent two weeks on my own in Toronto, exploring the city and working with my team. It was an unreal experience to combine travelling with the chance to work directly with my teammates and communicate in person." },
     ],
   },
   {
@@ -1171,7 +1179,8 @@ function BrowserPortfolio({ profile, onSwitchProfile }) {
   };
 
   useEffect(() => {
-    contentRef.current?.scrollTo({ top: 0, left: 0 });
+    contentRef.current?.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, [page, searchTerm]);
 
   useEffect(() => {
@@ -1993,6 +2002,15 @@ function ProfilePage({ onNavigate }) {
             <p className="mt-1 text-sm text-neutral-500">Vancouver, BC</p>
           </div>
           <div className="mt-6 grid gap-2">
+            <a
+              href={SITE_CONFIG.resumePdf}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-3 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            >
+              <FileText size={18} aria-hidden="true" />
+              <span>View résumé PDF <span className="sr-only">(opens in a new tab)</span></span>
+            </a>
             {HOT_LINKS.map((link) => {
               const Icon = link.icon;
               return (
@@ -2338,8 +2356,8 @@ function ResumePage({ onNavigate }) {
               <p className="mt-2 text-neutral-600">Software Developer - SFU CS + Finance - Vancouver, BC</p>
               <p className="mt-1 text-sm text-neutral-500">sahirsood@gmail.com - github.com/SahirSood - linkedin.com/in/sahir-sood</p>
             </div>
-            <a href="mailto:sahirsood@gmail.com?subject=Resume%20PDF%20request" className="rounded-full bg-blue-600 px-5 py-3 font-medium text-white">
-              Request PDF
+            <a href={SITE_CONFIG.resumePdf} target="_blank" rel="noreferrer" className="rounded-full bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+              View résumé PDF <span className="sr-only">(opens in a new tab)</span>
             </a>
           </div>
           <div className="mt-6 space-y-7">
@@ -2353,10 +2371,10 @@ function ResumePage({ onNavigate }) {
               Current Full Stack Developer at RBC. Software Developer at RedBrick/Paved. Lead Developer for the MotherTongue MVP. Contract Software Developer at Kapali Developments.
             </ResumeBlock>
             <ResumeBlock title="Projects">
-              UniVerse, Spotify Playlist Generator, Financial Fast Feed, BeerIQ, TripMate, Sensor Movement Data Analysis, and Apocalypse Rerising.
+              AI Trading Arena, UniVerse, Spotify Playlist Generator, Financial Fast Feed, BeerIQ, TripMate, Sensor Movement Data Analysis, and Apocalypse Rerising.
             </ResumeBlock>
             <ResumeBlock title="Skills">
-              Python, JavaScript, TypeScript, Java, Ruby, Kotlin, SQL, React, React Native, Node.js, Rails, Flask, Firebase, AWS, Docker, PostgreSQL, GitHub Actions.
+              Python, C++, JavaScript, TypeScript, Java, Ruby, Kotlin, SQL, React, React Native, Node.js, FastAPI, Rails, Flask, Firebase, AWS, Docker, PostgreSQL, GitHub Actions.
             </ResumeBlock>
           </div>
         </section>
@@ -2578,7 +2596,7 @@ function MapPage() {
 
   return (
     <PageShell eyebrow="Maps" title="Where I have been" description="A real OpenStreetMap-style travel page with clickable places and personal notes.">
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
         <section
           ref={mapRef}
           className="relative h-[360px] overflow-hidden rounded-3xl border border-neutral-200 bg-[#cfe8f7] shadow-sm touch-none cursor-grab active:cursor-grabbing sm:h-[460px] md:h-[560px]"
@@ -2658,13 +2676,9 @@ function MapPage() {
           <div className="absolute bottom-4 left-4 z-20 rounded bg-white/90 px-2 py-1 text-[10px] font-semibold text-neutral-700 shadow">
             OpenStreetMap contributors
           </div>
-          <div className="absolute bottom-4 left-1/2 z-20 max-h-44 w-[min(92%,520px)] -translate-x-1/2 overflow-y-auto rounded-2xl bg-white/95 p-3 shadow-lg">
-            <p className="text-sm font-semibold">{selected.name}</p>
-            <p className="mt-1 text-xs leading-5 text-neutral-600">{selected.note}</p>
-          </div>
         </section>
 
-        <aside className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+        <aside aria-label="Explore places" tabIndex={0} className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 xl:h-[560px] xl:overflow-y-auto">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">Explore places</p>
           <h2 className="mt-2 text-2xl font-semibold">Pick a stop</h2>
           <p className="mt-2 text-sm leading-6 text-neutral-600">
@@ -2720,22 +2734,6 @@ function MapPage() {
             </div>
           </div>
 
-          <div className="mt-5 rounded-2xl bg-neutral-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">Selected stop</p>
-            <h3 className="mt-2 text-xl font-semibold">{selected.name}</h3>
-            <p className="mt-1 text-sm text-neutral-500">
-              {selected.country} - {selected.code}
-            </p>
-            <p className="mt-3 text-sm leading-6 text-neutral-700">{selected.note}</p>
-          </div>
-
-          {selectedCountry.note && (
-            <div className="mt-4 rounded-2xl bg-blue-50 p-4 text-sm leading-6 text-blue-950">
-              <p className="font-semibold">Country note</p>
-              <p className="mt-2">{selectedCountry.note}</p>
-            </div>
-          )}
-
           <details className="mt-5 rounded-2xl bg-neutral-50 p-4">
             <summary className="cursor-pointer text-sm font-medium">Show full country list</summary>
             <div className="mt-4 max-h-56 space-y-4 overflow-y-auto pr-1">
@@ -2766,6 +2764,14 @@ function MapPage() {
             </div>
           </details>
         </aside>
+
+        <section aria-label="Selected stop personal note" aria-live="polite" className="row-start-2 rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm xl:col-span-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600">Personal note</p>
+          <h2 className="mt-2 text-xl font-semibold">{selected.name}</h2>
+          <p className="mt-1 text-sm text-neutral-500">{selected.country} - {selected.code}</p>
+          <p className="mt-3 text-sm leading-6 text-neutral-700">{selected.note}</p>
+          {selectedCountry.note && <p className="mt-3 text-sm leading-6 text-neutral-600">{selectedCountry.note}</p>}
+        </section>
       </div>
 
       <section className="mt-6 grid gap-5 lg:grid-cols-[1fr_1.1fr]">

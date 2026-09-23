@@ -62,4 +62,6 @@ Avoid adding more animation, novelty, or visual noise unless it improves compreh
 
 ## Long Content Pattern
 
+Route changes reset both the browser window and inner content scroll position so pages open at their heading. On the map page, the desktop places panel matches the map's 560px height and scrolls internally. The selected stop's personal note sits below the map row (immediately below the map on smaller screens), rather than being duplicated over the map and inside the sidebar. Keep the travel context close to this row without a tall sidebar creating empty space beneath the map.
+
 Experience, education, map, and contact pages should not open with walls of text. Lead with a short summary, compact cards, or key facts. Put longer context into progressive-disclosure controls such as `details` when the content is useful but not needed for first scan.

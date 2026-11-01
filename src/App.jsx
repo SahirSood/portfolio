@@ -238,6 +238,21 @@ const PROJECT_DETAILS = {
 
 const EXPERIENCE = [
   {
+    id: "aiden-edge",
+    company: "RBC Capital Markets",
+    role: "Incoming AidenEdge Analyst",
+    timeframe: "Incoming",
+    status: "Incoming",
+    team: "Capital Markets AidenEdge Program",
+    logo: rbcLogo,
+    logoWidth: 200,
+    logoHeight: 200,
+    summary:
+      "I am joining RBC Capital Markets through the AidenEdge Program, a tech-focused opportunity at the intersection of software, AI, and financial markets. I am excited to work on problems where understanding the market and building the system are part of the same job.",
+    tags: ["Python", "JavaScript", "AI", "Capital Markets", "End-to-End Solutions"],
+    priority: true,
+  },
+  {
     id: "rbc",
     company: "RBC",
     role: "Full Stack Developer",
@@ -785,11 +800,11 @@ const QUESTION_BANK = [
 
 const ANSWERS = {
   "why should we interview sahir":
-    "Sahir combines practical software experience, product sense, and a broad build history: current full stack work at RBC, RedBrick/Paved production software work, MotherTongue MVP leadership, and projects across AI, finance, web, mobile, backend, data, and games.",
+    "Sahir combines practical software experience, product sense, and a broad build history: an incoming AidenEdge role with RBC Capital Markets, full stack AI work at RBC, RedBrick/Paved production software work, MotherTongue MVP leadership, and projects across AI, finance, web, mobile, backend, data, and games.",
   "show me sahir's strongest engineering work":
     "Start with AI Trading Arena for AI + finance systems work, MotherTongue for AI + Chrome extension architecture, RedBrick/Paved for production engineering, and UniVerse for realtime mobile systems.",
   "what experience does sahir have":
-    "Sahir is currently a Full Stack Developer at RBC, previously worked as a Software Developer at RedBrick/Paved, built the MotherTongue MVP as lead developer, and has contract dashboard experience with Kapali Developments.",
+    "Sahir is an incoming AidenEdge Analyst at RBC Capital Markets and is currently a Full Stack Developer at RBC. He previously worked as a Software Developer at RedBrick/Paved, built the MotherTongue MVP as lead developer, and has contract dashboard experience with Kapali Developments.",
   "which projects prove full-stack ability":
     "AI Trading Arena, UniVerse, Spotify Playlist Generator, Financial Fast Feed, and TripMate show full-stack range across AI agents, native systems, market simulation, mobile, auth flows, backend services, databases, and realtime features.",
   "what is sahir like outside code":
@@ -843,6 +858,13 @@ const RECENT_TABS = [
     source: "experience.sahirsood.com",
     visited: "primary hiring signal",
     action: "rbc",
+    icon: BriefcaseBusiness,
+  },
+  {
+    title: "Incoming RBC Capital Markets AidenEdge analyst",
+    source: "next chapter",
+    visited: "AI + capital markets",
+    action: "experience",
     icon: BriefcaseBusiness,
   },
   {
@@ -1644,7 +1666,7 @@ function ExperiencePage({ onNavigate }) {
         <div>
           <AiOverview
             title="AI Overview"
-            body="Sahir's experience signal is practical and current: full stack work at RBC, RedBrick/Paved production engineering, MotherTongue MVP work, and contract full-stack dashboard work."
+            body="Sahir's next chapter is incoming work with RBC Capital Markets through the AidenEdge Program, building on full-stack AI work at RBC, RedBrick/Paved production engineering, MotherTongue MVP work, and contract dashboard development."
           />
           <div className="mt-8 space-y-8">
             {results.map((result) => (
@@ -2042,8 +2064,9 @@ function ProfilePage({ onNavigate }) {
                 much as technical execution.
               </p>
               <p>
-                Professionally, I have been moving toward AI, finance, and product-minded engineering: current internal
-                AI work at RBC, past production software at RedBrick/Paved, and personal projects like AI Trading Arena.
+                Professionally, I have been moving toward AI, finance, and product-minded engineering: internal AI work at
+                RBC, an incoming AidenEdge role with RBC Capital Markets, past production software at RedBrick/Paved,
+                and personal projects like AI Trading Arena.
               </p>
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -2070,7 +2093,7 @@ function ProfilePage({ onNavigate }) {
           <PersonalImageGallery compact />
           <div className="grid gap-4 md:grid-cols-3">
             {[
-              ["Current", "RBC"],
+              ["Incoming", "RBC Capital Markets"],
               ["Education", "SFU CS + Finance"],
               ["Study abroad", "Leeds, United Kingdom"],
             ].map(([label, value]) => (
@@ -2368,7 +2391,7 @@ function ResumePage({ onNavigate }) {
               Simon Fraser University - Computing Science + Finance. Study abroad experience in Leeds, United Kingdom.
             </ResumeBlock>
             <ResumeBlock title="Experience">
-              Current Full Stack Developer at RBC. Software Developer at RedBrick/Paved. Lead Developer for the MotherTongue MVP. Contract Software Developer at Kapali Developments.
+              Incoming AidenEdge Analyst at RBC Capital Markets. Full Stack Developer at RBC. Software Developer at RedBrick/Paved. Lead Developer for the MotherTongue MVP. Contract Software Developer at Kapali Developments.
             </ResumeBlock>
             <ResumeBlock title="Projects">
               AI Trading Arena, UniVerse, Spotify Playlist Generator, Financial Fast Feed, BeerIQ, TripMate, Sensor Movement Data Analysis, and Apocalypse Rerising.
@@ -3335,8 +3358,8 @@ function getSearchResults(value) {
         title: "Experience - Sahir Sood",
         url: "experience.sahirsood.com",
         source: "Work history",
-        description: "Current RBC full stack developer, RedBrick/Paved software developer, MotherTongue MVP lead developer, and Kapali contract software developer.",
-        tags: ["RBC", "Paved", "MotherTongue", "Kapali"],
+        description: "Incoming RBC Capital Markets AidenEdge analyst, RBC full stack developer, RedBrick/Paved software developer, MotherTongue MVP lead developer, and Kapali contract software developer.",
+        tags: ["AidenEdge", "RBC", "Paved", "MotherTongue", "Kapali"],
         action: "experience",
       },
       ...baseResults(),

@@ -131,18 +131,19 @@ export const SEO_ROUTES = [
     eyebrow: "Portfolio",
     priority: "1.0",
     changefreq: "monthly",
-    lastmod: "2026-07-21",
+    lastmod: "2026-10-31",
     sections: [
       {
         heading: "About Sahir Sood",
         paragraphs: [
           "Sahir Sood is a Vancouver-based software developer and Simon Fraser University Computing Science and Finance student. His portfolio covers full-stack development, AI-enabled products, mobile applications, backend systems, data analysis, and finance-focused software.",
-          "He has practical experience at RBC, RedBrick/Paved, MotherTongue, and Kapali Developments, with projects that span React, React Native, Node.js, Python, C++, FastAPI, Ruby on Rails, Firebase, PostgreSQL, Kotlin, and modern JavaScript.",
+          "He has an incoming AidenEdge role with RBC Capital Markets and practical experience at RBC, RedBrick/Paved, MotherTongue, and Kapali Developments, with projects that span React, React Native, Node.js, Python, C++, FastAPI, Ruby on Rails, Firebase, PostgreSQL, Kotlin, and modern JavaScript.",
         ],
       },
       {
         heading: "Software Development Experience",
         list: [
+          "Incoming AidenEdge Analyst at RBC Capital Markets, joining a tech-focused program at the intersection of software, AI, and financial markets.",
           "Full Stack Developer at RBC, working on an internal AI platform and frontend-heavy tools for document search, filtering, lineage, and exploration.",
           "Software Developer at RedBrick on Paved, contributing to production ad-tech systems, validation, tests, caching, and internal product improvements.",
           "Lead Developer for MotherTongue, an AI-powered writing coach MVP with React, Node.js, OpenAI API integration, Chrome extension support, and Firestore.",
@@ -178,13 +179,13 @@ export const SEO_ROUTES = [
     eyebrow: "About",
     priority: "0.9",
     changefreq: "monthly",
-    lastmod: "2026-09-23",
+    lastmod: "2026-10-31",
     sections: [
       {
         heading: "Profile",
         paragraphs: [
           "Sahir Sood is a software developer studying Computing Science and Finance at Simon Fraser University. His work connects practical product engineering with an interest in financial systems, AI tools, backend systems, mobile apps, and data-driven development.",
-          "His experience includes current full-stack work at RBC, production software development at RedBrick/Paved, lead development for the MotherTongue MVP, and contract dashboard work for Kapali Developments.",
+          "His next chapter is an incoming AidenEdge role with RBC Capital Markets, building on full-stack AI work at RBC, production software development at RedBrick/Paved, lead development for the MotherTongue MVP, and contract dashboard work for Kapali Developments.",
         ],
       },
       {
@@ -305,16 +306,17 @@ export const SEO_ROUTES = [
     path: ROUTE_PATHS.experience,
     title: "Software Development Experience | Sahir Sood",
     description:
-      "Sahir Sood's software experience includes full-stack work at RBC, RedBrick/Paved, MotherTongue, and Kapali Developments.",
+      "Sahir Sood's software experience includes an incoming AidenEdge role with RBC Capital Markets, full-stack work at RBC, RedBrick/Paved, MotherTongue, and Kapali Developments.",
     h1: "Software Development Experience",
     eyebrow: "Experience",
     priority: "0.9",
     changefreq: "monthly",
-    lastmod: "2026-09-23",
+    lastmod: "2026-10-31",
     sections: [
       {
         heading: "Experience Highlights",
         list: [
+          "Incoming AidenEdge Analyst at RBC Capital Markets, joining a tech-focused program focused on solving complex financial-market problems with software and AI.",
           "RBC - Full Stack Developer on Functions Assist, an internal AI platform for building specialized tools across the organization. Also planning a people-search proof of concept to help users find people by their skills.",
           "RedBrick/Paved - Software Developer contributing production code, validation, tests, caching, and product improvements for a newsletter advertising platform.",
           "MotherTongue - Lead Developer for an AI-powered writing coach MVP with backend services, AI integration, Chrome extension support, and Firestore.",
@@ -581,7 +583,7 @@ export const SEO_ROUTES = [
     eyebrow: "Resume",
     priority: "0.8",
     changefreq: "monthly",
-    lastmod: "2026-09-23",
+    lastmod: "2026-10-31",
     sections: [
       {
         heading: "Summary",
@@ -593,7 +595,7 @@ export const SEO_ROUTES = [
         heading: "Resume Highlights",
         list: [
           "Education: Simon Fraser University - Computing Science and Finance.",
-          "Experience: RBC, RedBrick/Paved, MotherTongue, and Kapali Developments.",
+          "Experience: Incoming AidenEdge Analyst at RBC Capital Markets, RBC, RedBrick/Paved, MotherTongue, and Kapali Developments.",
           "Projects: AI Trading Arena, UniVerse, Spotify Playlist Generator, Financial Fast Feed, BeerIQ, TripMate, Sensor Movement Data Analysis, and Apocalypse Rerising.",
           "Skills: Python, C++, JavaScript, TypeScript, Java, Ruby, Kotlin, SQL, React, React Native, Node.js, FastAPI, Rails, Flask, Firebase, AWS, Docker, PostgreSQL, and GitHub Actions.",
         ],
